@@ -6,6 +6,9 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+
+##Edited ___ L.Vance for publishing update
+
 ```{r set-options, echo=FALSE, cache=FALSE}
 ```
 
@@ -31,6 +34,8 @@ if(!require(kableExtra)) {install.packages("kableExtra")
   library(kableExtra)}
 if(!require(knitr)) {install.packages("knitr")
   library(knitr)}
+if(!require(tidylog)) {install.packages("tidylog")
+  library(tidylog)}
 
 ```
 
