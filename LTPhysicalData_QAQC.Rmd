@@ -152,8 +152,14 @@ PlotVars <- function(data,y) {
 ## 3.Load Data, Check Variable Types
 
 ```{r load, results = FALSE, warning = FALSE, message = FALSE}
-#setwd("C:/Users/cpien/OneDrive - California Department of Water Resources/Work/Database/R_code/")
-phys <- read.csv("Data/TblPhysicalData_20210204.csv")
+
+phys <- read_csv("drift data/TblPhysicalDataAccess.csv")
+phys2 <- read_csv("drift data/DriftSampExcelData.csv", skip=1)
+
+#get rid of NA in phys2 (data entry changed from Access to Excel in 2020)
+
+phys2 <- phys2 %>%
+  filter(!is.na(`Measuring program short name`))
 
 # Add and change data and time formats
 phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
