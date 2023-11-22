@@ -156,10 +156,40 @@ PlotVars <- function(data,y) {
 phys <- read_csv("drift data/TblPhysicalDataAccess.csv")
 phys2 <- read_csv("drift data/DriftSampExcelData.csv", skip=1)
 
-#get rid of NA in phys2 (data entry changed from Access to Excel in 2020)
+#get rid of NA in phys2 (data entry changed from Access to Excel in 2020), rename columns to be able to combine, clean up columns
 
 phys2 <- phys2 %>%
-  filter(!is.na(`Measuring program short name`))
+  filter(!is.na(`Measuring program short name`)) %>%
+    rename(Program = 'Measuring program short name',
+         Date = 'Sampling Event Date',
+         Time = 'Sampling Event Time',
+         Station = 'Sampling Area Number',
+         SamplingNumber = 'Sampling Event Number',
+         PhysicalDataID = '...6',
+         ConditionCode = 'Condition Code',
+         SamplingAltered = 'Sampling Altered',
+         MeterSetTime = 'Set Time',
+         FlowMeterStart = 'Flow Meter Start',
+         FlowMeterEnd = 'Flow Meter End',
+         FlowMeter50Start = 'Flow Meter Start (50)',
+         FlowMeter50End = 'Flow Meter End (50)',
+         FlowMeterSpeed = 'Flow Meter Speed',
+         PhysicalDataIDx = 'Physical Data ID',
+         EnteredBy = 'Entered by',
+         QAQCBy = "QAQC'd by",
+         FieldComments = 'Field Comments',
+         SampleVolume = 'Sample Volume',
+         SubsampleNumber = 'Subsample Number',
+         DilutionVolume = 'Dilution Volume',
+         SlideCount = 'Slide Count',
+         MeshSize = 'Observation Area Name',
+         Observation = 'Observation Area Number',
+         SpotNumber = 'Spot Number',
+         SpotCode = 'Spot Code (original/duplicate)') %>%
+  select(-c(PhysicalDataID, PhysicalDataIDx,
+            FlowMeter50Start,FlowMeter50End,
+            EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation,
+            '...27', '...28', '...29', '...30', '...31', '...32'))
 
 # Add and change data and time formats
 phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
