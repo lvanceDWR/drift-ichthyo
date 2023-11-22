@@ -193,9 +193,25 @@ phys2 <- phys2 %>%
             EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation,
             '...27', '...28', '...29', '...30', '...31', '...32'))
 
+#rename and cleanup columns for WQ
+WQ <- WQ %>%
+    filter(!is.na(`Measuring Program Name`)) %>%
+    rename(Program = 'Measuring Program Name',
+         Date = 'WDL SAM_COLLECTION_DATE',
+         Time = 'Collection Time',
+         Station = 'Station Name',
+         StationNumber = 'Station Number',
+         SamplingNumber = 'Sampling Number (event)',
+         WaterTemperature = 'water.temp',
+         SpCnd = 'sp.cond',
+         DO = 'DO.probe',
+         Turbidity = 'turb') %>%
+  select(-c('Run Number', 'Run Name'))
+
 # Add and change data and time formats
 phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
 phys2 <- phys2 %>% mutate(Datetime = paste(Date, Time, sep = " "))
+WQ <- WQ %>% mutate(Datetime = paste(Date, Time, sep = ""))
 
 phys$Datetime <-  mdy_hm(phys$Datetime)
 phys$Date<- mdy(phys$Date)
