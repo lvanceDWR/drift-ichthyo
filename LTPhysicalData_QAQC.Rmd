@@ -193,6 +193,7 @@ phys2 <- phys2 %>%
 
 # Add and change data and time formats
 phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
+phys2 <- phys2 %>% mutate(Datetime = paste(Date, Time, sep = " "))
 
 phys$Datetime <-  mdy_hm(phys$Datetime)
 phys$Date<- mdy(phys$Date)
