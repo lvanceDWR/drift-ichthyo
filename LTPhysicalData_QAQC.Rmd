@@ -262,7 +262,6 @@ summary(phys$`Field Check`)
 unique(phys$Tide) 
 
 # Rename some columns, remove unnecessary columns
-
 phys.s <- phys %>%
   rename(Secchi = SecchiDiskDepth,
          StationCode = Station.Code,
@@ -270,6 +269,20 @@ phys.s <- phys %>%
   select(-c(Recorder, Field.Check, Crew, EnteredBy, QA.QC.dBy, YSI..,  
             LightData, DriftData, LarvalData, ZoopsData, X50_ZoopsData, ChlData, PhytoData, NutrData,
             Comments, DataCorrectionComments, StartMeter, EndMeter, MeterSetTime))
+
+#rename some columns, clean up columns, filter by program to only YBFMP or shared
+WQ2 <- WQ %>%
+  filter(Program == "YBFMP" | Program == "Shared") %>%
+  rename(Secchi = secchi,
+         Conductivity = EC,
+         SampleDate = `Sample Date`,
+         SampleTime = `Sample Time`,
+         SampleNumber = `Sample Number`) %>%
+  select(-c(Program, LabOrField, Recorder, `Field Check`, FieldChecker, Crew, 
+            LightData, DriftData, LarvalData, `150_ZoopsData`, `50_ZoopsData`,
+            PhytoData, ChlData, NutrData, EnteredBy, QAQCBy, SurfaceIrr,
+            Depth1Irr, Depth2Irr, Depth3Irr, Depth4Irr, SubIrr1, SubIrr2, SubIrr3,
+            SubIrr4))
 
 # Filter only SHR and STTD
 phys_yolo <- phys.s %>%
