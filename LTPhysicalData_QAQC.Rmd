@@ -213,7 +213,7 @@ phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
 phys2 <- phys2 %>% mutate(Datetime = paste(Date, Time, sep = " "))
 WQ <- WQ %>% mutate(Datetime = paste(Date, Time, sep = ""))
 
-phys$Datetime <- ymd_hm(phys$Datetime)
+phys$Datetime <- mdy_hms(phys$Datetime)
 phys$Date<- mdy(phys$Date)
 phys$Time <- strptime(phys$Time, format = "%H:%M") %>%
   strftime(phys$Time, format = "%H:%M:%S")
