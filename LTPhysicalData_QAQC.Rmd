@@ -261,7 +261,7 @@ unique(phys$Recorder)
 summary(phys$`Field Check`)
 unique(phys$Tide) 
 
-# Rename some columns, remove unnecessary columns
+# Rename some columns, remove unnecessary columns, filter to only SHR, STTD
 phys.s <- phys %>%
   rename(Secchi = SecchiDiskDepth,
          StationCode = `Station Code`,
@@ -269,7 +269,8 @@ phys.s <- phys %>%
          YSI = `YSI #`) %>%
   select(-c(Recorder, `Field Check`, Crew, EnteredBy, "QA/QC'dBy",  
             LightData, DriftData, LarvalData, ZoopsData, `50_ZoopsData`, ChlData, PhytoData, NutrData,
-            Comments, DataCorrectionComments, StartMeter, EndMeter, MeterSetTime))
+            Comments, DataCorrectionComments, StartMeter, EndMeter, MeterSetTime)) %>%
+  filter(StationCode == "SHR" | StationCode == "STTD")
 
 #rename some columns, clean up columns, filter by program to only YBFMP or shared
 WQ2 <- WQ %>%
@@ -295,9 +296,13 @@ PhysWQ <- left_join(phys2, WQ2)
 
 PhysWQ <- filter(PhysWQ, year(Date) < 2023)
 
-# Filter only SHR and STTD
-phys_yolo <- phys.s %>%
-  filter(StationCode == "SHR" | StationCode == "STTD")
+#check column types before combining
+str(phys.s)
+str(PhysWQ)
+
+
+# Combine phys data from Access with Phys data from Excel
+phys_yolo <- bind_rows(phys.s, PhysWQ)
 ```
 
 ## 5.Look at observations in stations
