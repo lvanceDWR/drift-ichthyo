@@ -208,15 +208,15 @@ WQ <- WQ %>%
          Turbidity = 'turb') %>%
   select(-c('Run Number', 'Run Name'))
 
-# Add and change data and time formats
+# Add and change date and time formats
 phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
 phys2 <- phys2 %>% mutate(Datetime = paste(Date, Time, sep = " "))
 WQ <- WQ %>% mutate(Datetime = paste(Date, Time, sep = ""))
 
 phys$Datetime <- mdy_hms(phys$Datetime)
 phys$Date<- mdy(phys$Date)
-phys$Time <- strptime(phys$Time, format = "%H:%M") %>%
-  strftime(phys$Time, format = "%H:%M:%S")
+# phys$Time <- strptime(phys$Time, format = "%H:%M", tz = "") %>%
+#   strftime(phys$Time, format = "%H:%M:%S") - is this needed anymore?
 phys$Year <- ordered(year(phys$Date))
 phys$Month <- ordered(month(phys$Date))
 mymonths <- c("Jan","Feb","Mar",
@@ -229,6 +229,21 @@ phys$MonthAbb <- mymonths[ phys$Month ]
 #set order of months
 phys$MonthAbb <-ordered(phys$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
 # str(phys)
+
+#do the same with phys2 from Excel
+phys2$Datetime <- mmddyyy_hm(phys2$Datetime)
+phys2$Date<- mdy(phys2$Date)
+phys2$Year <- ordered(year(phys2$Date))
+phys2$Month <- ordered(month(phys2$Date))
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+#add abbreviated month name
+phys2$MonthAbb <- mymonths[ phys2$Month ]
+#set order of months
+phys2$MonthAbb <-ordered(phys2$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+
 ```
 
 ## 4.Check variables to include in QC, reorganize the data frame.
