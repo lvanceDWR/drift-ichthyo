@@ -286,11 +286,12 @@ WQ2 <- WQ %>%
             LightData, DriftData, LarvalData, `150_ZoopsData`, `50_ZoopsData`,
             PhytoData, ChlData, NutrData, EnteredBy, QAQCBy, SurfaceIrr,
             Depth1Irr, Depth2Irr, Depth3Irr, Depth4Irr, SubIrr1, SubIrr2, SubIrr3,
-            SubIrr4))
+            SubIrr4, SampleNumber, SampleDate, SampleTime))
 
 #combine phys2 and WQ so columns will line up with Access file
 
-PhysWQ <- left_join(phys2, WQ2)
+PhysWQ <- full_join(WQ2, phys2, by = c("Program", "Station", "SamplingNumber", "Date", "Time", "Datetime", "Year",
+                                       "Month", "MonthAbb"))
 
 #filter for ending Dec 2022
 
