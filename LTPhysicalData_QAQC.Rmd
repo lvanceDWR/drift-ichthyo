@@ -294,12 +294,29 @@ PhysWQ <- left_join(phys2, WQ2)
 
 #filter for ending Dec 2022
 
-PhysWQ <- filter(PhysWQ, year(Date) < 2023)
+PhysWQ2 <- filter(PhysWQ, year(Date) < 2023)
 
 #check column types before combining
 str(phys.s)
-str(PhysWQ)
+str(PhysWQ2)
 
+#make sure column types match
+
+PhysWQ3 <- PhysWQ2 %>%
+  mutate(Secchi = as.numeric(Secchi),
+         WaterTemperature = as.numeric(WaterTemperature),
+         DO = as.numeric(DO),
+         SpCnd = as.numeric(SpCnd),
+         Conductivity = as.numeric(Conductivity),
+         pH = as.numeric(pH),
+         MicrocystisVisualRank = as.numeric(MicrocystisVisualRank),
+         VegetationRank = as.numeric(VegetationRank),
+         Turbidity = as.numeric(Turbidity),
+         YSI = as.numeric(YSI),
+         StationNumber = as.numeric(StationNumber),
+         SampleDate = as.Date(SampleDate),
+         SampleTime = as_datetime(SampleTime),
+         Time = as_datetime(Time))
 
 # Combine phys data from Access with Phys data from Excel
 phys_yolo <- bind_rows(phys.s, PhysWQ)
