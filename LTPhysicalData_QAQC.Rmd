@@ -205,7 +205,14 @@ WQ <- WQ %>%
          WaterTemperature = 'water.temp',
          SpCnd = 'sp.cond',
          DO = 'DO.probe',
-         Turbidity = 'turb') %>%
+         Turbidity = 'turb',
+         Secchi = secchi,
+         Conductivity = EC,
+         SampleDate = `Sample Date`,
+         SampleTime = `Sample Time`,
+         SampleNumber = `Sample Number`,
+         MicrocystisVisualRank = microcyst,
+         VegetationRank = VegRank) %>%
   select(-c('Run Number', 'Run Name'))
 
 # Add and change date and time formats
@@ -256,7 +263,7 @@ WQ$MonthAbb <-ordered(WQ$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","
 ```{r filter, results = FALSE, message = FALSE, warning = FALSE}
 
 summary(phys$PhysicalDataID)
-unique(phys$Station.Code)
+unique(phys$`Station Code`)
 unique(phys$Recorder) 
 summary(phys$`Field Check`)
 unique(phys$Tide) 
@@ -272,16 +279,9 @@ phys.s <- phys %>%
             Comments, DataCorrectionComments, StartMeter, EndMeter, MeterSetTime)) %>%
   filter(StationCode == "SHR" | StationCode == "STTD")
 
-#rename some columns, clean up columns, filter by program to only YBFMP or shared
+#clean up columns, filter by program to only YBFMP or shared
 WQ2 <- WQ %>%
   filter(Program == "YBFMP" | Program == "Shared") %>%
-  rename(Secchi = secchi,
-         Conductivity = EC,
-         SampleDate = `Sample Date`,
-         SampleTime = `Sample Time`,
-         SampleNumber = `Sample Number`,
-         MicrocystisVisualRank = microcyst,
-         VegetationRank = VegRank) %>%
   select(-c(LabOrField, Recorder, `Field Check`, FieldChecker, Crew, 
             LightData, DriftData, LarvalData, `150_ZoopsData`, `50_ZoopsData`,
             PhytoData, ChlData, NutrData, EnteredBy, QAQCBy, SurfaceIrr,
