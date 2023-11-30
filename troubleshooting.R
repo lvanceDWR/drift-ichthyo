@@ -79,10 +79,13 @@ phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
 phys3 <- phys3 %>% mutate(Datetime = paste(Date, Time, sep = " "))
 WQ <- WQ %>% mutate(Datetime = paste(Date, Time, sep = ""))
 
+str(phys3)
+str(WQ)
+
 phys$Datetime <- mdy_hms(phys$Datetime)
 phys$Date<- mdy(phys$Date)
-# phys$Time <- strptime(phys$Time, format = "%H:%M", tz = "") %>%
-#   strftime(phys$Time, format = "%H:%M:%S") - is this needed anymore?
+phys$Time <- strptime(phys$Time, format = "%H:%M", tz = "") %>%
+  strftime(phys$Time, format = "%H:%M:%S")  #is this needed anymore?
 phys$Year <- ordered(year(phys$Date))
 phys$Month <- ordered(month(phys$Date))
 mymonths <- c("Jan","Feb","Mar",
@@ -114,6 +117,9 @@ WQ2 <- WQ %>%
             Depth1Irr, Depth2Irr, Depth3Irr, Depth4Irr, SubIrr1, SubIrr2, SubIrr3,
             SubIrr4, SampleNumber, SampleDate, SampleTime, SamplingNumber, StationNumber))
 
+str(phys3)
+str(WQ2)
+str(phys)
 
 WQ2$Datetime <- mdy_hm(WQ2$Datetime)
 WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
