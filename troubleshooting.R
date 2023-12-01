@@ -125,7 +125,7 @@ str(phys)
 
 WQ2$Datetime <- mdy_hm(WQ2$Datetime)
 WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
-  strftime(WQ2$Time, format = "%H:%M:%S")
+  strftime(WQ2$Time, format = "%H:%M:%S", tz = "") #invalid usetz argument
 WQ2$Date<- mdy(WQ2$Date)
 WQ2$Year <- ordered(year(WQ2$Date))
 WQ2$Month <- ordered(month(WQ2$Date))
