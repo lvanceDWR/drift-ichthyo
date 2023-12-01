@@ -101,6 +101,8 @@ phys$MonthAbb <-ordered(phys$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Ju
 
 phys3$Datetime <- mdy_hm(phys3$Datetime)
 phys3$Date<- mdy(phys3$Date)
+phys3$Time <- strptime(phys3$Time, format = "%H:%M:%S", tz = "") %>%
+  strftime(phys3$Time, format = "%H:%M:%S", tz = "")  #invalid usetz argument
 phys3$Year <- ordered(year(phys3$Date))
 phys3$Month <- ordered(month(phys3$Date))
 #add abbreviated month name
