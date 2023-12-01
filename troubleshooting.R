@@ -85,7 +85,7 @@ str(WQ)
 phys$Datetime <- mdy_hms(phys$Datetime)
 phys$Date<- mdy(phys$Date)
 phys$Time <- strptime(phys$Time, format = "%H:%M", tz = "") %>%
-  strftime(phys$Time, format = "%H:%M:%S")  #is this needed anymore?
+  strftime(phys$Time, format = "%H:%M:%S", tz = "")
 phys$Year <- ordered(year(phys$Date))
 phys$Month <- ordered(month(phys$Date))
 mymonths <- c("Jan","Feb","Mar",
