@@ -160,7 +160,7 @@ WQ <- read_csv("drift data/LTWQ2020on.csv", skip=1)
 #get rid of NA in phys2 (data entry changed from Access to Excel in 2020), rename columns to be able to combine, clean up columns
 #Water quality separated from physical data in Excel
 
-phys2 <- phys2 %>%
+phys3 <- phys2 %>%
   filter(!is.na(`Measuring program short name`)) %>%
     rename(Program = 'Measuring program short name',
          Date = 'Sampling Event Date',
@@ -217,13 +217,13 @@ WQ <- WQ %>%
 
 # Add and change date and time formats
 phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
-phys2 <- phys2 %>% mutate(Datetime = paste(Date, Time, sep = " "))
+phys3 <- phys3 %>% mutate(Datetime = paste(Date, Time, sep = " "))
 WQ <- WQ %>% mutate(Datetime = paste(Date, Time, sep = ""))
 
 phys$Datetime <- mdy_hms(phys$Datetime)
 phys$Date<- mdy(phys$Date)
 phys$Time <- strptime(phys$Time, format = "%H:%M", tz = "") %>%
-  strftime(phys$Time, format = "%H:%M:%S") 
+  strftime(phys$Time, format = "%H:%M:%S", tz = "") 
 phys$Year <- ordered(year(phys$Date))
 phys$Month <- ordered(month(phys$Date))
 mymonths <- c("Jan","Feb","Mar",
@@ -238,14 +238,16 @@ phys$MonthAbb <-ordered(phys$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Ju
 # str(phys)
 
 #do the same with phys2 from Excel
-phys2$Datetime <- mdy_hm(phys2$Datetime)
-phys2$Date<- mdy(phys2$Date)
-phys2$Year <- ordered(year(phys2$Date))
-phys2$Month <- ordered(month(phys2$Date))
+phys3$Datetime <- mdy_hm(phys3$Datetime)
+phys3$Date<- mdy(phys3$Date)
+phys3$Time <- strptime(phys3$Time, format = "%H:%M", tz = "") %>%
+  strftime(phys3$Time, format = "%H:%M:%S", tz = "")
+phys3$Year <- ordered(year(phys3$Date))
+phys3$Month <- ordered(month(phys3$Date))
 #add abbreviated month name
-phys2$MonthAbb <- mymonths[ phys2$Month ]
+phys3$MonthAbb <- mymonths[ phys3$Month ]
 #set order of months
-phys2$MonthAbb <-ordered(phys2$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+phys3$MonthAbb <-ordered(phys3$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
 
 #do the same with water quality from excel
 WQ$Datetime <- mdy_hm(WQ$Datetime)
