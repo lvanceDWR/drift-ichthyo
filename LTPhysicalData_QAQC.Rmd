@@ -237,7 +237,7 @@ phys$MonthAbb <- mymonths[ phys$Month ]
 phys$MonthAbb <-ordered(phys$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
 # str(phys)
 
-#do the same with phys2 from Excel
+#do the same with phys3 from Excel
 phys3$Datetime <- mdy_hm(phys3$Datetime)
 phys3$Date<- mdy(phys3$Date)
 phys3$Time <- strptime(phys3$Time, format = "%H:%M", tz = "") %>%
@@ -252,6 +252,8 @@ phys3$MonthAbb <-ordered(phys3$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","
 #do the same with water quality from excel
 WQ$Datetime <- mdy_hm(WQ$Datetime)
 WQ$Date<- mdy(WQ$Date)
+phys$WQ <- strptime(WQ$Time, format = "%H:%M", tz = "") %>%
+  strftime(WQ$Time, format = "%H:%M:%S", tz = "")
 WQ$Year <- ordered(year(WQ$Date))
 WQ$Month <- ordered(month(WQ$Date))
 #add abbreviated month name
