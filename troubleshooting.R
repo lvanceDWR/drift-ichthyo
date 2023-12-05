@@ -144,4 +144,5 @@ WQ2$MonthAbb <-ordered(WQ2$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun"
 
 
 
-combine <- full_join(WQ2, phys3)
+combine <- left_join(WQ2, phys3)
+#this join now seems to maintain all data points correctly for each sampling and station
