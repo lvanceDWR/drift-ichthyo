@@ -100,11 +100,15 @@ phys$MonthAbb <-ordered(phys$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Ju
 
 str(phys)
 
+str(phys3)
 
 phys3$Datetime <- mdy_hm(phys3$Datetime)
 phys3$Date<- mdy(phys3$Date)
 phys3$Time <- strptime(phys3$Time, format = "%H:%M", tz = "") %>%
   strftime(phys3$Time, format = "%H:%M:%S", tz = "")  #invalid usetz argument
+#phys3$Time <- as.POSIXlt(phys3$Time, format = "%H:%M") - adds todays date
+phys3 <- phys3 %>%
+  mutate(Time = as.numeric(hm(Time)))
 phys3$Year <- ordered(year(phys3$Date))
 phys3$Month <- ordered(month(phys3$Date))
 #add abbreviated month name
