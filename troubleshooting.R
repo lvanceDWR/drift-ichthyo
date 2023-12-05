@@ -85,7 +85,7 @@ str(WQ)
 phys$Datetime <- mdy_hms(phys$Datetime)
 phys$Date<- mdy(phys$Date)
 phys$Time <- strptime(phys$Time, format = "%H:%M", tz = "") %>%
-  strftime(phys$Time, format = "%H:%M:%S", tz = "")
+  strftime(phys$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) #add usetz = false to match phys3 and WQ
 phys$Year <- ordered(year(phys$Date))
 phys$Month <- ordered(month(phys$Date))
 mymonths <- c("Jan","Feb","Mar",
@@ -104,8 +104,9 @@ str(phys3)
 
 phys3$Datetime <- mdy_hm(phys3$Datetime)
 phys3$Date<- mdy(phys3$Date)
-phys3$Time <- strptime(phys3$Time, format = "%H:%M:%S", tz = "America/Los_Angeles") %>%
-  strftime(phys3$Time, format = "%H:%M:%S", tz = "America/Los_Angeles")  #invalid usetz argument
+phys3$Time <- strptime(phys3$Time, format = "%H:%M", tz = "") %>%
+  strftime(phys3$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)  
+#invalid usetz argument if usetz isn't used in strftime for this
 # #phys3$Time <- as.POSIXlt(phys3$Time, format = "%H:%M") - adds todays date
 # phys3 <- phys3 %>%
 #   mutate(Time = as.numeric(hm(Time))) - creates wrong format of time...
@@ -131,7 +132,8 @@ str(phys)
 
 WQ2$Datetime <- mdy_hm(WQ2$Datetime)
 WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
-  strftime(WQ2$Time, format = "%H:%M:%S", tz = "") #invalid usetz argument
+  strftime(WQ2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) 
+#invalid usetz argument, must add tz= FALSE in order to not receive error
 WQ2$Date<- mdy(WQ2$Date)
 WQ2$Year <- ordered(year(WQ2$Date))
 WQ2$Month <- ordered(month(WQ2$Date))
