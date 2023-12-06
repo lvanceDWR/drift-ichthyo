@@ -321,13 +321,13 @@ PhysWQ3 <- PhysWQ2 %>%
          VegetationRank = as.numeric(VegetationRank),
          Turbidity = as.numeric(Turbidity),
          YSI = as.numeric(YSI),
-         StationNumber = as.numeric(StationNumber),
-         SampleDate = as.Date(SampleDate),
-         SampleTime = as_datetime(SampleTime),
-         Time = as_datetime(Time))
+         FlowMeterEnd = as.numeric(FlowMeterEnd))
+
+phys.s <- phys.s %>%
+  mutate(Tide = as.character(Tide))
 
 # Combine phys data from Access with Phys data from Excel
-phys_yolo <- bind_rows(phys.s, PhysWQ)
+phys_yolo <- bind_rows(phys.s, PhysWQ3)
 ```
 
 ## 5.Look at observations in stations
