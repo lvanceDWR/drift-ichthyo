@@ -43,7 +43,7 @@ samp <- read_csv("Data/Drift/Drift_Samplings_20200918.csv")
 samp2 <- read_csv("Data/Drift/Drift_Sampling_Access_20210330.csv")
 tax <- read_csv("Data/Drift/Drift_Taxonomy.csv")
 wy <- read_csv("Data/WaterYearType_CDEC.csv") 
-inundation <- read_csv("Data/Inundation_1998_2021.csv")
+inundation <- read_csv("Inundation_1998_2022.csv")
 #inv_tax_2 <- read_csv("Data/TblInvertsLookUpV2.csv")
 
 # Add and change date formats
