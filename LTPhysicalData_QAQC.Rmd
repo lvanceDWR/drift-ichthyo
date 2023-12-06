@@ -191,7 +191,7 @@ phys3 <- phys2 %>%
   select(-c(PhysicalDataID, PhysicalDataIDx,
             FlowMeter50Start,FlowMeter50End,
             EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation,
-            '...27', '...28', '...29', '...30', '...31', '...32'))
+            '...27', '...28', '...29', '...30', '...31', '...32', SamplingNumber))
 
 #rename and cleanup columns for WQ
 WQ <- WQ %>%
@@ -223,7 +223,7 @@ WQ <- WQ %>% mutate(Datetime = paste(Date, Time, sep = ""))
 phys$Datetime <- mdy_hms(phys$Datetime)
 phys$Date<- mdy(phys$Date)
 phys$Time <- strptime(phys$Time, format = "%H:%M", tz = "") %>%
-  strftime(phys$Time, format = "%H:%M:%S", tz = "") 
+  strftime(phys$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) 
 phys$Year <- ordered(year(phys$Date))
 phys$Month <- ordered(month(phys$Date))
 mymonths <- c("Jan","Feb","Mar",
@@ -286,27 +286,19 @@ unique(phys$Tide)
 # Rename some columns, remove unnecessary columns, filter to only SHR, STTD
 phys.s <- phys %>%
   rename(Secchi = SecchiDiskDepth,
-         StationCode = `Station Code`,
+         Station = `Station Code`,
          Conductivity = EC,
          YSI = `YSI #`) %>%
   select(-c(Recorder, `Field Check`, Crew, EnteredBy, "QA/QC'dBy",  
             LightData, DriftData, LarvalData, ZoopsData, `50_ZoopsData`, ChlData, PhytoData, NutrData,
             Comments, DataCorrectionComments, StartMeter, EndMeter, MeterSetTime)) %>%
-  filter(StationCode == "SHR" | StationCode == "STTD")
+  filter(Station == "SHR" | Station == "STTD")
 
-#clean up columns, filter by program to only YBFMP or shared
-WQ2 <- WQ %>%
-  filter(Program == "YBFMP" | Program == "Shared") %>%
-  select(-c(LabOrField, Recorder, `Field Check`, FieldChecker, Crew, 
-            LightData, DriftData, LarvalData, `150_ZoopsData`, `50_ZoopsData`,
-            PhytoData, ChlData, NutrData, EnteredBy, QAQCBy, SurfaceIrr,
-            Depth1Irr, Depth2Irr, Depth3Irr, Depth4Irr, SubIrr1, SubIrr2, SubIrr3,
-            SubIrr4, SampleNumber, SampleDate, SampleTime))
+
 
 #combine phys2 and WQ so columns will line up with Access file
 
-PhysWQ <- full_join(WQ2, phys2, by = c("Program", "Station", "SamplingNumber", "Date", "Time", "Datetime", "Year",
-                                       "Month", "MonthAbb"))
+PhysWQ <- left_join(WQ2, phys3)
 
 #filter for ending Dec 2022
 
