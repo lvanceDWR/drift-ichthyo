@@ -326,6 +326,10 @@ PhysWQ3 <- PhysWQ2 %>%
 phys.s <- phys.s %>%
   mutate(Tide = as.character(Tide))
 
+#double check column types
+str(phys.s)
+str(PhysWQ3)
+
 # Combine phys data from Access with Phys data from Excel
 phys_yolo <- bind_rows(phys.s, PhysWQ3)
 ```
