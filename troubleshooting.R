@@ -73,14 +73,33 @@ WQ <- WQ %>%
          SampleNumber = `Sample Number`,
          MicrocystisVisualRank = microcyst,
          VegetationRank = VegRank) %>%
-  select(-c('Run Number', 'Run Name'))
+  select(-c('Run Number', 'Run Name', LabOrField, Recorder, `Field Check`, FieldChecker, Crew, 
+            LightData, DriftData, LarvalData, `150_ZoopsData`, `50_ZoopsData`,
+            PhytoData, ChlData, NutrData, EnteredBy, QAQCBy, SurfaceIrr,
+            Depth1Irr, Depth2Irr, Depth3Irr, Depth4Irr, SubIrr1, SubIrr2, SubIrr3,
+            SubIrr4, SampleNumber, SampleDate, SampleTime, SamplingNumber, StationNumber))
 
 phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
 phys3 <- phys3 %>% mutate(Datetime = paste(Date, Time, sep = " "))
 WQ <- WQ %>% mutate(Datetime = paste(Date, Time, sep = ""))
 
+WQ2 <- WQ %>%
+  filter(Program == "YBFMP" | Program == "Shared") %>%
+  filter(Station == "STTD" | Station == "SHR")
+
 str(phys3)
-str(WQ)
+str(WQ2)
+
+combine <- left_join(WQ2, phys3)
+
+#troubleshooting merging Access with Excel -testing out Nicole's suggestion of 
+# combining wq with phys from excel, combine with Access *before* parsing out time, date
+# year, Month
+
+str(phys)
+str(combine)
+
+
 
 phys$Datetime <- mdy_hms(phys$Datetime)
 phys$Date<- mdy(phys$Date)
@@ -119,12 +138,7 @@ phys3$MonthAbb <-ordered(phys3$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","
 
 
 WQ2 <- WQ %>%
-  filter(Program == "YBFMP" | Program == "Shared") %>%
-  select(-c(LabOrField, Recorder, `Field Check`, FieldChecker, Crew, 
-            LightData, DriftData, LarvalData, `150_ZoopsData`, `50_ZoopsData`,
-            PhytoData, ChlData, NutrData, EnteredBy, QAQCBy, SurfaceIrr,
-            Depth1Irr, Depth2Irr, Depth3Irr, Depth4Irr, SubIrr1, SubIrr2, SubIrr3,
-            SubIrr4, SampleNumber, SampleDate, SampleTime, SamplingNumber, StationNumber))
+  filter(Program == "YBFMP" | Program == "Shared") 
 
 str(phys3)
 str(WQ2)
