@@ -90,6 +90,17 @@ WQ2 <- WQ %>%
 str(phys3)
 str(WQ2)
 
+phys3$Datetime <- mdy_hm(phys3$Datetime)
+phys3$Date<- mdy(phys3$Date)
+phys3$Time <- strptime(phys3$Time, format = "%H:%M", tz = "") %>%
+  strftime(phys3$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)  
+
+WQ2$Datetime <- mdy_hm(WQ2$Datetime)
+WQ2$Date<- mdy(WQ2$Date)
+WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
+  strftime(WQ2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) 
+
+
 combine <- left_join(WQ2, phys3)
 
 #troubleshooting merging Access with Excel -testing out Nicole's suggestion of 
@@ -105,17 +116,70 @@ phys$Datetime <- mdy_hms(phys$Datetime)
 phys$Date<- mdy(phys$Date)
 phys$Time <- strptime(phys$Time, format = "%H:%M", tz = "") %>%
   strftime(phys$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) #add usetz = false to match phys3 and WQ
-phys$Year <- ordered(year(phys$Date))
-phys$Month <- ordered(month(phys$Date))
+
+
+phys.s <- phys %>%
+  rename(Secchi = SecchiDiskDepth,
+         Station = `Station Code`,
+         Conductivity = EC,
+         YSI = `YSI #`) %>%
+  select(-c(Recorder, `Field Check`, Crew, EnteredBy, "QA/QC'dBy",  
+            LightData, DriftData, LarvalData, ZoopsData, `50_ZoopsData`, ChlData, PhytoData, NutrData,
+            Comments, DataCorrectionComments, StartMeter, EndMeter, MeterSetTime)) %>%
+  filter(Station == "SHR" | Station == "STTD")
+
+
+combine2 <- combine %>%
+  mutate(Secchi = as.numeric(Secchi),
+         WaterTemperature = as.numeric(WaterTemperature),
+         DO = as.numeric(DO),
+         SpCnd = as.numeric(SpCnd),
+         Conductivity = as.numeric(Conductivity),
+         pH = as.numeric(pH),
+         MicrocystisVisualRank = as.numeric(MicrocystisVisualRank),
+         VegetationRank = as.numeric(VegetationRank),
+         Turbidity = as.numeric(Turbidity),
+         YSI = as.numeric(YSI),
+         FlowMeterEnd = as.numeric(FlowMeterEnd))
+
+str(phys.s)
+str(combine2)
+
+
+full <- bind_rows(phys.s, combine2)
+
+NATide <- filter(phys.s, is.na(Tide))
+NAYSI <- filter(phys.s, is.na(YSI))
+
+#now add in the ordered factors for month, year, tide, and abbreviated months
+
+full$Year <- ordered(year(full$Date))
+full$Month <- ordered(month(full$Date))
 mymonths <- c("Jan","Feb","Mar",
               "Apr","May","Jun",
               "Jul","Aug","Sep",
               "Oct","Nov","Dec")
-phys$Tide <- as.factor(phys$Tide)
+full$Tide <- as.factor(full$Tide)
 #add abbreviated month name
-phys$MonthAbb <- mymonths[ phys$Month ]
+full$MonthAbb <- mymonths[ full$Month ]
 #set order of months
-phys$MonthAbb <-ordered(phys$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+full$MonthAbb <-ordered(full$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+
+#this seems to fix the issue that came up
+
+##############################################################################################################################
+
+phys.s$Year <- ordered(year(phys.s$Date))
+phys.s$Month <- ordered(month(phys.s$Date))
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+phys.s$Tide <- as.factor(phys.s$Tide)
+#add abbreviated month name
+phys.s$MonthAbb <- mymonths[ phys.s$Month ]
+#set order of months
+phys.s$MonthAbb <-ordered(phys.s$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
 
 str(phys)
 
@@ -145,10 +209,11 @@ str(WQ2)
 str(phys)
 
 WQ2$Datetime <- mdy_hm(WQ2$Datetime)
+WQ2$Date<- mdy(WQ2$Date)
 WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
   strftime(WQ2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) 
 #invalid usetz argument, must add tz= FALSE in order to not receive error
-WQ2$Date<- mdy(WQ2$Date)
+
 WQ2$Year <- ordered(year(WQ2$Date))
 WQ2$Month <- ordered(month(WQ2$Date))
 #add abbreviated month name
