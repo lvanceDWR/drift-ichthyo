@@ -49,7 +49,7 @@ Yearbox <-  function(data,y) {
     y <- enquo(y)
   data %>%
     ggplot() +
-    geom_boxplot(mapping = aes(Year,!! y,fill = StationCode)) +
+    geom_boxplot(mapping = aes(Year,!! y,fill = Station)) +
     theme_bw() +
   scale_fill_manual(values = c("coral3", "lightseagreen"))+
   theme_bw() + 
@@ -70,7 +70,7 @@ Monthbox <-  function(data,y) {
     y <- enquo(y)
   data %>%
     ggplot() +
-    geom_boxplot(mapping = aes(MonthAbb,!! y,fill = StationCode)) +
+    geom_boxplot(mapping = aes(MonthAbb,!! y,fill = Station)) +
     theme_bw() +
   scale_fill_manual(values = c("coral3", "lightseagreen"))+
   theme_bw() + 
@@ -91,7 +91,7 @@ VisPoint <-  function(data,y) {
     y <- enquo(y)
   data %>%
     ggplot() +
-    geom_point(mapping = aes(Datetime,!! y,col = StationCode), size = 2) +
+    geom_point(mapping = aes(Datetime,!! y,col = Station), size = 2) +
     theme_bw() +
   scale_colour_manual(values = c("coral3", "lightseagreen"))+
   theme_bw() + 
@@ -112,8 +112,8 @@ VisHist <-  function(data,y, bin) {
     y <- enquo(y)
   data %>%
     ggplot() +
-    geom_histogram(mapping = aes(!! y,col = StationCode),binwidth = bin, fill = "lightseagreen", colour = "lightgray") +
-    facet_wrap(~StationCode, scales = "free_x") +
+    geom_histogram(mapping = aes(!! y,col = Station),binwidth = bin, fill = "lightseagreen", colour = "lightgray") +
+    facet_wrap(~Station, scales = "free_x") +
     theme_bw() +
   scale_colour_manual(values = c("coral3", "lightseagreen"))+
   theme_bw() + 
@@ -133,7 +133,7 @@ PlotVars <- function(data,y) {
     y <- enquo(y)
   data %>%
     ggplot() +
-    geom_point(mapping = aes(Datetime,!! y, col = StationCode)) +
+    geom_point(mapping = aes(Datetime,!! y, col = Station)) +
     theme_bw() +
   scale_colour_manual(values = c("#F3B2FF", "#106E83", "#FFC971", "#BAFF87")) + 
   theme_bw() + 
