@@ -209,6 +209,13 @@ WQ2 <- WQ %>%
 
 #cdec data 
 
+#cdec4gov seems outdated
+#cdec 
+# DO = 61
+# pH = 62
+# Turb = 221
+# EC = 100
+
 # Read files (came from cdec4gov)
 LIS_WaterTemperature <- read_csv("Data/STA/LIS_25.csv")
 LIS_DO <- read_csv("Data/STA/LIS_61.csv")
