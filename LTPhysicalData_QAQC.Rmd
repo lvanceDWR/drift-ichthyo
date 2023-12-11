@@ -325,11 +325,11 @@ phys_yolo <- filter(yolo_phys, year(Date) < 2023)
 
 # summarize number of observations per year
 sta.sum <- phys_yolo %>%
-  group_by(StationCode, Year) %>%
+  group_by(Station, Year) %>%
   summarize(n = n())
 
 # plot number of observations per station
-ggplot(sta.sum, aes(Year, n, fill = StationCode)) + geom_bar(stat = "identity") +theme_bw() +
+ggplot(sta.sum, aes(Year, n, fill = Station)) + geom_bar(stat = "identity") +theme_bw() +
   scale_y_continuous(breaks = seq(0,300,20))+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -342,7 +342,7 @@ ggplot(sta.sum, aes(Year, n, fill = StationCode)) + geom_bar(stat = "identity") 
         legend.text = element_text(size = 11))
 
 # plot number of observations per year
-ggplot(sta.sum, aes(StationCode, n, fill = Year)) + geom_bar(stat = "identity") +
+ggplot(sta.sum, aes(Station, n, fill = Year)) + geom_bar(stat = "identity") +
     scale_y_continuous(breaks = seq(0,600,50))+
     theme_bw()+
     theme(panel.grid.major = element_blank(),
@@ -388,7 +388,7 @@ grid.arrange(p.temp, p.ec, p.spc, p.secchi, p.turb, p.do, p.pH)
 ```{r minmaxtables, message = FALSE, warning = FALSE}
 # All database data
 WQ.overall <- phys_yolo %>%
-  group_by(StationCode) %>%
+  group_by(Station) %>%
   summarize(min.temp = min(WaterTemperature, na.rm=T),
             max.temp = max(WaterTemperature, na.rm=T),
             min.Conductivity = min(Conductivity, na.rm=T),
