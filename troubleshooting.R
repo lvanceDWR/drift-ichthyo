@@ -204,6 +204,19 @@ phys3$MonthAbb <-ordered(phys3$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","
 WQ2 <- WQ %>%
   filter(Program == "YBFMP" | Program == "Shared") 
 
+
+##################################################################################
+
+#cdec data 
+
+# Read files (came from cdec4gov)
+LIS_WaterTemperature <- read_csv("Data/STA/LIS_25.csv")
+LIS_DO <- read_csv("Data/STA/LIS_61.csv")
+LIS_pH <- read_csv("Data/STA/LIS_62.csv")
+LIS_Turb <- read_csv("Data/STA/LIS_27.csv")
+LIS_EC <- read_csv("Data/STA/LIS_100.csv")
+LIS_EC$`DATE TIME` <- mdy_hm(LIS_EC$`DATE TIME`)
+
 str(phys3)
 str(WQ2)
 str(phys)
