@@ -211,6 +211,7 @@ WQ2 <- WQ %>%
 
 #cdec4gov seems outdated
 #cdec 
+#water temp = 25 is now deg F
 # DO = 61
 # pH = 62
 # Turb = 221
