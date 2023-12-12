@@ -232,10 +232,10 @@ library(tidylog)
 stations <- "LIS"
 
 # Define start and end dates - these will remain the same throughout
-start <- "1998-01-01"
+starttemp <- "2008-07-16"
 end <- "2022-12-31"
 
-# Define sensor number, time interval 
+# Define sensor number, time interval  temperature 7/16/2008-present
 sensortemp <- c("25") # water temp F 
 interval <- "E" # Event = every 15 minutes
 
@@ -246,18 +246,18 @@ Data_temp <- lapply(sensortemp,
                          cdec_query(station = stations,
                                     sensor_num = x,
                                     dur_code = interval,
-                                    start_date = start,
+                                    start_date = starttemp,
                                     end_date = end)
                        })
 
 sensors_df_temp <- bind_rows(Data_temp) # bind rows into data frame
 
-# repeat for turb
+# repeat for turb 8/1/2013-present
 
 stations <- "LIS"
 
 # Define start and end dates - these will remain the same throughout
-start <- "1998-01-01"
+startturb <- "2013-08-01"
 end <- "2022-12-31"
 
 # Define sensor number, time interval 
@@ -271,17 +271,17 @@ Data_turb <- lapply(sensorturb,
                          cdec_query(station = stations,
                                     sensor_num = x,
                                     dur_code = interval,
-                                    start_date = start,
+                                    start_date = startturb,
                                     end_date = end)
                        })
 
 sensors_df_turb <- bind_rows(Data_turb) # bind rows into data frame
 
-#repeat for DO (sensor 61)
+#repeat for DO (sensor 61) 8/1/2013-present
 stations <- "LIS"
 
 # Define start and end dates - these will remain the same throughout
-start <- "1998-01-01"
+startDO <- "2013-08-01"
 end <- "2022-12-31"
 
 # Define sensor number, time interval 
@@ -295,17 +295,17 @@ Data_DO <- lapply(sensorDO,
                          cdec_query(station = stations,
                                     sensor_num = x,
                                     dur_code = interval,
-                                    start_date = start,
+                                    start_date = startDO,
                                     end_date = end)
                        })
 
 sensors_df_DO <- bind_rows(Data_DO) # bind rows into data frame
 
-#repeat for pH (sensor 62)
+#repeat for pH (sensor 62) 8-1-2013 - present
 stations <- "LIS"
 
 # Define start and end dates - these will remain the same throughout
-start <- "1998-01-01"
+startpH <- "2013-08-01"
 end <- "2022-12-31"
 
 # Define sensor number, time interval 
@@ -319,17 +319,17 @@ Data_pH <- lapply(sensorpH,
                          cdec_query(station = stations,
                                     sensor_num = x,
                                     dur_code = interval,
-                                    start_date = start,
+                                    start_date = startpH,
                                     end_date = end)
                        })
 
 sensors_df_pH <- bind_rows(Data_pH) # bind rows into data frame
 
-#repeat for EC (sensor 100)
+#repeat for EC (sensor 100) 8/1/2013 - present
 stations <- "LIS"
 
 # Define start and end dates - these will remain the same throughout
-start <- "1998-01-01"
+startEC <- "2013-08-01"
 end <- "2022-12-31"
 
 # Define sensor number, time interval 
@@ -343,7 +343,7 @@ Data_EC <- lapply(sensorEC,
                          cdec_query(station = stations,
                                     sensor_num = x,
                                     dur_code = interval,
-                                    start_date = start,
+                                    start_date = startEC,
                                     end_date = end)
                        })
 
