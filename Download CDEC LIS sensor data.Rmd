@@ -1,0 +1,169 @@
+---
+title: "download sensor data"
+author: "Lisa Vance"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## First install CDEC retrieve using either method here:
+
+```{r setup, results=FALSE, warning = FALSE, message = FALSE}
+devtools::install_github("flowwest/CDECRetrieve", force=TRUE)
+
+remotes::install_github("flowwest/CDECRetrieve", force=TRUE)
+
+# Alt method:
+# install roxygen2 (normal install method)
+# install.packages("https://cran.r-project.org/src/contrib/Archive/CDECRetrieve/CDECRetrieve_0.1.4.tar.gz", repos=NULL, method = "libcurl")
+## Or use winzip to unzip the files, copy folder into the .libPaths() specified (or go to Tools Install to check where lib is)
+```
+
+## Load libraries
+
+```{r setup, results=FALSE, warning = FALSE, message = FALSE}
+library(tidyverse)
+library(data.table) #rbindlist()
+library(lubridate) #today()
+library(CDECRetrieve) #cdec_datasets
+library(readr)
+library(tidylog)
+
+```
+
+## define sensors, start and end dates, create dataframes
+
+```{r}
+
+#cdec - utilize cdec retrieve package to access data for each sensor (https://cdec.water.ca.gov/dynamicapp/staMeta?station_id=LIS)
+#double check sensor numbers on CDEC to ensure no number changed
+#water temp = 25 is now deg F
+# DO = 61
+# pH = 62
+# Turb = 221
+# EC = 100
+
+stations <- "LIS"
+
+# Define start and end dates 
+starttemp <- "2008-07-16"
+end <- "2022-12-31"
+
+# Define sensor number, time interval  temperature 7/16/2008-present
+sensortemp <- c("25") # water temp F 
+interval <- "E" # Event = every 15 minutes
+
+
+### Download data, bind, write --------------------------------------------
+Data_temp <- lapply(sensortemp, 
+                       function(x){
+                         cdec_query(station = stations,
+                                    sensor_num = x,
+                                    dur_code = interval,
+                                    start_date = starttemp,
+                                    end_date = end)
+                       })
+
+sensors_df_temp <- bind_rows(Data_temp) # bind rows into data frame
+
+# repeat for turb 8/1/2013-present
+
+stations <- "LIS"
+
+# Define start and end dates 
+startturb <- "2013-08-01"
+end <- "2022-12-31"
+
+# Define sensor number, time interval 
+sensorturb <- c("221") # turbidity
+interval <- "E" # Event = every 15 minutes
+
+
+### Download data, bind, write --------------------------------------------
+Data_turb <- lapply(sensorturb, 
+                       function(x){
+                         cdec_query(station = stations,
+                                    sensor_num = x,
+                                    dur_code = interval,
+                                    start_date = startturb,
+                                    end_date = end)
+                       })
+
+sensors_df_turb <- bind_rows(Data_turb) # bind rows into data frame
+
+#repeat for DO (sensor 61) 8/1/2013-present
+stations <- "LIS"
+
+# Define start and end dates 
+startDO <- "2013-08-01"
+end <- "2022-12-31"
+
+# Define sensor number, time interval 
+sensorDO <- c("61") # DO
+interval <- "E" # Event = every 15 minutes
+
+
+### Download data, bind, write --------------------------------------------
+Data_DO <- lapply(sensorDO, 
+                       function(x){
+                         cdec_query(station = stations,
+                                    sensor_num = x,
+                                    dur_code = interval,
+                                    start_date = startDO,
+                                    end_date = end)
+                       })
+
+sensors_df_DO <- bind_rows(Data_DO) # bind rows into data frame
+
+#repeat for pH (sensor 62) 8-1-2013 - present
+stations <- "LIS"
+
+# Define start and end dates 
+startpH <- "2013-08-01"
+end <- "2022-12-31"
+
+# Define sensor number, time interval 
+sensorpH <- c("62") # pH
+interval <- "E" # Event = every 15 minutes
+
+
+### Download data, bind, write --------------------------------------------
+Data_pH <- lapply(sensorpH, 
+                       function(x){
+                         cdec_query(station = stations,
+                                    sensor_num = x,
+                                    dur_code = interval,
+                                    start_date = startpH,
+                                    end_date = end)
+                       })
+
+sensors_df_pH <- bind_rows(Data_pH) # bind rows into data frame
+
+#repeat for EC (sensor 100) 8/1/2013 - present
+stations <- "LIS"
+
+# Define start and end dates 
+startEC <- "2013-08-01"
+end <- "2022-12-31"
+
+# Define sensor number, time interval 
+sensorEC <- c("100") # EC
+interval <- "E" # Event = every 15 minutes
+
+
+### Download data, bind, write --------------------------------------------
+Data_EC <- lapply(sensorEC, 
+                       function(x){
+                         cdec_query(station = stations,
+                                    sensor_num = x,
+                                    dur_code = interval,
+                                    start_date = startEC,
+                                    end_date = end)
+                       })
+
+sensors_df_EC <- bind_rows(Data_EC) # bind rows into data frame
+```
+
