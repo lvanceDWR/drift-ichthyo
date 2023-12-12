@@ -214,6 +214,8 @@ WQ2 <- WQ %>%
 #```{r}
 devtools::install_github("flowwest/CDECRetrieve", force=TRUE)
 
+remotes::install_github("flowwest/CDECRetrieve")
+
 # Alt method:
 # install roxygen2 (normal install method)
 # install.packages("https://cran.r-project.org/src/contrib/Archive/CDECRetrieve/CDECRetrieve_0.1.4.tar.gz", repos=NULL, method = "libcurl")
