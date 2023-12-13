@@ -167,3 +167,19 @@ Data_EC <- lapply(sensorEC,
 sensors_df_EC <- bind_rows(Data_EC) # bind rows into data frame
 ```
 
+## write to csv files to read in during LTPhysicalData_QAQC process
+
+```{r}
+
+write_csv(sensors_df_DO, "drift data/STA/LIS_61.csv")
+write_csv(sensors_df_pH, "drift data/STA/LIS_62.csv")
+write_csv(sensors_df_temp, "drift data/STA/LIS_25.csv")
+write_csv(sensors_df_turb, "drift data/STA/LIS_221.csv")
+write_csv(sensors_df_EC, "drift data/STA/LIS_100.csv")
+
+
+
+```
+
+
+
