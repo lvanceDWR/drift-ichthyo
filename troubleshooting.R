@@ -101,7 +101,9 @@ WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
   strftime(WQ2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) 
 
 
-combine <- left_join(WQ2, phys3) #flowmeter values for 2021 are lost....figure out how to avoid
+combine <- full_join(WQ2, phys3, by = c("Program", "Station", "Date", "Time")) #flowmeter values for 2021 are lost....figure out how to avoid
+#12 rows "only in x" "only in y" not matched - these are the missing values when joined
+
 
 #troubleshooting merging Access with Excel -testing out Nicole's suggestion of 
 # combining wq with phys from excel, combine with Access *before* parsing out time, date
