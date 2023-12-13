@@ -101,7 +101,7 @@ WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
   strftime(WQ2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) 
 
 
-combine <- left_join(WQ2, phys3)
+combine <- left_join(WQ2, phys3) #flowmeter values for 2021 are lost....figure out how to avoid
 
 #troubleshooting merging Access with Excel -testing out Nicole's suggestion of 
 # combining wq with phys from excel, combine with Access *before* parsing out time, date
@@ -169,40 +169,40 @@ full$MonthAbb <-ordered(full$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Ju
 
 ##############################################################################################################################
 
-phys.s$Year <- ordered(year(phys.s$Date))
-phys.s$Month <- ordered(month(phys.s$Date))
-mymonths <- c("Jan","Feb","Mar",
-              "Apr","May","Jun",
-              "Jul","Aug","Sep",
-              "Oct","Nov","Dec")
-phys.s$Tide <- as.factor(phys.s$Tide)
-#add abbreviated month name
-phys.s$MonthAbb <- mymonths[ phys.s$Month ]
-#set order of months
-phys.s$MonthAbb <-ordered(phys.s$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
-
-str(phys)
-
-str(phys3)
-
-phys3$Datetime <- mdy_hm(phys3$Datetime)
-phys3$Date<- mdy(phys3$Date)
-phys3$Time <- strptime(phys3$Time, format = "%H:%M", tz = "") %>%
-  strftime(phys3$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)  
-#invalid usetz argument if usetz isn't used in strftime for this
-# #phys3$Time <- as.POSIXlt(phys3$Time, format = "%H:%M") - adds todays date
-# phys3 <- phys3 %>%
-#   mutate(Time = as.numeric(hm(Time))) - creates wrong format of time...
-phys3$Year <- ordered(year(phys3$Date))
-phys3$Month <- ordered(month(phys3$Date))
-#add abbreviated month name
-phys3$MonthAbb <- mymonths[ phys3$Month ]
-#set order of months
-phys3$MonthAbb <-ordered(phys3$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
-
-
-WQ2 <- WQ %>%
-  filter(Program == "YBFMP" | Program == "Shared") 
+# phys.s$Year <- ordered(year(phys.s$Date))
+# phys.s$Month <- ordered(month(phys.s$Date))
+# mymonths <- c("Jan","Feb","Mar",
+#               "Apr","May","Jun",
+#               "Jul","Aug","Sep",
+#               "Oct","Nov","Dec")
+# phys.s$Tide <- as.factor(phys.s$Tide)
+# #add abbreviated month name
+# phys.s$MonthAbb <- mymonths[ phys.s$Month ]
+# #set order of months
+# phys.s$MonthAbb <-ordered(phys.s$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+# 
+# str(phys)
+# 
+# str(phys3)
+# 
+# phys3$Datetime <- mdy_hm(phys3$Datetime)
+# phys3$Date<- mdy(phys3$Date)
+# phys3$Time <- strptime(phys3$Time, format = "%H:%M", tz = "") %>%
+#   strftime(phys3$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)  
+# #invalid usetz argument if usetz isn't used in strftime for this
+# # #phys3$Time <- as.POSIXlt(phys3$Time, format = "%H:%M") - adds todays date
+# # phys3 <- phys3 %>%
+# #   mutate(Time = as.numeric(hm(Time))) - creates wrong format of time...
+# phys3$Year <- ordered(year(phys3$Date))
+# phys3$Month <- ordered(month(phys3$Date))
+# #add abbreviated month name
+# phys3$MonthAbb <- mymonths[ phys3$Month ]
+# #set order of months
+# phys3$MonthAbb <-ordered(phys3$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+# 
+# 
+# WQ2 <- WQ %>%
+#   filter(Program == "YBFMP" | Program == "Shared") 
 
 
 ##################################################################################
