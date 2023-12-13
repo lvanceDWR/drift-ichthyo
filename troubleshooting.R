@@ -101,8 +101,10 @@ WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
   strftime(WQ2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) 
 
 
-combine <- full_join(WQ2, phys3, by = c("Program", "Station", "Date", "Time")) #flowmeter values for 2021 are lost....figure out how to avoid
+combine <- full_join(WQ2, phys3, by = c("Station", "Date", "Time", "Datetime")) #flowmeter values for 2021 are lost....figure out how to avoid
 #12 rows "only in x" "only in y" not matched - these are the missing values when joined
+# the 12 rows that have a problem are differing in "program"
+# SHR Oct 2021 - sampling day was 10/12/2021 according to datasheet, not 10/13/2021
 
 
 #troubleshooting merging Access with Excel -testing out Nicole's suggestion of 
