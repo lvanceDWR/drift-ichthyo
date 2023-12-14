@@ -29,7 +29,7 @@ library(magrittr)
 library(janitor)
 library(tidylog)
 
-Sys.setenv(TZ="America/Los_Angeles")
+
 
 #importing ich sampling data to clean up for comparison with lab data
 
@@ -37,11 +37,11 @@ setwd("C:/Users/lvance/Desktop/Icthyoplankton for publishing/reference 2")
 
 ###################### ACCESS DATA ############################################
 
-PhysData <- read_csv("TblPhysicalData.csv")
-CatchData <- read_csv("TblLarvalCatchData.csv")
-Species <- read_csv("TblLarvalLookUpV2.csv")
-SamplingData <- read_csv("TblLarval.csv")
-IEPFish <- read_csv("IEP FISH CODE.csv")
+PhysData <- read_csv("ichthyo data/TblPhysicalData.csv")
+CatchData <- read_csv("ichthyo data/TblLarvalCatchData.csv")
+Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
+SamplingData <- read_csv("ichthyo data/TblLarval.csv")
+IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 ### using csv to help with how many rows/determining column types vs readxl
 
