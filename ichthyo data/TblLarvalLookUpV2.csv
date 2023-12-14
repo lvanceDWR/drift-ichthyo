@@ -1,0 +1,99 @@
+﻿Code,Species,Scientific Name
+AMS,American Shad,Alosa sapidissima
+ASE,American Shad Eggs,Alosa sapidissima
+AMM,Ammocoete Lamprey,Petromyzontidae
+AT,Animal Tissue,
+BPF,Bay Pipefish,Syngnathus leptorhyncus
+BKB,Black Bullhead,Ameiurus melas
+BKS,Black Crappie,Pomoxis nigromaculatus
+BGS,Bluegill,Lepomis macrochirus
+BKT,Brook Trout,Salvelinus fontinalis
+BRB,Brown Bullhead,Ameiurus nebulosus
+BT,Brown Trout,Salmo trutta
+CAR,California Roach,Lavinia symmetricus
+C,Carp,Cyprinus carpio
+CHG,Chameleon Goby,Tridentiger trigonocephalus
+CHC,Channel Catfish,Ictalurus punctatus
+CHNA,"Chinook Salmon, Adult",Oncorhynchus tshawytscha
+CHNF,"Chinook Salmon, Fall-Run",Oncorhynchus tshawytscha
+CHNL,"Chinook Salmon, Late-Fall-Run",Oncorhynchus tshawytscha
+CHNM,"Chinook Salmon, Marked (Dyed)",Oncorhynchus tshawytscha
+CHNS,"Chinook Salmon, Spring-Run",Oncorhynchus tshawytscha
+CHNT,"Chinook Salmon, Tagged",Oncorhynchus tshawytscha
+CHN,"Chinook Salmon, Unknown Race",Oncorhynchus tshawytscha
+CHNW,"Chinook Salmon, Winter-Run",Oncorhynchus tshawytscha
+CB,Clam (baby),
+CO,Clupeidae Eggs,
+DSM,Delta Smelt,Hypomesus transpacificus
+FHM,Fathead Minnow,Pimephales promelas
+GF,Gold Fish,Carassius auratus
+GSN,Golden Shiner,Notemigonus crysoleucas
+GST,Green Sturgeon,Acipenser medirostris
+GSF,Green Sunfish,Lepomis cyanellus
+HH,Hardhead,Mylopharodon conocephalus
+HCH,Hitch,Lavinia exilicauda
+MSS,Inland Silverside,Menidia beryllina
+I,Invert (Insect),
+JSM,Jacksmelt,Atherinopsis californiensis
+LAM,"Lamprey, Unidentified Adult",Petromyzontidae
+LMB,Largemouth Bass,Micropterus salmoides
+LP,Logperch,Percina macrolepida
+LFS,Longfin Smelt,Spirinchus thaleichthys
+MQF,Mosquito Fish,Gambusia affinis
+None,NO FISH CAUGHT,
+NAN,Northern Anchovy,Engraulis mordax
+OE,Other Eggs,
+BL,Pacific Brook Lamprey,Lampetra pacifica
+PAH,Pacific Herring,Clupea harengeus pallasii
+PL,Pacific Lamprey,Lampetra tridentata
+PSS,Pacific Staghorn Sclupin,Leptocottus armatus
+PE,Percichthyidae eggs,
+PMP,Plainfin Midshipman,Porichthys notatus
+PRS,Prickly Sculpin,Cottus asper
+SF,Pumpkinseed,Lepomis gibbosus
+RBT,Rainbow Trout (Steel Head),Oncorhynchus mykiss
+RBTT,"Rainbow Trout, Tagged",Oncorhynchus mykiss
+RSN,Red Shiner,Cyprinella lutrensis
+RES,Redear Sunfish,Lepomis microlophus
+REB,Redeye Bass,"Micropterus	 coosae"
+RFS,Riffle Sculpin,Cottus gulosus
+RL,River Lamprey,Lampetra ayersi
+SCB,Sacramento Blackfish,Orthodon microlepidotus
+SASQ,Sacramento Pikeminnow,Ptychocheilus grandis
+SPLT,Sacramento Splittail,Pogonichthys macrolepidotus
+SASU,Sacramento Sucker,Catostomus occidentalis
+SHM,Shimofuri Goby,Tridentiger bifasciatus
+SMB,Smallmouth Bass,Micropterus dolomieu
+SE,Snail and Eggs,
+SPD,Speckled Dace,Rhinichthys osculus
+STF,Starry Flounder,Platichthys stellatus
+STB,Striped Bass,Morone saxatilis
+SBE,Striped Bass Eggs,Morone saxitalis
+SSM,Surf Smelt,Hypomesus pretiosus
+TFS,Threadfin Shad,Dorosoma petenense
+TSE,Threadfin Shad Eggs,Dorosoma petenense
+TSS,Threespine Stickleback,Gasterosteus aculeatus
+TSM,Top Smelt,Atherinops affinis
+TP,Tule Perch,Hysterocarpus traski
+ACT,Unid Actinopterygii (ray-finned fishes),Actinopterygii
+CLU,Unid Clupeidae (shad or herring),Clupeidae
+POM,Unid Crappie,Pomoxis spp
+CAT,Unid Ictalurid (catfish or bullhead),Ictaluridae
+BAS,Unid Juvenile Bass,Micropterus spp
+UNID,Unid Juvenile Fish,
+MIN,Unid Juvenile Minnow,Cyprinidae
+SNF,Unid Juvenile non-Micropterus Sunfish,Centrarchidae
+SCP,Unid Juvenile Sculpin,Cottus spp.
+ATH,Unid Juvenile silverside,Atherinopsidae
+STG,Unid Juvenile Sturgeon,Acipenser spp.
+LEP,Unid Sunfish,Lepomis spp
+TRD,Unid Tridentiger,Tridentiger spp.
+GOB,Unidentified Goby,Gobiidae
+WAG,Wakasagi,Hypomesus nipponensis
+W,Warmouth,Lepomis gulosus
+WHC,White Catfish,Ameiurus catus
+WHS,White Crappie,Pomoxis annularis
+WCK,White Croaker,Genyonemus lineatus
+WST,White Sturgeon,Acipenser transmontanus
+YEB,Yellow Bullhead,Ameiurus natalis
+YFG,Yellowfin Goby,Acanthogobius flavimanus
