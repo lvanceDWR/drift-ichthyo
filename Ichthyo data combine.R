@@ -43,7 +43,7 @@ Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
 SamplingData <- read_csv("ichthyo data/TblLarval.csv")
 IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
-### using csv to help with how many rows/determining column types vs readxl
+#check column types before renaming and adjusting columns
 
 str(PhysData)
 str(Species)
