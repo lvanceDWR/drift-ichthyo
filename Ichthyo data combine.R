@@ -33,14 +33,13 @@ library(tidylog)
 
 #importing ich sampling data to clean up for comparison with lab data
 
-setwd("C:/Users/lvance/Desktop/Icthyoplankton for publishing/reference 2")
 
 ###################### ACCESS DATA ############################################
 
 PhysData <- read_csv("ichthyo data/TblPhysicalData.csv")
-CatchData <- read_csv("ichthyo data/TblLarvalCatchData.csv")
+CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
 Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
-SamplingData <- read_csv("ichthyo data/TblLarval.csv")
+SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
 IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 #check column types before renaming and adjusting columns
