@@ -1,0 +1,78 @@
+﻿YBFMP,Date,Time,Station Code,Use sample code from FLIMS/WDL to connect field data and lab data,PhysicalDataID,,,Duration of tow,Flowmeter reading,Flowmeter reading,,,Low or Regular,,,,Keep this to comments pertaining to zoop collection,,,,,,Repeat of net mesh size,1 for 500,1 If normal;    2 if duplicate,
+Measuring program short name,Sampling Event Date,Sampling Event Time,Sampling Area Number,Sampling Event Number,,Condition Code,Sampling Altered,Set Time,Flow Meter Start,Flow Meter End,Flow Meter Start (50),Flow Meter End (50),Flow Meter Speed,Physical Data ID,Entered by,QAQC'd by,Field Comments,Lab Comments,Sample Volume,Subsample Number,Dilution Volume,Slide Count,Observation Area Name,Observation Area Number,Spot Number,Spot Code (original/duplicate)
+,"mm/dd/yyyy 2 digits per month, day",hh:mm (PST),,WDL_SAM code,,,Y/N,,,,,,,,,,,,,,,,,,,
+YBFMP,08/05/2014,12:05,SHR,EDZ0208B9217,,1,,5,848455,852000,,,Low,997,cstuart,acasby,Flowmeter has a bubble,Copepd sex; dominant sp: P. forbesii; Total Vol (mL): 1987; Subsample Vol (mL): 1; # of subsamples: 15; male counts: 0; female counts: 3; female with eggs: 1; # of eggs attatched to the females: 12,,5,,,500,1,1,original
+YBFMP,10/10/2016,13:12,STTD,EDZ1016B9217,,1,,5,222222,223222,,,Low,,hhudson,cstuart,Debris in net,,,,,,500,1,1,original
+YBFMP,01/06/2020,10:19,STTD,ES0120B0001,,1,,10,656369,660000,,,Low,,ehubbard,pfarman,"Flood tide, motor used faceing upstream with tide",,,,,,500,1,1,original
+YBFMP,01/27/2020,09:41,STTD,ES0120B0009,,1,,10,646110,650000,,,Low,,ehubbard,pfarman,,,,,,,500,1,1,original
+YBFMP,02/10/2020,10:24,STTD,ES0220B0017,,1,,10,636217,640000,,,Low,,ehubbard,pfarman,,,,,,,500,1,1,original
+YBFMP,02/24/2020,09:47,STTD,ES0220B0025,,1,,10,626383,630000,,,Low,,ehubbard,pfarman,,,,,,,500,1,1,original
+YBFMP,03/10/2020,09:51,STTD,ES0320B0033,,1,,10,612033,616000,,,Low,,ehubbard,pfarman,,,,,,,500,1,1,original
+YBFMP,04/26/2021,09:13,SHR,ES0421B0037,,1,,,592745,598600,,,Low,,abrady,ehubbard,Used net for comparison,,,,,,500,1,1,original
+YBFMP,04/27/2021,09:33,STTD,ES0421B0035,,1,,10,592000,587695,,,low,,abrady,ehubbard,,,,,,,500,1,1,original
+YBFMP,05/10/2021,09:55,SHR,ES0521B0062,,1,,10,582059,587615,,,Low,,abrady,ehubbard,"Looks like time was crossed off, I think net was used for comparison again while testing drift",,,,,,500,1,1,original
+YBFMP,05/11/2021,09:31,STTD,ES0521B0060,,1,,10,579048,582000,,,Low,,abrady,ehubbard,,,,,,,500,1,1,original
+YBFMP,05/25/2021,09:16,STTD,ES0521B0068,,1,,10,579020,575456,,,Low,,abrady,ehubbard,,,,,,,500,1,1,original
+YBFMP,06/09/2021,09:37,STTD,ES0621B0084,,1,,10,575408,571958,,,low,,abrady,ehubbard,,,,,,,500,1,1,original
+YBFMP,06/22/2021,09:17,STTD,ES0621B0092,,1,,10,571829,568363,,,Low,,ehubbard,pfarman,,,,,,,500,1,1,original
+YBFMP,01/10/2022,10:54,STTD,ES0122B0001,,1,,5,568296,566855,,,Low,,ehubbard,abrady,,,,,,,500,1,1,original
+YBFMP,01/24/2022,12:33,STTD,ES0122B0009,,1,,10,566705,563246,,,Low,,ehubbard,abrady,"some transferred with tap water, but corrected with DI",,,,,,500,1,1,original
+YBFMP,02/07/2022,10:17,STTD,ES0222B0017,,1,,10,563195,560285,,,Low,,abrady,ehubbard,,,,,,,500,1,1,original
+YBFMP,02/22/2022,09:52,STTD,ES0222B0025,,1,N,10,560152,556946,,,Low,,ehubbard,lolson,,,,,,,500,1,1,original
+YBFMP,03/14/2022,09:27,STTD,ES0322B0033,,2,Y,5,556647,555672,,,Low,,ehubbard,lolson,"motor died on last 30 seconds, paddled rest of way",,,,,,500,1,1,original
+YBFMP,03/28/2022,08:01,STTD,ES0322B0041,,1,N,10,555660,552436,,,Low,,ehubbard,lolson,,,,,,,500,1,1,original
+YBFMP,04/11/2022,08:05,STTD,ES0422B0049,,1,Y,10,552345,549800,,,Low,,ehubbard,lolson,sampled from jonboat,,,,,,500,1,1,original
+YBFMP,04/25/2022,08:07,STTD,ES0422B0099,,1,Y,10,549735,547868,,,Low,,ehubbard,lolson,,,,,,,500,1,1,original
+YBFMP,05/09/2022,10:39,STTD,ES0522B0115,,1,Y,10,547826,544764,,,Low,,ehubbard,lolson,,,,,,,500,1,1,original
+YBFMP,05/23/2022,10:12,STTD,ES0522B0123,,1,Y,10,544860,541730,,,Low,,ehubbard,lolson,towed from Jon boat,,,,,,500,1,1,original
+YBFMP,06/07/2022,08:17,STTD,ES0622B0131,,1,N,10,541600,537852,,,Low,,ehubbard,lolson,,,,,,,500,1,1,original
+YBFMP,06/21/2022,8:09,STTD,ES0622B0139,,1,Y,10,537810,534969,,,Low,,ehubbard,lolson,boat used,,,,,,500,1,1,original
+YBFMP,01/03/2023,11:00,STTD,ES0122B0037,,1,Y,10,524347,518337,,,Low,,molinger,lgunning,Sampled from jon boat (forward),,,,,,500,1,1,original
+YBFMP,01/12/2023,10:10,STTD,ES0123B0046,,1,Y,5,522033,529156,,,Reg,,lolson,lgunning,Reduced sampling time to half,,,,,,500,1,1,original
+YBFMP,01/17/2023,12:18,STTD,ES0123B0055,,1,Y,5,529277,542378,,,Reg,,lgunning,ehubbard,"Sampled 2 CHNF+ parr in ICH net, gen sampled, Genetic ID # : 2023Ad_plus-F_009 2023Ad_plus-F_010. retured to Ich sample.",,,,,,500,1,1,original
+YBFMP,01/24/2023,10:28,STTD,ES0123B0064,,1,Y,5,542612,559438,,,Reg,,lolson,molinger,,,,,,,500,1,1,original
+YBFMP,01/30/2023,09:52,STTD,ES0123B0073,,1,Y,5,559764,567743,,,Reg,,molinger,lolson,,,,,,,500,1,1,original
+YBFMP,02/09/2023,11:01,STTD,ES0223B0082,,1,Y,5,567645,565522,,,Low,,molinger,lolson,,,,,,,500,1,1,original
+YBFMP,02/21/2023,10:20,STTD,ES0223B0091,,1,N,10,565319,562013,,,Low,,molinger,lolson,,,,,,,500,1,1,original
+YBFMP,03/06/2023,09:45,STTD,ES0323B0100,,1,N,10,561893,557610,,,Low,,molinger,lolson,,,,,,,500,1,1,original
+YBFMP,03/16/2023,09:34,STTD,ES0323B0109,,1,N,5,557608,560200,,,Reg,,molinger,lolson,Reduced tow time 1/2,,,,,,500,1,1,original
+YBFMP,03/29/2023,08:32,STTD,ES0323B0118,,1,N,10,560242,596407,,,Reg,,lolson,molinger,,,,,,,500,1,1,original
+YBFMP,04/03/2023,09:42,STTD,ES0423B0127,,1,N,10,596418,579887,,,Low,,lolson,molinger,,,,,,,500,1,1,original
+YBFMP,04/10/2023,09:25,STTD,ES0423B0135,,1,N,10,579693,570510,,,Low,,lolson,molinger,,,,,,,500,1,1,original
+YBFMP,05/01/2023,09:07,STTD,ES0523B0151,,1,N,10,570348,566851,,,Low,,molinger,lolson,,,,,,,500,1,1,original
+YBFMP,05/15/2023,08:12,STTD,ES0523B0180,,1,N,10,566657,563067,,,Low,,lolson,molinger,,,,,,,500,1,1,original
+YBFMP,05/30/2023,08:04,STTD,ES0523B0188,,1,N,10,562833,559791,,,Low,,molinger,lolson,,,,,,,500,1,1,original
+YBFMP,06/12/2023,08:17,STTD,ES0623B0322,,1,N,10,559631,557308,,,Low,,molinger,lolson,,,,,,,500,1,1,original
+Shared,06/26/2023,12:24,STTD,ES0623B0452,,1,N,10,557248,552226,,,Low,,lolson,lwigger,,,,,,,500,1,1,original
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,
