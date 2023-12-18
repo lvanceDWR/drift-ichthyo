@@ -36,7 +36,7 @@ library(tidylog)
 
 ###################### ACCESS DATA ############################################
 
-PhysData <- read_csv("ichthyo data/TblPhysicalData.csv")
+PhysData <- read_csv("drift data/TblPhysicalDataAccess.csv") #physical data is shared with drift & ich, tows done at same time
 CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
 Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
 SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
@@ -251,7 +251,7 @@ write_csv(
 #TO FILL THE 2019/2020 gap of data between excel and access, now read in data from Excel
 
 ####### bring lab data from excel in ##############
-IchLabData <- read_csv("LabExcel.csv", skip=1)
+IchLabData <- read_csv("ichthyo data/IchLabExcelData.csv", skip=1)
 
 IchLabData <- IchLabData %>%
   rename(Program = 'Measuring program short name',
