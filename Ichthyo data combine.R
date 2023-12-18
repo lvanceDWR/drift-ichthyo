@@ -388,11 +388,11 @@ AccessGap <- bind_rows(AccessTestSpecies, IchAccessFilter2)
 
 ################ bring sampling data from excel in #############################
 
-read_csv("SamplingExcel.csv")
+read_csv("icthyo data/IchSampData.csv")
 
 #determine and label column names
 
-IchSampling <- read_csv("SamplingExcel.csv", skip =1)
+IchSampling <- read_csv("ichthyo data/IchSampData.csv", skip =1)
 
 #first rename columns, then remove descriptor row using filter
 
@@ -461,11 +461,11 @@ str(IchSampling3)
 # lab data in lower trophic excel databases. combine water quality with sampling data
 # (1:1 combine) and then combine lab data #name columns appropriately
 
-read_csv("WaterQualityExcel.csv")
+read_csv("drift data/LTWQ2020on.csv")
 
 #determine and label column names
 
-WaterQuality <- read_csv("WaterQualityExcel.csv", skip =1)
+WaterQuality <- read_csv("drift data/LTWQ2020on.csv", skip =1)
 
 View(WaterQuality)
 
