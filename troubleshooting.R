@@ -107,11 +107,12 @@ combine <- full_join(WQ2, phys3, by = c("Station", "Date", "Time", "Datetime")) 
 # SHR Oct 2021 - sampling day was 10/12/2021 according to datasheet, not 10/13/2021
 
 #use case when to solve that sampling date?
+#make sure to specify that the date desired is a date variable - how to not add an extra column?
 
 str(combine)
 
-fix <- combine %>%
-  mutate(Date == case_when(Date == "2021-10-13" ~ "2021-10-12",
+fix <- WQ2 %>%
+  mutate(Date == case_when(Date == "2021-10-13" ~ as_date("2021-10-12"),
                            TRUE ~ Date))
 
 #troubleshooting merging Access with Excel -testing out Nicole's suggestion of 
