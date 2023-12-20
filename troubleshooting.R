@@ -108,6 +108,8 @@ combine <- full_join(WQ2, phys3, by = c("Station", "Date", "Time", "Datetime")) 
 
 #use case when to solve that sampling date?
 
+str(combine)
+
 fix <- combine %>%
   mutate(Date == case_when(Date == "2021-10-13" ~ "2021-10-12",
                            TRUE ~ Date))
