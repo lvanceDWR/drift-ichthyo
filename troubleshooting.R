@@ -112,8 +112,7 @@ combine <- full_join(WQ2, phys3, by = c("Station", "Date", "Time", "Datetime")) 
 str(combine)
 
 fix <- WQ2 %>%
-  mutate(Date == case_when(Date == "2021-10-13" ~ as_date("2021-10-12"),
-                           TRUE ~ Date))
+  if_else(WQ2$Date == "2021-10-13", WQ$Date == "2021-10-12")
 
 #troubleshooting merging Access with Excel -testing out Nicole's suggestion of 
 # combining wq with phys from excel, combine with Access *before* parsing out time, date
