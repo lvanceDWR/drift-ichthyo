@@ -461,11 +461,11 @@ str(IchSampling3)
 # lab data in lower trophic excel databases. combine water quality with sampling data
 # (1:1 combine) and then combine lab data #name columns appropriately
 
-read_csv("drift data/LTWQ2020on.csv")
+read_csv("drift data/LTWQ2020onward.csv")
 
 #determine and label column names
 
-WaterQuality <- read_csv("drift data/LTWQ2020on.csv", skip =1)
+WaterQuality <- read_csv("drift data/LTWQ2020onward.csv", skip =1)
 
 View(WaterQuality)
 

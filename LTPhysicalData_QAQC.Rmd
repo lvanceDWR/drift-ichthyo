@@ -155,7 +155,7 @@ PlotVars <- function(data,y) {
 
 phys <- read_csv("drift data/TblPhysicalDataAccess.csv")
 phys2 <- read_csv("drift data/DriftSampExcelData.csv", skip=1)
-WQ <- read_csv("drift data/LTWQ2020on.csv", skip=1)
+WQ <- read_csv("drift data/LTWQ2020onward.csv", skip=1)
 
 #get rid of NA in phys2 (data entry changed from Access to Excel in 2020), rename columns to be able to combine, clean up columns
 #Water quality separated from physical data in Excel
