@@ -226,7 +226,6 @@ WQ <- WQ %>% mutate(Datetime = paste(Date, Time, sep = ""))
 
 #filter WQ to stations where drift is collected
 WQ2 <- WQ %>%
-  filter(Program == "YBFMP" | Program == "Shared") %>%
   filter(Station == "STTD" | Station == "SHR")
 
 #additional date time format changes

@@ -86,7 +86,6 @@ phys3 <- phys3 %>% mutate(Datetime = paste(Date, Time, sep = " "))
 WQ <- WQ %>% mutate(Datetime = paste(Date, Time, sep = ""))
 
 WQ2 <- WQ %>%
-  filter(Program == "YBFMP" | Program == "Shared") %>%
   filter(Station == "STTD" | Station == "SHR")
 
 str(phys3)
