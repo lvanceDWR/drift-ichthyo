@@ -110,15 +110,16 @@ combine <- full_join(WQ2, phys3) #flowmeter values for 2021 are lost....figure o
 
 #use case when to solve that sampling date?
 #make sure to specify that the date desired is a date variable - how to not add an extra column?
+#fixed by correcting date to correct date in database and re-reading in new file
 
-str(combine)
-
-fix <- WQ2 %>%
-  if_else(WQ$Date == "2021-10-13", Date == "2021-10-12")
-
-fix <- WQ2 %>%
-  case_when(Date == "2021-10-13" ~ as_date("2021-10-12"),
-            TRUE ~ Date)
+# str(combine)
+# 
+# fix <- WQ2 %>%
+#   if_else(WQ$Date == "2021-10-13", Date == "2021-10-12")
+# 
+# fix <- WQ2 %>%
+#   case_when(Date == "2021-10-13" ~ as_date("2021-10-12"),
+#             TRUE ~ Date)
 
 #troubleshooting merging Access with Excel -testing out Nicole's suggestion of 
 # combining wq with phys from excel, combine with Access *before* parsing out time, date
