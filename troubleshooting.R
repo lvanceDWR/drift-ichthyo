@@ -52,7 +52,7 @@ phys3 <- phys2 %>%
   select(-c(PhysicalDataID, PhysicalDataIDx,
             FlowMeter50Start,FlowMeter50End,
             EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation,
-            '...27', '...28', '...29', '...30', '...31', '...32', SamplingNumber))
+            '...27', '...28', '...29', '...30', '...31', '...32', SamplingNumber, Program))
 
 WQ <- WQ %>%
   filter(!is.na(`Measuring Program Name`)) %>%
@@ -77,7 +77,9 @@ WQ <- WQ %>%
             LightData, DriftData, LarvalData, `150_ZoopsData`, `50_ZoopsData`,
             PhytoData, ChlData, NutrData, EnteredBy, QAQCBy, SurfaceIrr,
             Depth1Irr, Depth2Irr, Depth3Irr, Depth4Irr, SubIrr1, SubIrr2, SubIrr3,
-            SubIrr4, SampleNumber, SampleDate, SampleTime, SamplingNumber, StationNumber))
+            SubIrr4, SampleNumber, SampleDate, SampleTime, SamplingNumber, StationNumber, Program))
+
+#removing program because it is not necessary for publishing - different entries for WQ and drift/ich can cause join errors
 
 phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
 phys3 <- phys3 %>% mutate(Datetime = paste(Date, Time, sep = " "))
