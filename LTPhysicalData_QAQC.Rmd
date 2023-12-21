@@ -191,7 +191,8 @@ phys3 <- phys2 %>%
   select(-c(PhysicalDataID, PhysicalDataIDx,
             FlowMeter50Start,FlowMeter50End,
             EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation,
-            '...27', '...28', '...29', '...30', '...31', '...32', SamplingNumber, Program))
+            '...27', '...28', '...29', '...30', '...31', '...32', SamplingNumber, Program,
+            SampleVolume, SubsampleNumber, DilutionVolume, SlideCount))
 
 #rename and cleanup columns for WQ
 WQ <- WQ %>%

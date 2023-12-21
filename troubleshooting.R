@@ -52,7 +52,8 @@ phys3 <- phys2 %>%
   select(-c(PhysicalDataID, PhysicalDataIDx,
             FlowMeter50Start,FlowMeter50End,
             EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation,
-            '...27', '...28', '...29', '...30', '...31', '...32', SamplingNumber, Program))
+            '...27', '...28', '...29', '...30', '...31', '...32', SamplingNumber, Program,
+            SampleVolume, SubsampleNumber, DilutionVolume, SlideCount))
 
 WQ <- WQ %>%
   filter(!is.na(`Measuring Program Name`)) %>%
@@ -102,7 +103,7 @@ WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
   strftime(WQ2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) 
 
 
-combine <- full_join(WQ2, phys3, by = c("Station", "Date", "Time", "Datetime")) #flowmeter values for 2021 are lost....figure out how to avoid
+combine <- full_join(WQ2, phys3) #flowmeter values for 2021 are lost....figure out how to avoid
 #12 rows "only in x" "only in y" not matched - these are the missing values when joined
 # the 12 rows that have a problem are differing in "program"
 # SHR Oct 2021 - sampling day was 10/12/2021 according to datasheet, not 10/13/2021
@@ -113,7 +114,11 @@ combine <- full_join(WQ2, phys3, by = c("Station", "Date", "Time", "Datetime")) 
 str(combine)
 
 fix <- WQ2 %>%
-  if_else(WQ2$Date == "2021-10-13", WQ$Date == "2021-10-12")
+  if_else(WQ$Date == "2021-10-13", Date == "2021-10-12")
+
+fix <- WQ2 %>%
+  case_when(Date == "2021-10-13" ~ as_date("2021-10-12"),
+            TRUE ~ Date)
 
 #troubleshooting merging Access with Excel -testing out Nicole's suggestion of 
 # combining wq with phys from excel, combine with Access *before* parsing out time, date
