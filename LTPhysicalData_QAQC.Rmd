@@ -191,7 +191,7 @@ phys3 <- phys2 %>%
   select(-c(PhysicalDataID, PhysicalDataIDx,
             FlowMeter50Start,FlowMeter50End,
             EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation,
-            '...27', '...28', '...29', '...30', '...31', '...32', SamplingNumber))
+            '...27', '...28', '...29', '...30', '...31', '...32', SamplingNumber, Program))
 
 #rename and cleanup columns for WQ
 WQ <- WQ %>%
@@ -217,7 +217,7 @@ WQ <- WQ %>%
             LightData, DriftData, LarvalData, `150_ZoopsData`, `50_ZoopsData`,
             PhytoData, ChlData, NutrData, EnteredBy, QAQCBy, SurfaceIrr,
             Depth1Irr, Depth2Irr, Depth3Irr, Depth4Irr, SubIrr1, SubIrr2, SubIrr3,
-            SubIrr4, SampleNumber, SampleDate, SampleTime, SamplingNumber, StationNumber))
+            SubIrr4, SampleNumber, SampleDate, SampleTime, SamplingNumber, StationNumber, Program))
 
 # Add and change date and time formats
 phys <- phys %>% mutate(Datetime = paste(Date, Time, sep = " "))
