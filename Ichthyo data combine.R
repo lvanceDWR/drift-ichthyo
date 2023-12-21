@@ -267,8 +267,7 @@ IchLabData <- IchLabData %>%
          TL = 'Value...11',
          FL = 'Value...12',
          LifeStage = 'Value...13',
-         LarvalLifeStage = '...14',
-  )
+         LarvalLifeStage = '...14',) 
 
 View(IchLabData)
 
@@ -282,7 +281,8 @@ View(IchLab2)
 
 str(IchLab2)
 
-IchLab2 <- mutate(IchLab2, Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time)), Time= NULL)
+IchLab2 <- mutate(IchLab2, Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time)), Time= NULL) %>%
+  select(-c(Program))
 
 View(IchLab2)
 
@@ -451,7 +451,7 @@ View(IchSampling2)
 
 IchSampling3 <- IchSampling2 %>%
   select(-c(PhysicalDataID, PhysicalDataIDx, FlowMeter50Start, FlowMeter50End,
-            EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation))
+            EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation, Program))
 View(IchSampling3)
 
 str(IchSampling3)
@@ -515,7 +515,7 @@ WaterQuality3 <- WaterQuality3 %>%
             `150_ZoopsData`, `50_ZoopsData`, PhytoData, ChlData, NutrData,
             EnteredBy, QAQCBy, FieldCheck, StationNumber, Depth1Irr, Depth2Irr, 
             Depth3Irr, Depth4Irr,SurfaceIrr, SubIrr1, SubIrr2, SubIrr3, SubIrr4,
-            LabOrField))
+            LabOrField, Program))
 View(WaterQuality3)
 
 #will need to filter out information that is for NDFA since
