@@ -159,7 +159,9 @@ Flowmeter <- yolo_phys %>%
   select(c(Station, Date, Time, YSI, WeatherCode, Tide, ConditionCode,
            SamplingAltered, MeterSetTime, FlowMeterStart, FlowMeterEnd,
            FlowMeterSpeed,MeshSize)) %>%
-  filter(year(Date) > 2020)
+  filter(year(Date) >= 2020) %>%
+  filter(!(Date == "2020-01-06" | Date == "2020-01-07" |
+             Date == "2020-01-27" | Date == "2020-01-28"))
 
 write_csv(Flowmeter, "data drift/Flowmeterdata.csv")
 
