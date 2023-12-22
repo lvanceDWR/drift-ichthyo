@@ -311,6 +311,8 @@ yolo_phys$MonthAbb <- mymonths[yolo_phys$Month ]
 #set order of months
 yolo_phys$MonthAbb <-ordered(yolo_phys$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
 
+# 3/18/2020	10/15/2020	DRIFT 	Lower trophic sampling was suspended due to COVID-19 pandemic
+# 3/18/2020	10/15/2020	ICH	Lower trophic sampling was suspended due to COVID-19 pandemic
 
 #filter for ending Dec 2022
 phys_yolo <- filter(yolo_phys, year(Date) < 2023)
