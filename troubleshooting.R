@@ -155,6 +155,14 @@ yolo_phys <-bind_rows(phys.s, combine2)
 #will it be necessary to separate out the flowmeter values with stations/datetimes, 
 # to merge with the catch data/lab data instead of being in the physical data file?
 
+Flowmeter <- yolo_phys %>%
+  select(c(Station, Date, Time, YSI, WeatherCode, Tide, ConditionCode,
+           SamplingAltered, MeterSetTime, FlowMeterStart, FlowMeterEnd,
+           FlowMeterSpeed,MeshSize)) %>%
+  filter(year(Date) > 2020)
+
+write_csv(Flowmeter, "data drift/Flowmeterdata.csv")
+
 
 
 # combine <- full_join(WQ2, phys3) #flowmeter values for 2021 are lost....figure out how to avoid
