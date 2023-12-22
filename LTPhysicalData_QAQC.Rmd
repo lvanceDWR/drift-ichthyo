@@ -265,7 +265,12 @@ phys.s <- phys %>%
             Comments, DataCorrectionComments, StartMeter, EndMeter, MeterSetTime)) %>%
   filter(Station == "SHR" | Station == "STTD")
 
+#check column formats again before joining access data and excel data
+str(phys.s)
+str(combine)
+
 #match column types for combining access and excel data together
+#filter out dates that were for NDFS only and no drift were collected
 combine2 <- combine %>%
   mutate(Secchi = as.numeric(Secchi),
          WaterTemperature = as.numeric(WaterTemperature),
@@ -277,7 +282,8 @@ combine2 <- combine %>%
          VegetationRank = as.numeric(VegetationRank),
          Turbidity = as.numeric(Turbidity),
          YSI = as.numeric(YSI),
-         FlowMeterEnd = as.numeric(FlowMeterEnd))
+         FlowMeterEnd = as.numeric(FlowMeterEnd)) %>%
+  filter(!(Date == "2020-07-13" | Date == "2020-07-27" | Date == "2020-08-10"))
 
 #ensure column types match, then create full file
 str(phys.s)
@@ -311,8 +317,6 @@ yolo_phys$MonthAbb <- mymonths[yolo_phys$Month ]
 #set order of months
 yolo_phys$MonthAbb <-ordered(yolo_phys$MonthAbb,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
 
-# 3/18/2020	10/15/2020	DRIFT 	Lower trophic sampling was suspended due to COVID-19 pandemic
-# 3/18/2020	10/15/2020	ICH	Lower trophic sampling was suspended due to COVID-19 pandemic
 
 #filter for ending Dec 2022
 phys_yolo <- filter(yolo_phys, year(Date) < 2023)
