@@ -102,10 +102,64 @@ WQ2$Date<- mdy(WQ2$Date)
 WQ2$Time <- strptime(WQ2$Time, format = "%H:%M", tz = "") %>%
   strftime(WQ2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) 
 
+#combine the physical data and water quality  from excel before joining to Access data
+combine <- left_join(WQ2, phys3)
 
-combine <- full_join(WQ2, phys3) #flowmeter values for 2021 are lost....figure out how to avoid
-#12 rows "only in x" "only in y" not matched - these are the missing values when joined
-# the 12 rows that have a problem are differing in "program"
+#check column formats before joining access data and excel data
+str(phys)
+str(combine)
+
+#configure date time columns before combining
+phys$Datetime <- mdy_hms(phys$Datetime)
+phys$Date<- mdy(phys$Date)
+phys$Time <- strptime(phys$Time, format = "%H:%M", tz = "") %>%
+  strftime(phys$Time, format = "%H:%M:%S", tz = "", usetz = FALSE) #add usetz = false to match phys3 and WQ
+
+
+#rename some columns,filter to stations drift is collected 
+phys.s <- phys %>%
+  rename(Secchi = SecchiDiskDepth,
+         Station = `Station Code`,
+         Conductivity = EC,
+         YSI = `YSI #`) %>%
+  select(-c(Recorder, `Field Check`, Crew, EnteredBy, "QA/QC'dBy",  
+            LightData, DriftData, LarvalData, ZoopsData, `50_ZoopsData`, ChlData, PhytoData, NutrData,
+            Comments, DataCorrectionComments, StartMeter, EndMeter, MeterSetTime)) %>%
+  filter(Station == "SHR" | Station == "STTD")
+
+#check column formats again before joining access data and excel data
+str(phys.s)
+str(combine)
+
+#match column types for combining access and excel data together
+#filter out dates that were for NDFS only and no drift were collected
+combine2 <- combine %>%
+  mutate(Secchi = as.numeric(Secchi),
+         WaterTemperature = as.numeric(WaterTemperature),
+         DO = as.numeric(DO),
+         SpCnd = as.numeric(SpCnd),
+         Conductivity = as.numeric(Conductivity),
+         pH = as.numeric(pH),
+         MicrocystisVisualRank = as.numeric(MicrocystisVisualRank),
+         VegetationRank = as.numeric(VegetationRank),
+         Turbidity = as.numeric(Turbidity),
+         YSI = as.numeric(YSI),
+         FlowMeterEnd = as.numeric(FlowMeterEnd)) %>%
+  filter(!(Date == "2020-07-13" | Date == "2020-07-27" | Date == "2020-08-10"))
+
+#ensure column types match, then create full file
+str(phys.s)
+str(combine2)
+
+yolo_phys <-bind_rows(phys.s, combine2)
+#will it be necessary to separate out the flowmeter values with stations/datetimes, 
+# to merge with the catch data/lab data instead of being in the physical data file?
+
+
+
+# combine <- full_join(WQ2, phys3) #flowmeter values for 2021 are lost....figure out how to avoid
+# #12 rows "only in x" "only in y" not matched - these are the missing values when joined
+# # the 12 rows that have a problem are differing in "program"
 # SHR Oct 2021 - sampling day was 10/12/2021 according to datasheet, not 10/13/2021
 
 #use case when to solve that sampling date?
