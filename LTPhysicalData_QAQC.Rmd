@@ -536,21 +536,21 @@ LIS_EC$`DATE TIME` <- mdy_hm(LIS_EC$`DATE TIME`)
 
 
 LIS_WaterTemperature_ed <- LIS_WaterTemperature %>%
-  select(5,6) %>%
-  filter(VALUE<99998) %>%
-  mutate(Temp_C = round((VALUE-32)*5/9,1))
+  select(3,5) %>%
+  filter(parameter_value<99998) %>%
+  mutate(Temp_C = round((parameter_value-32)*5/9,1))
 LIS_DO_ed <- LIS_DO %>%
-  select(5,6) %>%
-  rename(DO = VALUE)
+  select(3,5) %>%
+  rename(DO = parameter_value)
 LIS_pH_ed <- LIS_pH %>%
-  select(5,6) %>%
-  rename(pH = VALUE)
+  select(3,5) %>%
+  rename(pH = parameter_value)
 LIS_Turb_ed <- LIS_Turb %>%
-  select(5,6) %>%
-  rename(Turbidity = VALUE)
+  select(3,5) %>%
+  rename(Turbidity = parameter_value)
 LIS_EC_ed <- LIS_EC%>%
-  select(5,6) %>%
-  rename(Conductivity = VALUE)
+  select(3,5) %>%
+  rename(Conductivity = parameter_value)
 
 # Merge variables together
 a <- merge(LIS_DO_ed, LIS_Turb_ed, by = "DATE TIME")
