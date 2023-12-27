@@ -194,6 +194,11 @@ LIS_EC_ed <- LIS_EC%>%
   select(3,5) %>%
   rename(Conductivity = parameter_value)
 
+LIS_WaterTemperature_ed$Time <- hms::as_hms(LIS_WaterTemperature_ed$datetime)
+
+OlsonNames
+
+
 # Merge variables together
 a <- merge(LIS_DO_ed, LIS_Turb_ed, by = "datetime")
 b <- merge(a, LIS_EC_ed, by = "datetime")
@@ -201,8 +206,8 @@ c <- merge(b, LIS_pH_ed, by = "datetime")
 LIS_WQ <- left_join(LIS_WaterTemperature_ed, c, by = "datetime")
 
 # str(LIS_WQ)
-LIS_WQ$Time <- strftime(LIS_WQ$`datetime`, format = "%H:%M:%S")
-LIS_WQ$Date <- as.Date(LIS_WQ$`datetime`)
+LIS_WQ$Time <- hms::as_hms(LIS_WQ$datetime)
+LIS_WQ$Date <- as_date(LIS_WQ$datetime)
 LIS_WQ$Hour <- as.numeric(format(strptime(LIS_WQ$Time, "%H:%M:%S"), "%H"))
 
 LIS_WQ_f <- LIS_WQ %>%
