@@ -532,7 +532,7 @@ LIS_DO <- read_csv("drift data/STA/LIS_61.csv")
 LIS_pH <- read_csv("drift data/STA/LIS_62.csv")
 LIS_Turb <- read_csv("drift data/STA/LIS_221.csv")
 LIS_EC <- read_csv("drift data/STA/LIS_100.csv")
-LIS_EC$`DATE TIME` <- mdy_hm(LIS_EC$`DATE TIME`)
+# LIS_EC$`DATE TIME` <- mdy_hm(LIS_EC$`DATE TIME`)
 
 
 LIS_WaterTemperature_ed <- LIS_WaterTemperature %>%
