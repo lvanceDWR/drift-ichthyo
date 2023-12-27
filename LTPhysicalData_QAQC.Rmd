@@ -565,8 +565,7 @@ LIS_WQ$Date <- as.Date(LIS_WQ$`datetime`)
 LIS_WQ$Hour <- as.numeric(format(strptime(LIS_WQ$Time, "%H:%M:%S"), "%H"))
 
 LIS_WQ_f <- LIS_WQ %>%
-  rename(Datetime = `DATE TIME`,
-         WaterTemperature = Temp_C) %>%
+  rename(WaterTemperature = Temp_C) %>%
   dplyr::filter(Hour>06 & Hour<15) %>%
   dplyr::filter(WaterTemperature>0 & WaterTemperature<40) %>%
   dplyr::filter(Conductivity>0)%>%
