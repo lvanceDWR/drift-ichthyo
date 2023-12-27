@@ -560,8 +560,8 @@ c <- merge(b, LIS_pH_ed, by = "datetime")
 LIS_WQ <- left_join(LIS_WaterTemperature_ed, c, by = "datetime")
 
 # str(LIS_WQ)
-LIS_WQ$Time <- strftime(LIS_WQ$`datetime`, format = "%H:%M:%S")
-LIS_WQ$Date <- as.Date(LIS_WQ$`datetime`)
+LIS_WQ$Time <- hms::as_hms(LIS_WQ$datetime)
+LIS_WQ$Date <- as_date(LIS_WQ$datetime)
 LIS_WQ$Hour <- as.numeric(format(strptime(LIS_WQ$Time, "%H:%M:%S"), "%H"))
 
 LIS_WQ_f <- LIS_WQ %>%
@@ -570,8 +570,8 @@ LIS_WQ_f <- LIS_WQ %>%
   dplyr::filter(WaterTemperature>0 & WaterTemperature<40) %>%
   dplyr::filter(Conductivity>0)%>%
   filter(DO>0)%>%
-         filter(pH>0 & pH<14)%>%
-         filter(Turbidity >0) %>%
+  filter(pH>0 & pH<14)%>%
+  filter(Turbidity >0) %>%
   mutate(StationCode="LIS_RT") %>%
   select(1,3:7,9,11)
 
