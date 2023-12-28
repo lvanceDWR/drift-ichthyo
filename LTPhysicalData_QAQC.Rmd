@@ -576,18 +576,22 @@ LIS_WQ_f <- LIS_WQ %>%
   select(1,3:7,9,11)
 
 # Make plots
-Temp <- ggplot(LIS_WQ_f, aes(Datetime, WaterTemperature)) + geom_point() + theme_bw()
-DO <- ggplot(LIS_WQ_f, aes(Datetime, DO)) + geom_point() + theme_bw()
-pH <- ggplot(LIS_WQ_f, aes(Datetime, pH)) + geom_point() + theme_bw()
-Turb <- ggplot(LIS_WQ_f, aes(Datetime, Turbidity)) + geom_point() + theme_bw()
-Conductivity <- ggplot(LIS_WQ_f, aes(Datetime, Conductivity)) + geom_point() + theme_bw()
+Temp <- ggplot(LIS_WQ_f, aes(datetime, WaterTemperature)) + geom_point() + theme_bw()
+DO <- ggplot(LIS_WQ_f, aes(datetime, DO)) + geom_point() + theme_bw()
+pH <- ggplot(LIS_WQ_f, aes(datetime, pH)) + geom_point() + theme_bw()
+Turb <- ggplot(LIS_WQ_f, aes(datetime, Turbidity)) + geom_point() + theme_bw()
+Conductivity <- ggplot(LIS_WQ_f, aes(datetime, Conductivity)) + geom_point() + theme_bw()
 
 grid.arrange(Temp, DO, pH, Turb, Conductivity, nrow = 2)
 
 Yolo_WQ <- phys_yolo %>%
-  select(c(Datetime, WaterTemperature, DO, Turbidity, Conductivity, pH, Date, StationCode))
+  select(c(Datetime, WaterTemperature, DO, Turbidity, Conductivity, pH, Date, Station))
 
-WQ_large <- rbind(LIS_WQ_f, Yolo_WQ)
+LIS_WQ_f_ed <- LIS_WQ_f %>%
+  rename(Datetime = "datetime",
+         Station = "StationCode")
+
+WQ_large <- rbind(LIS_WQ_f_ed, Yolo_WQ)
 WQ_large$Year <- as.numeric(year(WQ_large$Date))
 WQ_sub <- WQ_large %>%
   filter(Year>2001)
@@ -595,6 +599,8 @@ WQ_sub2 <- WQ_large %>%
   filter(Year>2006)
 WQ_sub3 <- WQ_large %>%
   filter(Year>2010)
+WQ_sub4 <- WQ_large %>%
+  filter(Year>2019)
 
 ```
 
