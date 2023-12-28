@@ -36,6 +36,8 @@ if(!require(knitr)) {install.packages("knitr")
   library(knitr)}
 if(!require(tidylog)) {install.packages("tidylog")
   library(tidylog)}
+if(!require(plotly)) {install.packages("plotly")
+  library(plotly)}
 
 ```
 
@@ -607,11 +609,17 @@ WQ_sub4 <- WQ_large %>%
 ## 11. Plots with Lisbon-Yolo data
 ```{r Plots for LIS_Yolo, echo = FALSE, warning = FALSE, message = FALSE}
 
-PlotVars(WQ_large, WaterTemperature)
-PlotVars(WQ_large, Conductivity)
-PlotVars(WQ_large, DO)
-PlotVars(WQ_large, pH)
-PlotVars(WQ_large, Turbidity)
+WaterTemp <- PlotVars(WQ_large, WaterTemperature)
+WQCond <- PlotVars(WQ_large, Conductivity)
+WQDO <- PlotVars(WQ_large, DO)
+WQpH <- PlotVars(WQ_large, pH)
+WQTurb <- PlotVars(WQ_large, Turbidity)
+
+ggplotly(WaterTemp)
+ggplotly(WQCond)
+ggplotly(WQDO)
+ggplotly(WQpH)
+ggplotly(WQTurb)
 ```
 
 
@@ -638,7 +646,7 @@ phys_yolo$pH[phys_yolo$PhysicalDataID==1501] <- 7.92 # Typo
 
 
 # One entry was not entered
-phys_yolo$StationCode[phys_yolo$PhysicalDataID==1752] <- "STTD"
+phys_yolo$Station[phys_yolo$PhysicalDataID==1752] <- "STTD"
 phys_yolo$Conductivity[phys_yolo$PhysicalDataID==1752] <- 530
 phys_yolo$SpCnd[phys_yolo$PhysicalDataID==1752] <- 563
 phys_yolo$Turbidity[phys_yolo$PhysicalDataID==1752] <- 16.5
