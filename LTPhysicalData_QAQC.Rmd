@@ -265,6 +265,7 @@ phys.s <- phys %>%
   select(-c(Recorder, `Field Check`, Crew, EnteredBy, "QA/QC'dBy",  
             LightData, DriftData, LarvalData, ZoopsData, `50_ZoopsData`, ChlData, PhytoData, NutrData,
             Comments, DataCorrectionComments, StartMeter, EndMeter, MeterSetTime)) %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
   filter(Station == "SHR" | Station == "STTD")
 
 #check column formats again before joining access data and excel data
@@ -285,6 +286,7 @@ combine2 <- combine %>%
          Turbidity = as.numeric(Turbidity),
          YSI = as.numeric(YSI),
          FlowMeterEnd = as.numeric(FlowMeterEnd)) %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
   filter(!(Date == "2020-07-13" | Date == "2020-07-27" | Date == "2020-08-10"))
 
 #ensure column types match, then create full file
