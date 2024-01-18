@@ -682,28 +682,33 @@ phys_yolo %>%
 modified <- c(688, 680, 656, 748, 926, 1847, 1140, 1139, 1847, 708, 1409, 1501, 1818)
 
 # Flagged but not replaced
-flag <-  c(899, 885, 1087, 1090, 1314, 1218, 602, 668, 841, 1187)
+flag <-  c(899, 885, 1087, 1090, 1314, 1218, 602, 668, 841, 1187, "STTD_2021-10-13 11:07:00", "STTD_2022-02-07 10:17:00",
+           "STTD_2022-03-14 09:27:00", "SHR_2022-04-26 08:55:00")
 
 # Variable associated with flag
 wtemp <- c(688, 1818)
 turb <- c(680, 656, 885, 668, 841, 1187)
-cond <- c(748, 926, 1847)
-spc <- c(1140, 1139, 1847, 899, 1087)
+cond <- c(748, 926, 1847, "STTD_2021-10-13 11:07:00")
+spc <- c(1140, 1139, 1847, 899, 1087, "STTD_2021-10-13 11:07:00")
 sec <- c(708, 1090)
-do <- c(1409, 1314, 1218)
-ph <- c(1501)
+do <- c(1409, 1314, 1218, "STTD_2022-02-07 10:17:00", "STTD_2022-03-14 09:27:00")
+ph <- c(1501, "SHR_2022-04-26 08:55:00")
 
 # Adding Flag and Comment variables
 phys_yolo_flag <- phys_yolo %>%
   mutate(Flag_PQC = ifelse(PhysicalDataID %in% modified, 3,
-                           ifelse(PhysicalDataID %in% flag, 2, "")),
+                           ifelse(PhysicalDataID %in% flag, 2,
+                                  ifelse(event_id %in% flag, 2, ""))),
          Comment_PQC = ifelse(PhysicalDataID %in% wtemp, "WTEMP",
                               ifelse(PhysicalDataID %in% turb, "TURB",
                                      ifelse(PhysicalDataID %in% cond, "COND",
+                                            ifelse(event_id %in% cond, "COND",
                                             ifelse(PhysicalDataID %in% spc, "SPC",
                                                    ifelse(PhysicalDataID %in% sec, "SECCHI",
                                                           ifelse(PhysicalDataID %in% do, "DO",
-                                                          ifelse(PhysicalDataID %in% ph, "PH", ""))))))))
+                                                                 ifelse(event_id %in% do, "DO",
+                                                          ifelse(PhysicalDataID %in% ph, "PH",
+                                                                 ifelse(event_id %in% ph, "PH", "")))))))))))
 
 phys_yolo_flag$Flag_PQC <- as.factor(phys_yolo_flag$Flag_PQC)
 
