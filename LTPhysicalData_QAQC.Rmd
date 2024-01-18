@@ -293,8 +293,8 @@ combine2 <- combine %>%
 str(phys.s)
 str(combine2)
 
-yolo_phys <-bind_rows(phys.s, combine2)
-
+yolo_phys <-bind_rows(phys.s, combine2) %>%
+  relocate(event_id)
 
 
 ```
