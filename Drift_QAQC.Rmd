@@ -6,8 +6,8 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-YBFMP Drift Invertebrate Data 1998 - 2019
-
+YBFMP Drift Invertebrate Data 1998 - 2022
+## modified 2023/2024 by L.Vance for publishing update
 
 ```{r set-options, echo=FALSE, cache=FALSE}
 
@@ -36,13 +36,13 @@ library(kableExtra)
 
 ```{r load, results = FALSE, warning = FALSE, message = FALSE}
 # Load data - several tables
-phys <- read_csv("Data/Drift/LT_phys_qc_20210204.csv")
+phys <- read_csv("drift data/LT_phys_qc_20240118.csv")
 catch <- read_csv("Data/Drift/Drift_Catch_20200918.csv")
 catch2 <- read_csv("Data/Drift/Drift_Catch_Contractor_20210330.csv")
 samp <- read_csv("Data/Drift/Drift_Samplings_20200918.csv")
 samp2 <- read_csv("Data/Drift/Drift_Sampling_Access_20210330.csv")
-tax <- read_csv("Data/Drift/Drift_Taxonomy.csv")
-wy <- read_csv("Data/WaterYearType_CDEC.csv") 
+tax <- read_csv("drift data/Drift_Taxonomy.csv")
+wy <- read_csv("WaterYearType_CDEC.csv") 
 inundation <- read_csv("Inundation_1998_2022.csv")
 #inv_tax_2 <- read_csv("Data/TblInvertsLookUpV2.csv")
 
