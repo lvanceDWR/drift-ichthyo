@@ -37,13 +37,13 @@ library(kableExtra)
 ```{r load, results = FALSE, warning = FALSE, message = FALSE}
 # Load data - several tables
 phys <- read_csv("drift data/LT_phys_qc_20240118.csv")
-catch <- read_csv("drift data/DriftCatchAccess_20240119.csv")
-catch2 <- read_csv("drift data/DriftLabExcelData.csv")
-samp <- read_csv("drift data/DriftSampAccess_20240119.csv")
-samp2 <- read_csv("drift data/DriftSampExcelData.csv")
+catch <- read_csv("drift data/DriftCatchDataAccess_20240119.csv")
+catch2 <- read_csv("drift data/DriftLabExcelData.csv", skip=1)
+samp <- read_csv("drift data/DriftInvertSampAccess_20240119.csv")
+samp2 <- read_csv("drift data/DriftSampExcelData.csv", skip=1)
 tax <- read_csv("drift data/DriftTaxonomy.csv")
 wy <- read_csv("WaterYearType_CDEC.csv") 
-inundation <- read_csv("Inundation_1998_2022.csv")
+inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
 #inv_tax_2 <- read_csv("Data/TblInvertsLookUpV2.csv")
 
 # Add and change date formats
