@@ -30,6 +30,7 @@ library(lubridate)
 library(plotly)
 library(viridis)
 library(kableExtra)
+library(tidylog)
 ```
 
 2.Load Data, Check Variable Types
@@ -67,7 +68,7 @@ catch2$Datetime = paste(catch2$Date, catch2$Time)
 catch2$Datetime <- as.POSIXct(catch2$Datetime, 
                            format = "%Y-%m-%d %H:%M:%S")
 
-inundation$Date<-as.Date(inundation$Date,"%m/%d/%Y")
+inundation$Date<-as.Date(inundation$Dates,"%m/%d/%Y")
 str(phys)
 str(catch)
 ```
