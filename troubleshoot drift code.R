@@ -29,16 +29,16 @@ phys$Datetime = paste(phys$Date, phys$Time)
 phys$Datetime <- as.POSIXct(phys$Datetime, 
                             format = "%Y-%m-%d %H:%M:%S")
 
-phys <- phys %>%
-  rename(Station = StationCode)
+#rename columns and variables for consistency across dataframes, simplify for later work
+#remove unnecessary columns
 
-catch <- catch %>%
-  mutate(SamplingID = str_extract(`Sampling number`, "[^/]+")) %>%
-  rename(Datetime = Time,
-         TaxonName = Observable,
-         LifeStage = `Life Stage`) %>%
-  select(-c(Value, `Sampling number`))
-catch$SamplingID = as.numeric(catch$SamplingID)
+# catch <- catch %>%
+#   mutate(SamplingID = str_extract(`Sampling number`, "[^/]+")) %>%
+#   rename(Datetime = Time,
+#          TaxonName = Observable,
+#          LifeStage = `Life Stage`) %>%
+#   select(-c(Value, `Sampling number`))
+# catch$SamplingID = as.numeric(catch$SamplingID)
 
 samp <- samp %>% 
   rename(SamplingID = `Sampling number`,
@@ -56,16 +56,29 @@ samp$SamplingID <- as.numeric(samp$SamplingID)
 summary(samp)
 
 catch2 <- catch2 %>%
-  rename(Count = Individuals,
-         Category = `Insect/Non-Insect`,
-         LifeStage = Stage,
-         TaxonName = Name) %>%
-  select(-c("Number", "Time"))
+  filter(!(is.na(`Measuring program short name`))) %>%
+  rename(Count = `Value...11`,
+         LifeStage = `Value...12`,
+         TaxonName = Observable,
+         Date = `Sampling Event Date`,
+         Time = `Sampling Event Time`,
+         Station = `Sampling Area Number`,
+         SAMCode = `Sampling Event Number`,
+         SampleNumber = `Sample ID`) %>%
+  select(-c(`Measuring program short name`, `Observation Type Short Name`))
 
 samp2 <- samp2 %>%
-  rename(FlowMeterStart = DriftStartMeter,
-         FlowMeterEnd = DriftEndMeter) %>%
-  select(-c("StartTime", "StopTime"))
+  filter(!(is.na(`Measuring program short name`))) %>%
+  rename(FlowMeterStart = `Flow Meter Start`,
+         FlowMeterEnd = `Flow Meter End`,
+         Date = `Sampling Event Date`,
+         Time = `Sampling Event Time`,
+         Station = `Sampling Area Number`,
+         SAMCode = `Sampling Event Number`) %>%
+  select(-c(`Observation Area Number`, `Spot Code (original/duplicate)`, `...27`, `...28`,
+            `...29`, `...30`, `...31`, `...32`,
+            `Spot Number`, `Flow Meter Start (50)`, `Flow Meter End (50)`,
+            `Entered by`, `QAQC'd by`, `...6`, `Measuring program short name`))
 
 
 #add and change date formats
