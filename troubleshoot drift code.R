@@ -19,12 +19,12 @@ wy <- read_csv("WaterYearType_CDEC.csv")
 inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
 
 
-# Add and change date formats
+# Add and change date formats (does this even need to be done for phys??)
 phys$Date<-as.Date(phys$Date,"%m/%d/%Y")
 phys$Year <- year(phys$Date)
 phys$Month <- month(phys$Date)
+phys$MonthAbb <- mymonths[phys$Month ]
 phys$MonthAbb <-ordered(phys$Month,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
-
 phys$Datetime = paste(phys$Date, phys$Time)
 phys$Datetime <- as.POSIXct(phys$Datetime, 
                             format = "%Y-%m-%d %H:%M:%S")
@@ -56,7 +56,8 @@ catch2 <- catch2 %>%
          Station = `Sampling Area Number`,
          SAMCode = `Sampling Event Number`,
          SampleID = `Sample ID`) %>%
-  select(-c(`Measuring program short name`, `Observation Type Short Name`))
+  select(-c(`Measuring program short name`, `Observation Type Short Name`,
+            SAMCode))
 
 samp2 <- samp2 %>%
   filter(!(is.na(`Measuring program short name`))) %>%
@@ -69,10 +70,36 @@ samp2 <- samp2 %>%
   select(-c(`Observation Area Number`, `Spot Code (original/duplicate)`, `...27`, `...28`,
             `...29`, `...30`, `...31`, `...32`,
             `Spot Number`, `Flow Meter Start (50)`, `Flow Meter End (50)`,
-            `Entered by`, `QAQC'd by`, `...6`, `Measuring program short name`))
+            `Entered by`, `QAQC'd by`, `...6`, `Measuring program short name`,
+            SAMCode))
 
 
 #add and change date formats
+
+catch2$Date<-as.Date(catch2$Date,"%m/%d/%Y")
+catch2$Year <- year(catch2$Date)
+catch2$Month <- month(catch2$Date)
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+catch2$MonthAbb <- mymonths[catch2$Month ]
+catch2$Datetime = paste(catch2$Date, catch2$Time)
+catch2$Datetime <- ymd_hm(catch2$Datetime)
+
+
+samp2$Date<-as.Date(samp2$Date,"%m/%d/%Y")
+samp2$Year <- year(samp2$Date)
+samp2$Month <- month(samp2$Date)
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+samp2$MonthAbb <- mymonths[samp2$Month ]
+samp2$Datetime = paste(samp2$Date, samp2$Time)
+samp2$Datetime <- ymd_hm(samp2$Datetime)
+
+
 catch$Time <- as.POSIXct(catch$Time,
                          format = "%m/%d/%Y %H:%M")
 samp$Date<-as.Date(samp$Date,"%m/%d/%Y")
