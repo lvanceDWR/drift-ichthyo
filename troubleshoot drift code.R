@@ -43,8 +43,8 @@ phys$Datetime <- as.POSIXct(phys$Datetime,
 samp <- samp %>% 
   rename(FlowMeterStart = `DriftStartMeter`,
          FlowMeterEnd = `DriftEndMeter`) %>%
-  select(-c(`EnteredBy`, `QA/QC'dBy`))
-summary(samp)
+  select(-c(`EnteredBy`, `QA/QC'dBy`, StartTime, StopTime))
+str(samp)
 
 catch2 <- catch2 %>%
   filter(!(is.na(`Measuring program short name`))) %>%
@@ -55,7 +55,7 @@ catch2 <- catch2 %>%
          Time = `Sampling Event Time`,
          Station = `Sampling Area Number`,
          SAMCode = `Sampling Event Number`,
-         SampleNumber = `Sample ID`) %>%
+         SampleID = `Sample ID`) %>%
   select(-c(`Measuring program short name`, `Observation Type Short Name`))
 
 samp2 <- samp2 %>%
