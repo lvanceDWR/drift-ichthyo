@@ -41,18 +41,9 @@ phys$Datetime <- as.POSIXct(phys$Datetime,
 # catch$SamplingID = as.numeric(catch$SamplingID)
 
 samp <- samp %>% 
-  rename(SamplingID = `Sampling number`,
-         Datetime = `Date/Time`,
-         InvertDataID = `Invertebrate Data ID`,
-         ConditionCode = `Condition Code`,
-         SetTime = `Set Time`,
-         FlowMeterSpeed = `Flow Meter Speed`,
-         FlowMeterStart = `Flow Meter Start`,
-         FlowMeterEnd = `Flow Meter End`,
-         LabComments = `Lab Comments`,
-         FieldComments = `Field Comments`) %>%
-  select(-`Invertebrate Catch ID`)
-samp$SamplingID <- as.numeric(samp$SamplingID)
+  rename(FlowMeterStart = `DriftStartMeter`,
+         FlowMeterEnd = `DriftEndMeter`) %>%
+  select(-c(`EnteredBy`, `QA/QC'dBy`))
 summary(samp)
 
 catch2 <- catch2 %>%
