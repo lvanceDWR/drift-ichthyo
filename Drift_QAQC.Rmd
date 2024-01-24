@@ -142,11 +142,11 @@ str(catch2)
 
 catch2 <- catch2 %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
-  relocate(event_id)
+  relocate(event_id, Datetime)
 
 samp2 <- samp2 %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
-  relocate(event_id)
+  relocate(event_id, Datetime)
 
 ```
 
