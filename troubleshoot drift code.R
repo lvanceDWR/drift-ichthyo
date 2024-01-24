@@ -99,19 +99,18 @@ samp2$MonthAbb <- mymonths[samp2$Month ]
 samp2$Datetime = paste(samp2$Date, samp2$Time)
 samp2$Datetime <- ymd_hm(samp2$Datetime)
 
-
-catch$Time <- as.POSIXct(catch$Time,
-                         format = "%m/%d/%Y %H:%M")
-samp$Date<-as.Date(samp$Date,"%m/%d/%Y")
-samp$`Date/Time` = as.POSIXct(samp$`Date/Time`, 
-                              format = "%m/%d/%Y %H:%M:%S")
-catch2$Date <- as.Date(catch2$Date, "%m/%d/%Y")
-catch2$Time <- strptime(catch2$Time, format = "%H:%M:%S") %>%
-  strftime(catch2$Time, format = "%H:%M:%S")
-catch2$Datetime = paste(catch2$Date, catch2$Time)
-catch2$Datetime <- as.POSIXct(catch2$Datetime, 
-                              format = "%Y-%m-%d %H:%M:%S")
-
-inundation$Date<-as.Date(inundation$Dates,"%m/%d/%Y")
+inundation <- inundation %>%
+  rename(Date = Dates)
+inundation$Date<-as.Date(inundation$Date,"%m/%d/%Y")
 str(phys)
 str(catch)
+
+
+
+#catch and samp do not have date/time columns
+# catch$Time <- as.POSIXct(catch$Time,
+#                          format = "%m/%d/%Y %H:%M")
+# samp$Date<-as.Date(samp$Date,"%m/%d/%Y")
+# samp$`Date/Time` = as.POSIXct(samp$`Date/Time`, 
+#                               format = "%m/%d/%Y %H:%M:%S")
+
