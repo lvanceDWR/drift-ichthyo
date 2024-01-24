@@ -137,8 +137,16 @@ str(catch2)
 
 ```
 
-4. Make changes already identified
+4. Merge data tables that came from Excel, for ease of combining with Access, create eventID
 ```{r}
+
+catch2 <- catch2 %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id)
+
+samp2 <- samp2 %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id)
 
 ```
 
