@@ -20,25 +20,17 @@ inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
 
 
 # Add and change date formats (does this even need to be done for phys??)
-phys$Date<-as.Date(phys$Date,"%m/%d/%Y")
-phys$Year <- year(phys$Date)
-phys$Month <- month(phys$Date)
-phys$MonthAbb <- mymonths[phys$Month ]
-phys$MonthAbb <-ordered(phys$Month,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
-phys$Datetime = paste(phys$Date, phys$Time)
-phys$Datetime <- as.POSIXct(phys$Datetime, 
-                            format = "%Y-%m-%d %H:%M:%S")
+# phys$Date<-as.Date(phys$Date,"%m/%d/%Y")
+# phys$Year <- year(phys$Date)
+# phys$Month <- month(phys$Date)
+# phys$MonthAbb <- mymonths[phys$Month ]
+# phys$MonthAbb <-ordered(phys$Month,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+# phys$Datetime = paste(phys$Date, phys$Time)
+# phys$Datetime <- as.POSIXct(phys$Datetime, 
+#                             format = "%Y-%m-%d %H:%M:%S")
 
 #rename columns and variables for consistency across dataframes, simplify for later work
 #remove unnecessary columns
-
-# catch <- catch %>%
-#   mutate(SamplingID = str_extract(`Sampling number`, "[^/]+")) %>%
-#   rename(Datetime = Time,
-#          TaxonName = Observable,
-#          LifeStage = `Life Stage`) %>%
-#   select(-c(Value, `Sampling number`))
-# catch$SamplingID = as.numeric(catch$SamplingID)
 
 samp <- samp %>% 
   rename(FlowMeterStart = `DriftStartMeter`,
@@ -105,12 +97,39 @@ inundation$Date<-as.Date(inundation$Date,"%m/%d/%Y")
 str(phys)
 str(catch)
 
+#creating eventID for later merging of data from excel and access
+
+#start with data that is from excel - this does have some physical data included - watch for combining with phys data
+catch2 <- catch2 %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id, Datetime)
+
+samp2 <- samp2 %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id, Datetime)
+
+samp_catch2 <- left_join(samp2, catch2) %>%
+  filter(Date < "2023-01-01")
 
 
-#catch and samp do not have date/time columns
-# catch$Time <- as.POSIXct(catch$Time,
-#                          format = "%m/%d/%Y %H:%M")
-# samp$Date<-as.Date(samp$Date,"%m/%d/%Y")
-# samp$`Date/Time` = as.POSIXct(samp$`Date/Time`, 
-#                               format = "%m/%d/%Y %H:%M:%S")
+# Merge datasets for CPUE variables
+samp_catch <- left_join(samp, catch)
+
+
+# Merge physical data
+samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
+  filter(!is.na(Station)) %>%
+  filter(Date < "2020-02-10") 
+notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
+
+check <- samp_catch_phys0 %>%
+  filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
+  filter(is.na(PhysicalDataID))
+
+# For second part 2019, merge phys-samp, then add catch.
+# For the additional data
+phys_samp <- left_join(phys, samp2, by = c("PhysicalDataID")) %>%
+  filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
+  mutate(SamplingID = "N/A") 
+
 
