@@ -110,7 +110,11 @@ samp2 <- samp2 %>%
 
 samp_catch2 <- left_join(samp2, catch2) %>%
   filter(Date < "2023-01-01")
+str(samp_catch2)
 
+samp_catch2$Date <- as.Date(samp_catch2$Date)
+
+#select only up to 2022 for publishing
 
 # Merge datasets for CPUE variables
 samp_catch <- left_join(samp, catch)
@@ -126,10 +130,13 @@ check <- samp_catch_phys0 %>%
   filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
   filter(is.na(PhysicalDataID))
 
-# For second part 2019, merge phys-samp, then add catch.
-# For the additional data
-phys_samp <- left_join(phys, samp2, by = c("PhysicalDataID")) %>%
-  filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
-  mutate(SamplingID = "N/A") 
+samp_catch_phys2 <- left_join(phys, samp_catch2)
+
+#this part not needed anymore because all 2019 added for updated publishing - instead must account for different database
+# # For second part 2019, merge phys-samp, then add catch.
+# # For the additional data
+# phys_samp <- left_join(phys, samp2, by = c("PhysicalDataID")) %>%
+#   filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
+#   mutate(SamplingID = "N/A") 
 
 
