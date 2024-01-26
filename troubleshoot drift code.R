@@ -113,6 +113,9 @@ samp_catch2 <- left_join(samp2, catch2) %>%
 str(samp_catch2)
 
 samp_catch2$Date <- as.Date(samp_catch2$Date)
+samp_catch2$Time <- strptime(samp_catch2$Time, format = "%H:%M", tz = "") %>%
+  strftime(samp_catch2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+str(samp_catch2)
 
 #select only up to 2022 for publishing
 
