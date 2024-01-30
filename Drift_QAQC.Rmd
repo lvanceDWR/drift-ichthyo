@@ -134,12 +134,14 @@ str(catch)
 str(samp)
 str(samp2)
 str(catch2)
+str(inundation)
 
 ```
 
 4. Merge data tables that came from Excel, for ease of combining with Access, create eventID
 ```{r}
 
+#first create event_id
 catch2 <- catch2 %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
   relocate(event_id, Datetime)
@@ -147,6 +149,20 @@ catch2 <- catch2 %>%
 samp2 <- samp2 %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
   relocate(event_id, Datetime)
+
+#join data frames and select for data through end of 2022
+samp_catch2 <- left_join(samp2, catch2) %>%
+  filter(Date < "2023-01-01")
+str(samp_catch2)
+
+#ensure column types match for joining with Access data
+samp_catch2$Date <- as.Date(samp_catch2$Date)
+samp_catch2$Time <- strptime(samp_catch2$Time, format = "%H:%M", tz = "") %>%
+  strftime(samp_catch2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+str(samp_catch2)
+samp_catch2$Time <- hms::as_hms(samp_catch2$Time)
+samp_catch2 <- samp_catch2 %>%
+  mutate(FlowMeterEnd = as.numeric(FlowMeterEnd))
 
 ```
 
