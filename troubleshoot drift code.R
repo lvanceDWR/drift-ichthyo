@@ -140,7 +140,16 @@ check <- samp_catch_phys0 %>%
   filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
   filter(is.na(PhysicalDataID))
 
-samp_catch_phys2 <- left_join(samp_catch2, phys)
+flow <- samp_catch_phys0 %>%
+  filter(!is.na(FlowMeterEnd.y))
+
+samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "Station", "Date", "Time",
+                                                        "Year", "Month", "MonthAbb"))
+
+
+#rename and remove columns from join
+
+
 
 #this part not needed anymore because all 2019 added for updated publishing - instead must account for different database
 # # For second part 2019, merge phys-samp, then add catch.
