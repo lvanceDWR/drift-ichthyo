@@ -96,6 +96,9 @@ inundation <- inundation %>%
 inundation$Date<-as.Date(inundation$Date,"%m/%d/%Y")
 str(phys)
 str(catch)
+str(inundation)
+str(catch2)
+str(samp2)
 
 #creating eventID for later merging of data from excel and access
 
@@ -116,6 +119,10 @@ samp_catch2$Date <- as.Date(samp_catch2$Date)
 samp_catch2$Time <- strptime(samp_catch2$Time, format = "%H:%M", tz = "") %>%
   strftime(samp_catch2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
 str(samp_catch2)
+samp_catch2$Time <- hms::as_hms(samp_catch2$Time)
+samp_catch2 <- samp_catch2 %>%
+  mutate(FlowMeterEnd = as.numeric(FlowMeterEnd))
+str(samp_catch2)
 
 #select only up to 2022 for publishing
 
@@ -133,7 +140,7 @@ check <- samp_catch_phys0 %>%
   filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
   filter(is.na(PhysicalDataID))
 
-samp_catch_phys2 <- left_join(phys, samp_catch2)
+samp_catch_phys2 <- left_join(samp_catch2, phys)
 
 #this part not needed anymore because all 2019 added for updated publishing - instead must account for different database
 # # For second part 2019, merge phys-samp, then add catch.
