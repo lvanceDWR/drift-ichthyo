@@ -164,6 +164,23 @@ samp_catch2$Time <- hms::as_hms(samp_catch2$Time)
 samp_catch2 <- samp_catch2 %>%
   mutate(FlowMeterEnd = as.numeric(FlowMeterEnd))
 
+#combine with phys data in prep to merge with access data before flowmeter values
+#rename some columns, remove duplicate columns
+
+samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "Station", "Date", "Time",
+                                                        "Year", "Month", "MonthAbb")) %>%
+  select(-c("FlowMeterStart.y", "FlowMeterEnd.y", "MeterSetTime", "FlowMeterSpeed", 
+            "Observation Area Name", "Physical Data ID", "Sampling Altered", "ConditionCode")) %>%
+  rename(FlowMeterStart = "FlowMeterStart.x",
+         FlowMeterEnd = "FlowMeterEnd.x",
+         FlowMeterSpeed = "Flow Meter Speed",
+         SetTime = "Set Time",
+         Field_Comments = "Field Comments",
+         SampleVolume = "Sample Volume",
+         SubsampleNumber = "Subsample Number",
+         SlideCount = "Slide Count",
+         ConditionCode = "Condition Code")
+
 ```
 
 
