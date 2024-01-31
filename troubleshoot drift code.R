@@ -144,8 +144,28 @@ flow <- samp_catch_phys0 %>%
   filter(!is.na(FlowMeterSpeed.y))
 
 samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "Station", "Date", "Time",
-                                                        "Year", "Month", "MonthAbb"))
+                                                        "Year", "Month", "MonthAbb")) %>%
+  select(-c("FlowMeterStart.y", "FlowMeterEnd.y", "MeterSetTime", "FlowMeterSpeed", 
+            "Observation Area Name", "Physical Data ID", "Sampling Altered", "ConditionCode")) %>%
+  rename(FlowMeterStart = "FlowMeterStart.x",
+         FlowMeterEnd = "FlowMeterEnd.x",
+         FlowMeterSpeed = "Flow Meter Speed",
+         SetTime = "Set Time",
+         Field_Comments = "Field Comments",
+         SampleVolume = "Sample Volume",
+         SubsampleNumber = "Subsample Number",
+         SlideCount = "Slide Count",
+         ConditionCode = "Condition Code")
 
+# Flow <- samp_catch_phys2 %>%
+#   select(c("event_id", "Datetime", "Station", "FlowMeterStart.x", "FlowMeterEnd.x",
+#            "FlowMeterStart.y", "FlowMeterEnd.y", "Set Time", "MeterSetTime"))
+# 
+# altered <- samp_catch_phys2 %>%
+#   filter(!is.na("SamplingAltered"))
+# 
+# Condcode <- samp_catch_phys2 %>%
+#   select(c("event_id", "Station", "Condition Code", "ConditionCode"))
 
 #rename and remove columns from join
 
@@ -164,11 +184,14 @@ comments <- samp_catch_phys0 %>%
   filter(!is.na(FieldComments.y))
 #need to figure out field comments column
 
-#this part not needed anymore because all 2019 added for updated publishing - instead must account for different database
-# # For second part 2019, merge phys-samp, then add catch.
-# # For the additional data
-# phys_samp <- left_join(phys, samp2, by = c("PhysicalDataID")) %>%
-#   filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
-#   mutate(SamplingID = "N/A") 
+
+#to merge excel with access - use bindrows instead of
+sampcatchphysMerge <- rbind(samp_catch_phys0, phys_samp_catch0) 
+
+# All samplings - remove catch info and find unique entries
+sampUnique <- sampcatchphysMerge %>%
+  select(-c(WeatherCode:Turbidity, Year:Comment_PQC,  LabComments, TaxonName:LifeStage)) %>%
+  unique() %>%
+  arrange(Datetime)
 
 
