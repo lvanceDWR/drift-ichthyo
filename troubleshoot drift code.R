@@ -141,7 +141,7 @@ check <- samp_catch_phys0 %>%
   filter(is.na(PhysicalDataID))
 
 flow <- samp_catch_phys0 %>%
-  filter(!is.na(FlowMeterEnd.y))
+  filter(!is.na(FlowMeterSpeed.y))
 
 samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "Station", "Date", "Time",
                                                         "Year", "Month", "MonthAbb"))
@@ -149,7 +149,20 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
 
 #rename and remove columns from join
 
+samp_catch_phys0 <- samp_catch_phys0 %>%
+  select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
+            ConditionCode.x)) %>%
+  rename(FlowMeterStart = FlowMeterStart.y,
+         FlowMeterEnd = FlowMeterEnd.y,
+         FlowMeterSpeed = FlowMeterSpeed.y,
+         ConditionCode = ConditionCode.y)
 
+condcode <- samp_catch_phys0 %>%
+  filter(!is.na(ConditionCode.y))
+
+comments <- samp_catch_phys0 %>%
+  filter(!is.na(FieldComments.y))
+#need to figure out field comments column
 
 #this part not needed anymore because all 2019 added for updated publishing - instead must account for different database
 # # For second part 2019, merge phys-samp, then add catch.
