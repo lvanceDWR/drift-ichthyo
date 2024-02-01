@@ -126,22 +126,10 @@ str(samp_catch2)
 
 #select only up to 2022 for publishing
 
-# Merge datasets for CPUE variables
-samp_catch <- left_join(samp, catch)
 
 
 # Merge physical data
-samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
-  filter(!is.na(Station)) %>%
-  filter(Date < "2020-02-10") 
-notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
-check <- samp_catch_phys0 %>%
-  filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
-  filter(is.na(PhysicalDataID))
-
-flow <- samp_catch_phys0 %>%
-  filter(!is.na(FlowMeterSpeed.y))
 
 samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "Station", "Date", "Time",
                                                         "Year", "Month", "MonthAbb")) %>%
@@ -155,7 +143,19 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
          SampleVolume = "Sample Volume",
          SubsampleNumber = "Subsample Number",
          SlideCount = "Slide Count",
-         ConditionCode = "Condition Code")
+         ConditionCode = "Condition Code") %>%
+  select(-c(Field_Comments))
+
+comments3 <- samp_catch_phys2 %>%
+  filter(!is.na(Field_Comments))
+
+Comments4 <- samp_catch_phys2 %>%
+  filter(!is.na(FieldComments))
+
+duplicate <- left_join(comments3, Comments4) %>%
+  select("event_id", "Station", "Date", "Field_Comments", "FieldComments")
+#this confirms these two comments columns contain exactly the same comments
+
 
 # Flow <- samp_catch_phys2 %>%
 #   select(c("event_id", "Datetime", "Station", "FlowMeterStart.x", "FlowMeterEnd.x",
@@ -167,22 +167,43 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
 # Condcode <- samp_catch_phys2 %>%
 #   select(c("event_id", "Station", "Condition Code", "ConditionCode"))
 
+# Merge datasets for CPUE variables
+samp_catch <- left_join(samp, catch)
+
 #rename and remove columns from join
+
+samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
+  filter(!is.na(Station)) %>%
+  filter(Date < "2020-02-10") 
+notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
+
+check <- samp_catch_phys0 %>%
+  filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
+  filter(is.na(PhysicalDataID))
+
+flow <- samp_catch_phys0 %>%
+  filter(!is.na(FlowMeterSpeed.y))
 
 samp_catch_phys0 <- samp_catch_phys0 %>%
   select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
-            ConditionCode.x)) %>%
+            ConditionCode.x, FieldComments.x)) %>%
   rename(FlowMeterStart = FlowMeterStart.y,
          FlowMeterEnd = FlowMeterEnd.y,
          FlowMeterSpeed = FlowMeterSpeed.y,
-         ConditionCode = ConditionCode.y)
+         ConditionCode = ConditionCode.y,
+         FieldComments = FieldComments.y)
 
 condcode <- samp_catch_phys0 %>%
   filter(!is.na(ConditionCode.y))
 
 comments <- samp_catch_phys0 %>%
   filter(!is.na(FieldComments.y))
+
+comments2 <- samp_catch_phys0 %>%
+  filter(is.na(FieldComments.x))
 #need to figure out field comments column
+
+combined <- bind_rows(samp_catch_phys0, samp_catch_phys2)
 
 
 #to merge excel with access - use bindrows instead of
