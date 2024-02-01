@@ -745,15 +745,15 @@ grid.arrange(p.temp, p.ec, p.spc, p.secchi, p.turb, p.do, p.pH, ncol = 2)
 
 ### 15. Replace blanks
 ```{r Write file, message = FALSE, warning = FALSE}
-
+#section not used this round of publishing
 # Replace blanks with NA
-empty_as_na <- function(x){
-    if("factor" %in% class(x)) x <- as.character(x) ## since ifelse wont work with factors
-    ifelse(as.character(x)!="", x, NA)
-}
-
-phys_yolo_flag <- phys_yolo_flag %>%
-  mutate_each(list(empty_as_na),5:20)
+# empty_as_na <- function(x){
+#     if("factor" %in% class(x)) x <- as.character(x) ## since ifelse wont work with factors
+#     ifelse(as.character(x)!="", x, NA)
+# }
+# 
+# phys_yolo_flag <- phys_yolo_flag %>%
+#   mutate_each(list(empty_as_na),5:20)
 
 
 ```
