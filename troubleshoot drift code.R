@@ -193,6 +193,8 @@ samp_catch_phys0 <- samp_catch_phys0 %>%
          ConditionCode = ConditionCode.y,
          FieldComments = FieldComments.y)
 
+#check invert taxons and counts ensure none disappeared
+
 condcode <- samp_catch_phys0 %>%
   filter(!is.na(ConditionCode.y))
 
