@@ -191,9 +191,13 @@ samp_catch_phys0 <- samp_catch_phys0 %>%
          FlowMeterEnd = FlowMeterEnd.y,
          FlowMeterSpeed = FlowMeterSpeed.y,
          ConditionCode = ConditionCode.y,
-         FieldComments = FieldComments.y)
+         FieldComments = FieldComments.y,
+         Category = Classification)
 
 #check invert taxons and counts ensure none disappeared
+
+nacount <- samp_catch_phys0 %>%
+  filter(is.na(Count))
 
 condcode <- samp_catch_phys0 %>%
   filter(!is.na(ConditionCode.y))
