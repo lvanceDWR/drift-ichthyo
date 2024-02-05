@@ -211,6 +211,8 @@ comments2 <- samp_catch_phys0 %>%
 
 combined <- bind_rows(samp_catch_phys0, samp_catch_phys2)
 
+nacombined <- combined %>%
+  filter(is.na(Count))
 
 #to merge excel with access - use bindrows instead of
 sampcatchphysMerge <- rbind(samp_catch_phys0, phys_samp_catch0) 
@@ -221,4 +223,9 @@ sampUnique <- sampcatchphysMerge %>%
   unique() %>%
   arrange(Datetime)
 
+sampUnique <- combined %>%
+  unique() %>%
+  arrange(Datetime)
 
+naunique <- sampUnique %>%
+  filter(is.na(Count))
