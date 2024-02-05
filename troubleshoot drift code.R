@@ -126,7 +126,7 @@ str(samp_catch2)
 
 #select only up to 2022 for publishing
 
-
+#25 lines in samp_catch2 have no taxon name - 2021 and 2022 data.
 
 # Merge physical data
 
