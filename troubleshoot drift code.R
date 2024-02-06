@@ -146,14 +146,14 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
          ConditionCode = "Condition Code") %>%
   select(-c(Field_Comments))
 
-comments3 <- samp_catch_phys2 %>%
-  filter(!is.na(Field_Comments))
-
-Comments4 <- samp_catch_phys2 %>%
-  filter(!is.na(FieldComments))
-
-duplicate <- left_join(comments3, Comments4) %>%
-  select("event_id", "Station", "Date", "Field_Comments", "FieldComments")
+# comments3 <- samp_catch_phys2 %>%
+#   filter(!is.na(Field_Comments))
+# 
+# Comments4 <- samp_catch_phys2 %>%
+#   filter(!is.na(FieldComments))
+# 
+# duplicate <- left_join(comments3, Comments4) %>%
+#   select("event_id", "Station", "Date", "Field_Comments", "FieldComments")
 #this confirms these two comments columns contain exactly the same comments
 
 
@@ -177,12 +177,12 @@ samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
   filter(Date < "2020-02-10") 
 notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
-check <- samp_catch_phys0 %>%
-  filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
-  filter(is.na(PhysicalDataID))
-
-flow <- samp_catch_phys0 %>%
-  filter(!is.na(FlowMeterSpeed.y))
+# check <- samp_catch_phys0 %>%
+#   filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
+#   filter(is.na(PhysicalDataID))
+# 
+# flow <- samp_catch_phys0 %>%
+#   filter(!is.na(FlowMeterSpeed.y))
 
 samp_catch_phys0 <- samp_catch_phys0 %>%
   select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
@@ -199,14 +199,14 @@ samp_catch_phys0 <- samp_catch_phys0 %>%
 nacount <- samp_catch_phys0 %>%
   filter(is.na(Count))
 
-condcode <- samp_catch_phys0 %>%
-  filter(!is.na(ConditionCode.y))
-
-comments <- samp_catch_phys0 %>%
-  filter(!is.na(FieldComments.y))
-
-comments2 <- samp_catch_phys0 %>%
-  filter(is.na(FieldComments.x))
+# condcode <- samp_catch_phys0 %>%
+#   filter(!is.na(ConditionCode.y))
+# 
+# comments <- samp_catch_phys0 %>%
+#   filter(!is.na(FieldComments.y))
+# 
+# comments2 <- samp_catch_phys0 %>%
+#   filter(is.na(FieldComments.x))
 #need to figure out field comments column
 
 combined <- bind_rows(samp_catch_phys0, samp_catch_phys2)
