@@ -236,3 +236,20 @@ samp_catch_physMerge <- combined %>%
   left_join(wy, by = "WY") %>%
   select(-c(Index, WYType)) %>%
   mutate(Flowdiff = FlowMeterEnd-FlowMeterStart)
+
+
+sampA <- combined %>%
+  select(-c(WeatherCode:Turbidity, Year:Comment_PQC,  TaxonName:LifeStage)) %>%
+  unique() %>%
+  arrange(Datetime)
+
+lab <- sampA %>%
+  filter(!is.na(lab_comments))
+#only 15 lab comments for all data
+
+SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 )
+SamplingQAQC$Flag_SAMP <-  ""
+SamplingQAQC$Comment_SAMP <-""
+SamplingQAQC$Flag_LAB <- ""
+SamplingQAQC$Comment_LAB <- ""
+today <- today()
