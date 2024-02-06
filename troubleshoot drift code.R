@@ -229,3 +229,10 @@ sampUnique <- combined %>%
 
 naunique <- sampUnique %>%
   filter(is.na(Count))
+
+
+samp_catch_physMerge <- combined %>%
+  mutate(WY = ifelse(Month >9, Year + 1, Year)) %>%
+  left_join(wy, by = "WY") %>%
+  select(-c(Index, WYType)) %>%
+  mutate(Flowdiff = FlowMeterEnd-FlowMeterStart)
