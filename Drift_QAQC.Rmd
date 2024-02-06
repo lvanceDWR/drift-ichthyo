@@ -189,35 +189,32 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
 ```{r merge, message = FALSE, warning = FALSE}
 # Merge datasets for CPUE variables
 # tax <- full_join(inv_tax, inv_tax_2, by = "OrganismID")
-samp_catch <- left_join(samp, catch, by = c("SamplingID", "Station")) %>%
-  rename(Datetime = Datetime.x) %>%
-  select(-c(Datetime.y))
+# Merge datasets for CPUE variables
+samp_catch <- left_join(samp, catch)
 
-# Merge physical data
+#rename and remove columns from join
+
 samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
-  rename(Station = Station.x,
-         Date = Date.x,
-         Time = Time.x,
-         Datetime = Datetime.x) %>%
-  select(-c(Station.y, Date.y, Time.y, Datetime.y)) %>%
- filter(!is.na(Station)) %>%
-  filter(Date < "2019-04-22") 
+  filter(!is.na(Station)) %>%
+  filter(Date < "2020-02-10") 
 notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
-# For second part 2019, merge phys-samp, then add catch.
-# For the additional data
-phys_samp <- left_join(phys, samp2, by = c("PhysicalDataID")) %>%
-  filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
-  mutate(SamplingID = "N/A") 
+#clean up and rename some columns
+samp_catch_phys0 <- samp_catch_phys0 %>%
+  select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
+            ConditionCode.x, FieldComments.x)) %>%
+  rename(FlowMeterStart = FlowMeterStart.y,
+         FlowMeterEnd = FlowMeterEnd.y,
+         FlowMeterSpeed = FlowMeterSpeed.y,
+         ConditionCode = ConditionCode.y,
+         FieldComments = FieldComments.y,
+         Category = Classification)
 
-phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("Datetime", "Date", "Station")) %>%
-    select(c(PhysicalDataID:Comment_PQC, SamplingID, InvertDataID:SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, LabComments, FieldComments, TaxonName, Count, Category, LifeStage))
-
-sampcatchphysMerge <- rbind(samp_catch_phys0, phys_samp_catch0) 
+#Now combine these two files to then continue with qa/qc
+sampcatchphysMerge <- bind_rows(samp_catch_phys0, samp_catch_phys2)
 
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
-  select(-c(WeatherCode:Turbidity, Year:Comment_PQC,  LabComments, TaxonName:LifeStage)) %>%
   unique() %>%
   arrange(Datetime)
 
