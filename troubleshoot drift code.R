@@ -177,6 +177,14 @@ samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
   filter(Date < "2020-02-10") 
 notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
+# For second part 2019, merge phys-samp, then add catch.
+# For the additional data
+phys_samp <- left_join(phys, catch2, by = c("PhysicalDataID")) %>%
+  filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
+  mutate(SamplingID = "N/A") 
+phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("Datetime", "Date", "Station")) %>%
+  select(c(PhysicalDataID:Comment_PQC, SamplingID, InvertDataID:SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, LabComments, FieldComments, TaxonName, Count, Category, LifeStage))
+
 # check <- samp_catch_phys0 %>%
 #   filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
 #   filter(is.na(PhysicalDataID))
@@ -247,7 +255,7 @@ lab <- sampA %>%
   filter(!is.na(lab_comments))
 #only 15 lab comments for all data
 
-SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 )
+SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 | !is.na(lab_comments) )
 SamplingQAQC$Flag_SAMP <-  ""
 SamplingQAQC$Comment_SAMP <-""
 SamplingQAQC$Flag_LAB <- ""
