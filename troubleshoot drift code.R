@@ -78,7 +78,9 @@ mymonths <- c("Jan","Feb","Mar",
 catch2$MonthAbb <- mymonths[catch2$Month ]
 catch2$Datetime = paste(catch2$Date, catch2$Time)
 catch2$Datetime <- ymd_hm(catch2$Datetime)
-
+catch2$Time <- strptime(catch2$Time, format = "%H:%M", tz = "") %>%
+  strftime(catch2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+catch2$Time <- hms::as_hms(catch2$Time)
 
 samp2$Date<-as.Date(samp2$Date,"%m/%d/%Y")
 samp2$Year <- year(samp2$Date)
@@ -90,6 +92,9 @@ mymonths <- c("Jan","Feb","Mar",
 samp2$MonthAbb <- mymonths[samp2$Month ]
 samp2$Datetime = paste(samp2$Date, samp2$Time)
 samp2$Datetime <- ymd_hm(samp2$Datetime)
+samp2$Time <- strptime(samp2$Time, format = "%H:%M", tz = "") %>%
+  strftime(samp2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+samp2$Time <- hms::as_hms(samp2$Time)
 
 inundation <- inundation %>%
   rename(Date = Dates)
@@ -116,10 +121,10 @@ samp_catch2 <- left_join(samp2, catch2) %>%
 str(samp_catch2)
 
 samp_catch2$Date <- as.Date(samp_catch2$Date)
-samp_catch2$Time <- strptime(samp_catch2$Time, format = "%H:%M", tz = "") %>%
-  strftime(samp_catch2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
-str(samp_catch2)
-samp_catch2$Time <- hms::as_hms(samp_catch2$Time)
+# samp_catch2$Time <- strptime(samp_catch2$Time, format = "%H:%M", tz = "") %>%
+#   strftime(samp_catch2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+# str(samp_catch2)
+# samp_catch2$Time <- hms::as_hms(samp_catch2$Time)
 samp_catch2 <- samp_catch2 %>%
   mutate(FlowMeterEnd = as.numeric(FlowMeterEnd))
 str(samp_catch2)
@@ -179,8 +184,8 @@ notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
 # For second part 2019, merge phys-samp, then add catch.
 # For the additional data
-phys_samp <- left_join(phys, catch2, by = c("PhysicalDataID")) %>%
-  filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
+phys_samp <- left_join(phys, catch2) %>%
+  filter(Date > "2019-04-16" & Date < "2020-02-01") %>%
   mutate(SamplingID = "N/A") 
 phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("Datetime", "Date", "Station")) %>%
   select(c(PhysicalDataID:Comment_PQC, SamplingID, InvertDataID:SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, LabComments, FieldComments, TaxonName, Count, Category, LifeStage))
