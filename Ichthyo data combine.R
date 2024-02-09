@@ -33,6 +33,22 @@ library(tidylog)
 
 #importing ich sampling data to clean up for comparison with lab data
 
+# Since ichthyo and drift are done at the same time, the physical data for both is the same
+# utilize the ltphysdata_qaqc for the physical data for ichthyo, then clean up catch data
+
+################# bring in qa/qc physical data #################################
+PhysData <-read_csv("drift data/LT_phys_qc_20240118.csv")
+
+######### Read in Access catch data ###########################################
+
+CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
+Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
+SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
+IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
+
+########## Read in Excel Catch data ###########################################
+
+IchLabData <- read_csv("ichthyo data/IchLabExcelData.csv", skip=1)
 
 ###################### ACCESS DATA ############################################
 
