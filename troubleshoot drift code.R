@@ -184,7 +184,12 @@ notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
 # For second part 2019, merge phys-samp, then add catch.
 # For the additional data
-phys_samp <- left_join(phys, catch2) %>%
+
+catch2019 <- catch2 %>%
+  filter(Date > "2019-04-10" & Date < "2020-02-01")
+
+phys_samp <- left_join(samp_catch_phys0, catch2019, by = c("event_id", "Station", "Date", "Time",
+                                                           "Datetime", "Year", "Month", "MonthAbb")) %>%
   filter(Date > "2019-04-16" & Date < "2020-02-01") %>%
   mutate(SamplingID = "N/A") 
 phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("Datetime", "Date", "Station")) %>%
