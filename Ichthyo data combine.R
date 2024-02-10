@@ -51,12 +51,12 @@ IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 IchLabData <- read_csv("ichthyo data/IchLabExcelData.csv", skip=1)
 
 ###################### ACCESS DATA ############################################
-
-PhysData <- read_csv("drift data/TblPhysicalDataAccess.csv") #physical data is shared with drift & ich, tows done at same time
-CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
-Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
-SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
-IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
+# 
+# PhysData <- read_csv("drift data/TblPhysicalDataAccess.csv") #physical data is shared with drift & ich, tows done at same time
+# CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
+# Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
+# SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
+# IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 #check column types before renaming and adjusting columns
 
@@ -66,15 +66,15 @@ str(SamplingData)
 str(CatchData)
 
 ### now rename columns for consistency/being able to merge data together later
-
-PhysData <- PhysData %>%
-  rename (YSI = 'YSI #',
-          Station = 'Station Code',
-          FieldCheck = "Field Check",
-          FieldEnteredByAccess = 'EnteredBy',
-          FieldQAQCByAccess = "QA/QC'dBy",
-          FieldCommentsAccess = 'Comments')
-View(PhysData)
+# 
+# PhysData <- PhysData %>%
+#   rename (YSI = 'YSI #',
+#           Station = 'Station Code',
+#           FieldCheck = "Field Check",
+#           FieldEnteredByAccess = 'EnteredBy',
+#           FieldQAQCByAccess = "QA/QC'dBy",
+#           FieldCommentsAccess = 'Comments')
+# View(PhysData)
 
 Species <- Species %>%
   rename (SpeciesCode = "Code",
@@ -102,21 +102,21 @@ str(SamplingData)
 str(CatchData)
 
 #create date and time column, put date into correct format
-
-PhysData2 <- mutate(PhysData, Date=mdy(Date),DateTime = ymd_hms(paste(as.character(Date), as.character(Time))))
-View(PhysData2)
+# 
+# PhysData2 <- mutate(PhysData, Date=mdy(Date),DateTime = ymd_hms(paste(as.character(Date), as.character(Time))))
+# View(PhysData2)
 
 ## 8 failed to parse = 8 where date/time was NA in file - keep eye for later
 
 #removing unneeded columns from view of table
 #start meter/end meter refer to zoop tows, not ich, so they can be dropped here
 
-PhysData3 <- PhysData2 %>%
-  select(-c(LightData, DriftData, ZoopsData, `50_ZoopsData`, ChlData,
-            LarvalData, PhytoData, NutrData, Recorder, FieldCheck, Crew,
-            FieldEnteredByAccess, FieldQAQCByAccess, StartMeter, EndMeter,
-            MeterSetTime))
-View(PhysData3)
+# PhysData3 <- PhysData2 %>%
+#   select(-c(LightData, DriftData, ZoopsData, `50_ZoopsData`, ChlData,
+#             LarvalData, PhytoData, NutrData, Recorder, FieldCheck, Crew,
+#             FieldEnteredByAccess, FieldQAQCByAccess, StartMeter, EndMeter,
+#             MeterSetTime))
+# View(PhysData3)
 
 #discovered in 2015 tows were done to determine if channel location created bias in sampling
 # will need to arrange those columns 
