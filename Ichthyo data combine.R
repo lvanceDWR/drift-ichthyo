@@ -131,7 +131,7 @@ View(CatchSpecies)
 
 CatchSpecies2 <- mutate(CatchSpecies, ChannelLocation = case_when(is.na(ChannelLocation) ~ "Center", TRUE ~ ChannelLocation))
 
-IchSample <- left_join(PhysData3, SamplingData, by = "PhysicalDataID")
+IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
 View(IchSample)
 
 # rename columns to help simplify before pivoting
