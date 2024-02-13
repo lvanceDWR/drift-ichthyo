@@ -41,9 +41,46 @@ library(tidylog)
 ```
 
 2. Load data and check variable types
+Note data is in both MS Access and MS Excel
+Physical data is shared between drift and ichthyo since tows are done at the same time and site
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r load, results = FALSE, warning = FALSE, message = FALSE}
+
+################# bring in qa/qc physical data #################################
+PhysData <-read_csv("drift data/LT_phys_qc_20240118.csv")
+
+######### Read in Access catch data ###########################################
+
+CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
+Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
+SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
+IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
+
+########## Read in Excel Catch data ###########################################
+
+IchLabData <- read_csv("ichthyo data/IchLabExcelData.csv", skip=1)
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+3. Rename some columns
+```{r filter, results = FALSE, message = FALSE, warning = FALSE}
+
+Species <- Species %>%
+  rename (SpeciesCode = "Code",
+          CommonName = "Species",
+          ScientificName = "Scientific Name")
+View(Species)
+
+SamplingData <- SamplingData %>%
+  rename (SamplingQAQCByAccess = "QA/QC'dBy",
+          SamplingEnteredByAccess = 'EnteredBy')
+View(SamplingData)
+
+IEPFish <- IEPFish %>%
+  select(-c("...5":"...17"))
+View(IEPFish)
+
+```
+
+
