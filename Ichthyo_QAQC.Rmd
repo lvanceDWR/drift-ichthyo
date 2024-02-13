@@ -1,0 +1,49 @@
+---
+title: "Ichthyo_QAQC"
+author: "Lisa Vance"
+date: "2024-02-13"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+YBFMP Ichtyoplankton Data 1998 - 2022
+
+```{r set-options, echo=FALSE, cache=FALSE}
+
+options(width = 10000)
+```
+
+## Setup
+
+1. Set up and load libraries
+
+```{r setup, results=FALSE, warning = FALSE, message = FALSE}
+
+rm(list=ls(all=TRUE))
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(moderndive)
+library(knitr)
+library(gridExtra)
+library(stringr)
+library(plotly)
+library(viridis)
+library(kableExtra)
+library(lubridate)
+library(readxl)
+library(readr)
+library(anytime)
+library(magrittr)
+library(janitor)
+library(tidylog)
+```
+
+2. Load data and check variable types
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
