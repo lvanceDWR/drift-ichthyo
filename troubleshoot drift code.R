@@ -197,17 +197,19 @@ phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
             "FlowMeterSpeed.x")) %>%
   rename(FlowMeterStart = "FlowMeterStart.y",
          FlowMeterEnd = "FlowMeterEnd.y",
-         FlowMeterSpeed = "FlowMeterSpeed.y")
+         FlowMeterSpeed = "FlowMeterSpeed.y",
+         ConditionCode = "ConditionCode.y")
 
-overlap <- left_join(phys, catch2019)
+# overlap <- left_join(phys, catch2019)
 
 
-phys_samp <- left_join(samp_catch_phys0, catch2019, by = c("event_id", "Station", "Date", "Time",
-                                                           "Datetime", "Year", "Month", "MonthAbb")) %>%
-  filter(Date > "2019-04-16" & Date < "2020-02-01") %>%
-  mutate(SamplingID = "N/A") 
-phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("Datetime", "Date", "Station")) %>%
-  select(c(PhysicalDataID:Comment_PQC, SamplingID, InvertDataID:SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, LabComments, FieldComments, TaxonName, Count, Category, LifeStage))
+# phys_samp <- left_join(samp_catch_phys0, catch2019, by = c("event_id", "Station", "Date", "Time",
+#                                                            "Datetime", "Year", "Month", "MonthAbb")) %>%
+#   filter(Date > "2019-04-16" & Date < "2020-02-01") %>%
+#   mutate(SamplingID = "N/A") 
+
+phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("event_id", "Datetime", "Date", "Station")) %>%
+  select(c("event_id", PhysicalDataID:Comment_PQC, InvertDataID:SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, TaxonName, Count, Category, LifeStage))
 
 # check <- samp_catch_phys0 %>%
 #   filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
