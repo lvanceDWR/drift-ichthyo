@@ -188,6 +188,20 @@ notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 catch2019 <- catch2 %>%
   filter(Date > "2019-04-10" & Date < "2020-02-01")
 
+
+phys2019 <- phys %>%
+  filter(Date > "2018-12-31" & Date < "2022-01-01")
+
+phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
+  select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
+            "FlowMeterSpeed.x")) %>%
+  rename(FlowMeterStart = "FlowMeterStart.y",
+         FlowMeterEnd = "FlowMeterEnd.y",
+         FlowMeterSpeed = "FlowMeterSpeed.y")
+
+overlap <- left_join(phys, catch2019)
+
+
 phys_samp <- left_join(samp_catch_phys0, catch2019, by = c("event_id", "Station", "Date", "Time",
                                                            "Datetime", "Year", "Month", "MonthAbb")) %>%
   filter(Date > "2019-04-16" & Date < "2020-02-01") %>%
