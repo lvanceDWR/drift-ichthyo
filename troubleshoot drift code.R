@@ -182,6 +182,9 @@ samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
   filter(Date < "2020-02-10") 
 notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
+find2019 <- samp_catch_phys0 %>%
+  filter(year(Date) == 2019)
+
 # For second part 2019, merge phys-samp, then add catch.
 # For the additional data
 
