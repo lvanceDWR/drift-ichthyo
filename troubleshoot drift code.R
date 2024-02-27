@@ -204,6 +204,11 @@ phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
          ConditionCode = "ConditionCode.y")
 
 gap <- left_join(phys_samp, catch2019)
+#seems to take care of missing 2019 catch data...next, how to combine? 
+
+#bind with the other two df to create full catch data? make sure to not duplicate
+# reference ich code?
+
 
 # overlap <- left_join(phys, catch2019)
 
