@@ -203,6 +203,8 @@ phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
          FlowMeterSpeed = "FlowMeterSpeed.y",
          ConditionCode = "ConditionCode.y")
 
+gap <- left_join(phys_samp, catch2019)
+
 # overlap <- left_join(phys, catch2019)
 
 
