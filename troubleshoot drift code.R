@@ -182,6 +182,11 @@ samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
   filter(Date < "2020-02-10") 
 notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
+
+samp_catch_phys1 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
+  filter(!is.na(Station)) %>%
+  filter(Date < "2019-04-22")
+
 find2019 <- samp_catch_phys0 %>%
   filter(year(Date) == 2019)
 
