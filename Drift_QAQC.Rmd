@@ -193,25 +193,48 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
 samp_catch <- left_join(samp, catch)
 
 #rename and remove columns from join
-# 02-10-2020 onward was entered into Excel, not Access
+# 04-22-2019 onward was entered into Excel, not Access
 samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
   filter(!is.na(Station)) %>%
-  filter(Date < "2020-02-10") 
+  filter(Date < "2019-04-22") 
 notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
 #clean up and rename some columns
 samp_catch_phys0 <- samp_catch_phys0 %>%
-  select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
-            ConditionCode.x, FieldComments.x)) %>%
-  rename(FlowMeterStart = FlowMeterStart.y,
-         FlowMeterEnd = FlowMeterEnd.y,
-         FlowMeterSpeed = FlowMeterSpeed.y,
-         ConditionCode = ConditionCode.y,
-         FieldComments = FieldComments.y,
-         Category = Classification)
+  select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
+            "FlowMeterSpeed.x")) %>%
+  rename(FlowMeterStart = "FlowMeterStart.y",
+         FlowMeterEnd = "FlowMeterEnd.y",
+         FlowMeterSpeed = "FlowMeterSpeed.y",
+         ConditionCode = "ConditionCode.y",
+         FieldComments_Acc = "FieldComments.x",
+         FieldComments_Samp = "FieldComments.y")
+
+# For second part 2019, merge phys-samp, then add catch.
+# For the additional data
+
+catch2019 <- catch2 %>%
+  filter(Date > "2019-04-10" & Date < "2020-02-01")
+
+
+phys2019 <- phys %>%
+  filter(Date > "2018-12-31" & Date < "2020-01-01")
+
+phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
+  select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
+            "FlowMeterSpeed.x")) %>%
+  rename(FlowMeterStart = "FlowMeterStart.y",
+         FlowMeterEnd = "FlowMeterEnd.y",
+         FlowMeterSpeed = "FlowMeterSpeed.y",
+         ConditionCode = "ConditionCode.y")
+
+gap <- left_join(phys_samp, catch2019)
+
+#combine the 2019 data with the rest of the access data
+samp_catch_phys <- bind_rows(samp_catch_phys0, gap)
 
 #Now combine these two files to then continue with qa/qc
-sampcatchphysMerge <- bind_rows(samp_catch_phys0, samp_catch_phys2)
+sampcatchphysMerge <- bind_rows(samp_catch_phys, samp_catch_phys2)
 
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
