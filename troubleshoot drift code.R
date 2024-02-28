@@ -151,6 +151,9 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
          ConditionCode = "Condition Code") %>%
   select(-c(Field_Comments))
 
+
+#number of rows expanded a lot due to duplicates - find a way to manage this
+
 # comments3 <- samp_catch_phys2 %>%
 #   filter(!is.na(Field_Comments))
 # 
