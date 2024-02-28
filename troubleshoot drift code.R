@@ -214,10 +214,10 @@ phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
 gap <- left_join(phys_samp, catch2019)
 #seems to take care of missing 2019 catch data...next, how to combine? 
 
-checkcol <- samp_catch_phys0 %>%
-  select(c(event_id, Date, Time, PhysicalDataID, Station, FlowMeterStart.x, FlowMeterStart.y,
-           FlowMeterEnd.x, FlowMeterEnd.y, FlowMeterSpeed.x, FlowMeterSpeed.y, ConditionCode.x,
-           ConditionCode.y))
+# checkcol <- samp_catch_phys0 %>%
+#   select(c(event_id, Date, Time, PhysicalDataID, Station, FlowMeterStart.x, FlowMeterStart.y,
+#            FlowMeterEnd.x, FlowMeterEnd.y, FlowMeterSpeed.x, FlowMeterSpeed.y, ConditionCode.x,
+#            ConditionCode.y))
 
 samp_catch_phys0 <- samp_catch_phys0 %>%
   select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
@@ -233,16 +233,16 @@ samp_catch_phys0 <- samp_catch_phys0 %>%
 samp_catch_phys <- bind_rows(samp_catch_phys0, gap)
 
 #check duplicate columns
-
-comments1 <- samp_catch_phys %>%
-  filter(!is.na(FieldComments.x))
-
-comments2 <- samp_catch_phys %>%
-  filter(!is.na(FieldComments.y))
-
-condcode <- samp_catch_phys %>%
-  filter(!is.na(ConditionCode)) %>%
-  select(c(event_id, Date, ConditionCode.x, ConditionCode.y, ConditionCode))
+# 
+# comments1 <- samp_catch_phys %>%
+#   filter(!is.na(FieldComments.x))
+# 
+# comments2 <- samp_catch_phys %>%
+#   filter(!is.na(FieldComments.y))
+# 
+# condcode <- samp_catch_phys %>%
+#   filter(!is.na(ConditionCode)) %>%
+#   select(c(event_id, Date, ConditionCode.x, ConditionCode.y, ConditionCode))
 
 #bind with the other two df to create full catch data? make sure to not duplicate
 # reference ich code?
@@ -265,28 +265,28 @@ phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("event_id", "Datetime", 
 # 
 # flow <- samp_catch_phys0 %>%
 #   filter(!is.na(FlowMeterSpeed.y))
-
-samp_catch_phys3 <- samp_catch_phys %>%
-  select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
-            ConditionCode.x, FieldComments.x)) %>%
-  rename(FlowMeterStart = FlowMeterStart.y,
-         FlowMeterEnd = FlowMeterEnd.y,
-         FlowMeterSpeed = FlowMeterSpeed.y,
-         ConditionCode = ConditionCode.y,
-         FieldComments = FieldComments.y,
-         Category = Classification)
-
-samp_catch_phys3 <- samp_catch_phys %>%
-  select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
-            ConditionCode.x, FieldComments.x))
-
-samp_catch_phys3 <- samp_catch_phys3 %>%
-  rename(FlowMeterStarta = FlowMeterStart.y,
-         FlowMeterEnda = FlowMeterEnd.y,
-         FlowMeterSpeeda = FlowMeterSpeed.y,
-         ConditionCodea = ConditionCode.y,
-         FieldComments = FieldComments.y,
-         Categoryx = Classification)
+# 
+# samp_catch_phys3 <- samp_catch_phys %>%
+#   select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
+#             ConditionCode.x, FieldComments.x)) %>%
+#   rename(FlowMeterStart = FlowMeterStart.y,
+#          FlowMeterEnd = FlowMeterEnd.y,
+#          FlowMeterSpeed = FlowMeterSpeed.y,
+#          ConditionCode = ConditionCode.y,
+#          FieldComments = FieldComments.y,
+#          Category = Classification)
+# 
+# samp_catch_phys3 <- samp_catch_phys %>%
+#   select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
+#             ConditionCode.x, FieldComments.x))
+# 
+# samp_catch_phys3 <- samp_catch_phys3 %>%
+#   rename(FlowMeterStarta = FlowMeterStart.y,
+#          FlowMeterEnda = FlowMeterEnd.y,
+#          FlowMeterSpeeda = FlowMeterSpeed.y,
+#          ConditionCodea = ConditionCode.y,
+#          FieldComments = FieldComments.y,
+#          Categoryx = Classification)
 
 
 #check invert taxons and counts ensure none disappeared
