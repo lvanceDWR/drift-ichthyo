@@ -304,13 +304,18 @@ nacount <- samp_catch_phys0 %>%
 #   filter(is.na(FieldComments.x))
 #need to figure out field comments column
 
-combined <- bind_rows(samp_catch_phys0, samp_catch_phys2)
+sampcatchphysMerge <- bind_rows(samp_catch_phys0, samp_catch_phys2)
 
-nacombined <- combined %>%
+nacombined <- sampcatchphysMerge %>%
   filter(is.na(Count))
 
 #to merge excel with access - use bindrows instead of
 sampcatchphysMerge <- rbind(samp_catch_phys0, phys_samp_catch0) 
+
+#check various comments columns, find solution for number of columns
+
+allcomments <- sampcatchphysMerge %>%
+  select(c())
 
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
