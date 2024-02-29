@@ -47,7 +47,8 @@ catch2 <- catch2 %>%
          Time = `Sampling Event Time`,
          Station = `Sampling Area Number`,
          SAMCode = `Sampling Event Number`,
-         SampleID = `Sample ID`) %>%
+         SampleID = `Sample ID`,
+         LabComments = lab_comments) %>%
   select(-c(`Measuring program short name`, `Observation Type Short Name`,
             SAMCode))
 
@@ -129,6 +130,9 @@ samp_catch2 <- samp_catch2 %>%
   mutate(FlowMeterEnd = as.numeric(FlowMeterEnd))
 str(samp_catch2)
 
+comments1 <- samp_catch2 %>%
+  filter(!is.na(`Field Comments`))
+
 #select only up to 2022 for publishing
 
 #25 lines in samp_catch2 have no taxon name - 2021 and 2022 data.
@@ -201,7 +205,8 @@ catch2019 <- catch2 %>%
 
 
 phys2019 <- phys %>%
-  filter(Date > "2018-12-31" & Date < "2020-01-01")
+  filter(Date > "2018-12-31" & Date < "2020-01-01") %>%
+  select(-c(FieldComments))
 
 phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
   select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
@@ -213,6 +218,10 @@ phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
 
 gap <- left_join(phys_samp, catch2019)
 #seems to take care of missing 2019 catch data...next, how to combine? 
+
+# checkgap <- gap %>%
+#   filter(!is.na(FieldComments))
+#comments not lost
 
 # checkcol <- samp_catch_phys0 %>%
 #   select(c(event_id, Date, Time, PhysicalDataID, Station, FlowMeterStart.x, FlowMeterStart.y,
@@ -315,7 +324,24 @@ sampcatchphysMerge <- rbind(samp_catch_phys0, phys_samp_catch0)
 #check various comments columns, find solution for number of columns
 
 allcomments <- sampcatchphysMerge %>%
-  select(c())
+  select(c(event_id, Date, Time, Station, FieldComments_WQ, FieldComments_Acc, FieldComments_Samp,
+           FieldComments, Comment_PQC, Flag_PQC))
+
+anyAcc <- allcomments %>%
+  filter(is.na(FieldComments_Acc))
+#this column can be removed
+
+anyWQ <- allcomments %>%
+  filter(!is.na(FieldComments_WQ))
+
+anySamp <- allcomments %>%
+  filter(!is.na(FieldComments_Samp))
+
+anyNA <- allcomments %>%
+  filter(!is.na(FieldComments))
+
+field <- phys %>%
+  filter(!is.na(FieldComments))
 
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
