@@ -288,13 +288,13 @@ samp_catch_physMerge <- sampcatchphysMerge %>%
 * This part is manual. Think about how to make this codeable, change our condition code flags or add a flag as part of data entry? 
 
 ```{r}
-SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 )
+SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 | !is.na(LabComments))
 SamplingQAQC$Flag_SAMP <-  ""
 SamplingQAQC$Comment_SAMP <-""
 SamplingQAQC$Flag_LAB <- ""
 SamplingQAQC$Comment_LAB <- ""
 today <- today()
-#write.csv(SamplingQAQC, paste("R_write/Drift/SamplingQAQC_", today, ".csv"))
+write.csv(SamplingQAQC, paste("R_write/SamplingQAQC_", today, ".csv"))
 
 ```
 
