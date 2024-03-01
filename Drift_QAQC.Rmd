@@ -67,7 +67,8 @@ catch2 <- catch2 %>%
          Time = `Sampling Event Time`,
          Station = `Sampling Area Number`,
          SAMCode = `Sampling Event Number`,
-         SampleID = `Sample ID`) %>%
+         SampleID = `Sample ID`,
+         LabComments = lab_comments) %>%
   select(-c(`Measuring program short name`, `Observation Type Short Name`,
             SAMCode))
 
@@ -202,13 +203,12 @@ notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 #clean up and rename some columns
 samp_catch_phys0 <- samp_catch_phys0 %>%
   select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
-            "FlowMeterSpeed.x")) %>%
+            "FlowMeterSpeed.x", "FieldComments.x")) %>%
   rename(FlowMeterStart = "FlowMeterStart.y",
          FlowMeterEnd = "FlowMeterEnd.y",
          FlowMeterSpeed = "FlowMeterSpeed.y",
          ConditionCode = "ConditionCode.y",
-         FieldComments_Acc = "FieldComments.x",
-         FieldComments_Samp = "FieldComments.y")
+         FieldComments = "FieldComments.y")
 
 # For second part 2019, merge phys-samp, then add catch.
 # For the additional data
@@ -216,9 +216,10 @@ samp_catch_phys0 <- samp_catch_phys0 %>%
 catch2019 <- catch2 %>%
   filter(Date > "2019-04-10" & Date < "2020-02-01")
 
-
 phys2019 <- phys %>%
-  filter(Date > "2018-12-31" & Date < "2020-01-01")
+  filter(Date > "2018-12-31" & Date < "2020-01-01") %>%
+  select(-c(FieldComments))
+#fieldcomments removed for 2019 since all NA and the comments are in a diff comments column
 
 phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
   select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
