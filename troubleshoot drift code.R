@@ -219,6 +219,9 @@ phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
 gap <- left_join(phys_samp, catch2019)
 #seems to take care of missing 2019 catch data...next, how to combine? 
 
+checksampphys <- samp_catch_phys0 %>%
+  filter(!is.na(FieldComments.y))
+
 # checkgap <- gap %>%
 #   filter(!is.na(FieldComments))
 #comments not lost
@@ -230,13 +233,12 @@ gap <- left_join(phys_samp, catch2019)
 
 samp_catch_phys0 <- samp_catch_phys0 %>%
   select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
-            "FlowMeterSpeed.x")) %>%
+            "FlowMeterSpeed.x", "FieldComments.x")) %>%
   rename(FlowMeterStart = "FlowMeterStart.y",
          FlowMeterEnd = "FlowMeterEnd.y",
          FlowMeterSpeed = "FlowMeterSpeed.y",
          ConditionCode = "ConditionCode.y",
-         FieldComments_Acc = "FieldComments.x",
-         FieldComments_Samp = "FieldComments.y")
+         FieldComments = "FieldComments.y")
 
 
 samp_catch_phys <- bind_rows(samp_catch_phys0, gap)
@@ -342,6 +344,14 @@ anyNA <- allcomments %>%
 
 field <- phys %>%
   filter(!is.na(FieldComments))
+
+field2 <- phys %>%
+  filter(is.na(FieldComments))
+
+sampcom <- samp %>%
+  filter(!is.na(FieldComments))
+
+fieldsamp <- left_join(field, sampcom, by = "PhysicalDataID")
 
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
