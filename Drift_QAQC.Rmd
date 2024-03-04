@@ -286,6 +286,7 @@ samp_catch_physMerge <- sampcatchphysMerge %>%
     * Leave blank if no issues
 
 * This part is manual. Think about how to make this codeable, change our condition code flags or add a flag as part of data entry? 
+* The following section creates blank columns before creating the csv to manually filter through comments and add appropriate notation before reading the file back in at step 12
 
 ```{r}
 SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 | !is.na(LabComments))
