@@ -194,8 +194,8 @@ samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
   filter(!is.na(Station)) %>%
   filter(Date < "2019-04-22")
 
-find2019 <- samp_catch_phys0 %>%
-  filter(year(Date) == 2019)
+# find2019 <- samp_catch_phys0 %>%
+#   filter(year(Date) == 2019)
 
 # For second part 2019, merge phys-samp, then add catch.
 # For the additional data
@@ -241,7 +241,8 @@ samp_catch_phys0 <- samp_catch_phys0 %>%
          FieldComments = "FieldComments.y")
 
 
-samp_catch_phys <- bind_rows(samp_catch_phys0, gap)
+samp_catch_phys <- bind_rows(samp_catch_phys0, gap) %>%
+  relocate(event_id, Datetime)
 
 #check duplicate columns
 # 
@@ -267,8 +268,8 @@ samp_catch_phys <- bind_rows(samp_catch_phys0, gap)
 #   filter(Date > "2019-04-16" & Date < "2020-02-01") %>%
 #   mutate(SamplingID = "N/A") 
 
-phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("event_id", "Datetime", "Date", "Station")) %>%
-  select(c("event_id", PhysicalDataID:Comment_PQC, InvertDataID:SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, TaxonName, Count, Category, LifeStage))
+# phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("event_id", "Datetime", "Date", "Station")) %>%
+#   select(c("event_id", PhysicalDataID:Comment_PQC, InvertDataID:SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, TaxonName, Count, Category, LifeStage))
 
 # check <- samp_catch_phys0 %>%
 #   filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
@@ -315,7 +316,8 @@ nacount <- samp_catch_phys0 %>%
 #   filter(is.na(FieldComments.x))
 #need to figure out field comments column
 
-sampcatchphysMerge <- bind_rows(samp_catch_phys0, samp_catch_phys2)
+sampcatchphysMerge <- bind_rows(samp_catch_phys0, samp_catch_phys2) %>%
+  relocate(event_id, Datetime)
 
 nacombined <- sampcatchphysMerge %>%
   filter(is.na(Count))

@@ -236,7 +236,8 @@ gap <- left_join(phys_samp, catch2019)
 samp_catch_phys <- bind_rows(samp_catch_phys0, gap)
 
 #Now combine these two files to then continue with qa/qc
-sampcatchphysMerge <- bind_rows(samp_catch_phys, samp_catch_phys2)
+sampcatchphysMerge <- bind_rows(samp_catch_phys, samp_catch_phys2) %>%
+  relocate(event_id, Datetime)
 
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
