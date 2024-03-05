@@ -327,33 +327,33 @@ sampcatchphysMerge <- rbind(samp_catch_phys0, phys_samp_catch0)
 
 #check various comments columns, find solution for number of columns
 
-allcomments <- sampcatchphysMerge %>%
-  select(c(event_id, Date, Time, Station, FieldComments_WQ, FieldComments_Acc, FieldComments_Samp,
-           FieldComments, Comment_PQC, Flag_PQC))
-
-anyAcc <- allcomments %>%
-  filter(is.na(FieldComments_Acc))
-#this column can be removed
-
-anyWQ <- allcomments %>%
-  filter(!is.na(FieldComments_WQ))
-
-anySamp <- allcomments %>%
-  filter(!is.na(FieldComments_Samp))
-
-anyNA <- allcomments %>%
-  filter(!is.na(FieldComments))
-
-field <- phys %>%
-  filter(!is.na(FieldComments))
-
-field2 <- phys %>%
-  filter(is.na(FieldComments))
-
-sampcom <- samp %>%
-  filter(!is.na(FieldComments))
-
-fieldsamp <- left_join(field, sampcom, by = "PhysicalDataID")
+# allcomments <- sampcatchphysMerge %>%
+#   select(c(event_id, Date, Time, Station, FieldComments_WQ, FieldComments_Acc, FieldComments_Samp,
+#            FieldComments, Comment_PQC, Flag_PQC))
+# 
+# anyAcc <- allcomments %>%
+#   filter(is.na(FieldComments_Acc))
+# #this column can be removed
+# 
+# anyWQ <- allcomments %>%
+#   filter(!is.na(FieldComments_WQ))
+# 
+# anySamp <- allcomments %>%
+#   filter(!is.na(FieldComments_Samp))
+# 
+# anyNA <- allcomments %>%
+#   filter(!is.na(FieldComments))
+# 
+# field <- phys %>%
+#   filter(!is.na(FieldComments))
+# 
+# field2 <- phys %>%
+#   filter(is.na(FieldComments))
+# 
+# sampcom <- samp %>%
+#   filter(!is.na(FieldComments))
+# 
+# fieldsamp <- left_join(field, sampcom, by = "PhysicalDataID")
 
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
