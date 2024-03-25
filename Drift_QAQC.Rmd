@@ -343,10 +343,12 @@ inundation2 <- inundation %>%
 # Plot - only inundation events that correspond with sampling date
 inplot1 <- ggplot(inundation_flow) + 
   geom_point(aes(x = Date, y = Flowdiff)) + 
-  geom_col(aes(x = Date, y = Inundation_n), fill = "blue", size = 2) + 
+  geom_col(aes(x = Date, y = Inundation_n), fill = "blue", linewidth = 2) + 
   labs(title = "Flowdiff with Inundation events corresponding with sample dates") +
   facet_grid(Station~.) +
   theme_bw()
+
+ggplotly(inplot1)
 
 # Plot - All inundation events
 inplot2 <- ggplot() +
@@ -354,6 +356,7 @@ inplot2 <- ggplot() +
   labs(title = "Flowdiff with all Inundation") +
   geom_col(data = inundation2, aes(x = Date, y = Inundation_n), fill = 
                  "blue", alpha = 0.6) + theme_bw()
+ggplotly(inplot2)
 
 inplot3 <- ggplot() +
   geom_point(data = inundation_flow, aes(x = Date, y = Flowdiff_s)) +
