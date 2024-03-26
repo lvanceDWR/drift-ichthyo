@@ -413,17 +413,17 @@ grid.arrange(FlowPoint, FlowPoint2)
 # difference between 999,999 and 999,xxx then add the 000xxx
 check <- samp_catch_phys %>% filter(Flowdiff < 0)
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$SamplingID==47736] <- 573926
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$SamplingID==47736] <- 581200
-samp_catch_phys$Flowdiff[samp_catch_phys$SamplingID==47736] <- 581200-573926
+samp_catch_phys$FlowMeterStart[samp_catch_phys$PhysicalDataID==1727] <- 573926
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$PhysicalDataID==1727] <- 581200
+samp_catch_phys$Flowdiff[samp_catch_phys$PhysicalDataID==1727] <- 581200-573926
 
 samp_catch_phys$FlowMeterStart[samp_catch_phys$InvertDataID==978] <- 788767
 samp_catch_phys$FlowMeterEnd[samp_catch_phys$InvertDataID==978] <- 	795100
 samp_catch_phys$Flowdiff[samp_catch_phys$InvertDataID==978] <- 795100-788767
 
-samp3$FlowMeterStart[samp3$SamplingID==47736] <- 573926
-samp3$FlowMeterEnd[samp3$SamplingID==47736] <- 581200
-samp3$Flowdiff[samp3$SamplingID==47736] <- 581200-573926
+samp3$FlowMeterStart[samp3$PhysicalDataID==1727] <- 573926
+samp3$FlowMeterEnd[samp3$PhysicalDataID==1727] <- 581200
+samp3$Flowdiff[samp3$PhysicalDataID==1727] <- 581200-573926
 
 samp3$FlowMeterStart[samp3$InvertDataID==978] <- 788767
 samp3$FlowMeterEnd[samp3$InvertDataID==978] <- 	795100
