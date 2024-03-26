@@ -409,6 +409,8 @@ grid.arrange(FlowPoint, FlowPoint2)
 # Change known incorrect values
 # Change FlowMeterStart and FlowMeterEnd, Recalculate Flowdiff
 # SamplingID = 47736 Switched FlowMeterStart and FlowMeterEnd 
+#flowmeter maxes out at 999,999 then starts over at 0. For any values where value is 999,xxx and 000,xxx, find
+# difference between 999,999 and 999,xxx then add the 000xxx
 check <- samp_catch_phys %>% filter(Flowdiff < 0)
 
 samp_catch_phys$FlowMeterStart[samp_catch_phys$SamplingID==47736] <- 573926
