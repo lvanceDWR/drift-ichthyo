@@ -421,6 +421,16 @@ samp_catch_phys$FlowMeterStart[samp_catch_phys$InvertDataID==978] <- 788767
 samp_catch_phys$FlowMeterEnd[samp_catch_phys$InvertDataID==978] <- 	795100
 samp_catch_phys$Flowdiff[samp_catch_phys$InvertDataID==978] <- 795100-788767
 
+samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2020-11-30 10:13:00"] <- 598353
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2020-11-30 10:13:00"] <- 603427
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2020-11-30 10:13:00"] <- 603427-598353
+
+samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTDE_2021-04-27 09:33:00"]<- 987030
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTDE_2021-04-27 09:33:00"]<- 992157
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTDE_2021-04-27 09:33:00"]<- 992157-987030
+
+#fix the same flow meter values in samp3
+
 samp3$FlowMeterStart[samp3$PhysicalDataID==1727] <- 573926
 samp3$FlowMeterEnd[samp3$PhysicalDataID==1727] <- 581200
 samp3$Flowdiff[samp3$PhysicalDataID==1727] <- 581200-573926
@@ -428,6 +438,14 @@ samp3$Flowdiff[samp3$PhysicalDataID==1727] <- 581200-573926
 samp3$FlowMeterStart[samp3$InvertDataID==978] <- 788767
 samp3$FlowMeterEnd[samp3$InvertDataID==978] <- 	795100
 samp3$Flowdiff[samp3$InvertDataID==978] <- 795100-788767
+
+samp3$FlowMeterStart[samp3$event_id=="SHR_2020-11-30 10:13:00"] <- 598353
+samp3$FlowMeterEnd[samp3$event_id=="SHR_2020-11-30 10:13:00"] <- 603427
+samp3$Flowdiff[samp3$event_id== "SHR_2020-11-30 10:13:00"] <- 603427-598353
+
+samp3$FlowMeterStart[samp3$event_id=="STTDE_2021-04-27 09:33:00"]<- 987030
+samp3$FlowMeterEnd[samp3$event_id=="STTDE_2021-04-27 09:33:00"]<- 992157
+samp3$Flowdiff[samp3$event_id=="STTDE_2021-04-27 09:33:00"]<- 992157-987030
 
 ```
 
