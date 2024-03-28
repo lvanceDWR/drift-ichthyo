@@ -372,8 +372,9 @@ inundation4 <- inundation %>%
   mutate(Inundation2 = ifelse(lead(Inundation, 10) == "TRUE", "TRUE", Inundation)) %>%
   select(c(Date, Month:Inundation2))
 
-samp_catch_phys <- left_join(samp_catch_physMerge, inundation4)
-
+samp_catch_phys <- left_join(samp_catch_physMerge, inundation4)%>%
+  select(-SampleID)
+#move removing sampleID to beginning for next publishing update
 ```
 
 14. Look at distribution of flowmeter values
@@ -425,9 +426,30 @@ samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2020-11-30 10:13:0
 samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2020-11-30 10:13:00"] <- 603427
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2020-11-30 10:13:00"] <- 603427-598353
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTDE_2021-04-27 09:33:00"]<- 987030
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTDE_2021-04-27 09:33:00"]<- 992157
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTDE_2021-04-27 09:33:00"]<- 992157-987030
+samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-04-27 09:33:00"]<- 987030
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-04-27 09:33:00"]<- 992157
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-04-27 09:33:00"]<- 992157-987030
+
+samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-05-24 09:44:00"]<-962445
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-05-24 09:44:00"]<-974411
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-05-24 09:44:00"]<-974411-962445
+
+samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-05-25 09:16:00"]<-957174
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-05-25 09:16:00"]<-961755
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-05-25 09:16:00"]<-961755-957174
+
+samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-06-07 09:02:00"]<-946267
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-06-07 09:02:00"]<-957000
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-06-07 09:02:00"]<-957000-946267
+
+samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-06-09 09:37:00"]<-945753
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-06-09 09:37:00"]<-946108
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-06-09 09:37:00"]<-946108-945753
+
+samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-06-21 08:58:00"]<-934553
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-06-21 08:58:00"]<-945578
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-06-21 08:58:00"]<-945578-934553
+
 
 #fix the same flow meter values in samp3
 
@@ -446,6 +468,26 @@ samp3$Flowdiff[samp3$event_id== "SHR_2020-11-30 10:13:00"] <- 603427-598353
 samp3$FlowMeterStart[samp3$event_id=="STTDE_2021-04-27 09:33:00"]<- 987030
 samp3$FlowMeterEnd[samp3$event_id=="STTDE_2021-04-27 09:33:00"]<- 992157
 samp3$Flowdiff[samp3$event_id=="STTDE_2021-04-27 09:33:00"]<- 992157-987030
+
+samp3$FlowMeterStart[samp3$event_id=="SHR_2021-05-24 09:44:00"]<-962445
+samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-05-24 09:44:00"]<-974411
+samp3$Flowdiff[samp3$event_id=="SHR_2021-05-24 09:44:00"]<-974411-962445
+
+samp3$FlowMeterStart[samp3$event_id=="STTD_2021-05-25 09:16:00"]<-957174
+samp3$FlowMeterEnd[samp3s$event_id=="STTD_2021-05-25 09:16:00"]<-961755
+samp3$Flowdiff[samp3$event_id=="STTD_2021-05-25 09:16:00"]<-961755-957174
+
+samp3$FlowMeterStart[samp3$event_id=="SHR_2021-06-07 09:02:00"]<-946267
+samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-06-07 09:02:00"]<-957000
+samp3$Flowdiff[samp3$event_id=="SHR_2021-06-07 09:02:00"]<-957000-946267
+
+samp3$FlowMeterStart[samp3$event_id=="STTD_2021-06-09 09:37:00"]<-945753
+samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-06-09 09:37:00"]<-946108
+samp3$Flowdiff[samp3$event_id=="STTD_2021-06-09 09:37:00"]<-946108-945753
+
+samp3$FlowMeterStart[samp3$event_id=="SHR_2021-06-21 08:58:00"]<-934553
+samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-06-21 08:58:00"]<-945578
+samp3$Flowdiff[samp3$event_id=="SHR_2021-06-21 08:58:00"]<-945578-934553
 
 ```
 
