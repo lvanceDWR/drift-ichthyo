@@ -546,9 +546,9 @@ samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2022-01-24 12:33:
 samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2022-01-24 12:33:00"]<-724020
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2022-01-24 12:33:00"]<-724020-720225  
   
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id==""]<-
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id==""]<-
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id==""]<-   
+samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2022-02-08 09:38:00"]<-703484
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2022-02-08 09:38:00"]<-708021
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2022-02-08 09:38:00"]<-708021-703484
   
 samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id==""]<-
 samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id==""]<-
@@ -704,7 +704,9 @@ samp3$FlowMeterStart[samp3$event_id=="STTD_2022-01-24 12:33:00"]<-720225
 samp3$FlowMeterEnd[samp3$event_id=="STTD_2022-01-24 12:33:00"]<-724020
 samp3$Flowdiff[samp3$event_id=="STTD_2022-01-24 12:33:00"]<-724020-720225
 
-
+samp3$FlowMeterStart[samp3$event_id=="SHR_2022-02-08 09:38:00"]<-703484
+samp3$FlowMeterEnd[samp3$event_id=="SHR_2022-02-08 09:38:00"]<-708021
+samp3$Flowdiff[samp3$event_id=="SHR_2022-02-08 09:38:00"]<-708021-703484
 
 
 
