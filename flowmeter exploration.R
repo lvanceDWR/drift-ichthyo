@@ -2,7 +2,7 @@
 
 
 
-
+field_dat_50$flowdiff <- abs(field_dat_50$x50_zoop_start_meter- field_dat_50$x50_zoop_end_meter)
 
 
 
