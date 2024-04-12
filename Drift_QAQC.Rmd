@@ -410,6 +410,7 @@ grid.arrange(FlowPoint, FlowPoint2)
 # Change known incorrect values
 # Change FlowMeterStart and FlowMeterEnd, Recalculate Flowdiff
 # SamplingID = 47736 Switched FlowMeterStart and FlowMeterEnd 
+#account for different rotors spinning different directions by using absolute value for flowdiff
 #flowmeter maxes out at 999,999 then starts over at 0. For any values where value is 999,xxx and 000,xxx, find
 # difference between 999,999 and 999,xxx then add the 000xxx (SHR_2022-09-06 07:29:00)
 check <- samp_catch_phys %>% filter(Flowdiff < 0)
@@ -422,163 +423,152 @@ samp_catch_phys$FlowMeterStart[samp_catch_phys$InvertDataID==978] <- 788767
 samp_catch_phys$FlowMeterEnd[samp_catch_phys$InvertDataID==978] <- 	795100
 samp_catch_phys$Flowdiff[samp_catch_phys$InvertDataID==978] <- 795100-788767
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2020-11-30 10:13:00"] <- 598353
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2020-11-30 10:13:00"] <- 603427
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2020-11-30 10:13:00"] <- 603427-598353
-
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2020-11-30 10:13:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2020-11-30 10:13:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-04-27 09:33:00"]<- 987030
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-04-27 09:33:00"]<- 992157
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-04-27 09:33:00"]<- 992157-987030
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-04-27 09:33:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-04-27 09:33:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-05-24 09:44:00"]<-962445
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-05-24 09:44:00"]<-974411
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-05-24 09:44:00"]<-974411-962445
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-05-24 09:44:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-05-24 09:44:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-05-25 09:16:00"]<-957174
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-05-25 09:16:00"]<-961755
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-05-25 09:16:00"]<-961755-957174
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-05-25 09:16:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-05-25 09:16:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-06-07 09:02:00"]<-946267
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-06-07 09:02:00"]<-957000
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-06-07 09:02:00"]<-957000-946267
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-06-07 09:02:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-06-07 09:02:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-06-09 09:37:00"]<-945753
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-06-09 09:37:00"]<-946108
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-06-09 09:37:00"]<-946108-945753
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-06-09 09:37:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-06-09 09:37:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-06-21 08:58:00"]<-934553
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-06-21 08:58:00"]<-945578
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-06-21 08:58:00"]<-945578-934553
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-06-21 08:58:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-06-21 08:58:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-06-22 09:17:00"]<-930003
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-06-22 09:17:00"]<-934500
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-06-22 09:17:00"]<-934500-930003
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-07-06 09:03:00"]<-925636
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-07-06 09:03:00"]<-929896
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-07-06 09:03:00"]<-929896-925636
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-06-22 09:17:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-06-22 09:17:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-08-31 08:06:00"]<-839104
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-08-31 08:06:00"]<-849068
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-08-31 08:06:00"]<-849068-839104
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-08-31 11:06:00"]<-834952
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-08-31 11:06:00"]<-838900
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-08-31 11:06:00"]<-838900-834952
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-07-06 09:03:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-07-06 09:03:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-09-14 07:51:00"]<-825385
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-09-14 07:51:00"]<-834847
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-09-14 07:51:00"]<-834847-825385
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-08-31 08:06:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-08-31 08:06:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-09-14 11:34:00"]<-818234
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-09-14 11:34:00"]<-825276
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-09-14 11:34:00"]<-825276-818234
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-08-31 11:06:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-08-31 11:06:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-09-28 08:10:00"]<-808333
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-09-28 08:10:00"]<-818171
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-09-28 08:10:00"]<-818171-808333
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-09-28 11:25:00"]<-805353
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-09-28 11:25:00"]<-808080
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-09-28 11:25:00"]<-808080-805353
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-10-12 08:24:00"]<-795151
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-10-12 08:24:00"]<-805190
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-10-12 08:24:00"]<-805190-795151  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-09-14 07:51:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-09-14 07:51:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-10-13 11:07:00"]<-788937
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-10-13 11:07:00"]<-794960
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-10-13 11:07:00"]<- 794960-788937 
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-10-18 08:23:00"]<-779507
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-10-18 08:23:00"]<-788877
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-10-18 08:23:00"]<-788877-779507
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-10-19 08:13:00"]<-775811
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-10-19 08:13:00"]<-779403
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-10-19 08:13:00"]<-779403-775811
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-11-15 10:05:00"]<-757646
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-11-15 10:05:00"]<-764877
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-11-15 10:05:00"]<-764877-757646
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-11-16 09:48:00"]<-754627
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-11-16 09:48:00"]<-757538
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-11-16 09:48:00"]<-757538-754627
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-11-29 09:19:00"]<-749206
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-11-29 09:19:00"]<-754562
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-11-29 09:19:00"]<-754562-749206
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-09-14 11:34:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-09-14 11:34:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-11-30 09:30:00"]<-745847
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-11-30 09:30:00"]<-749000
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-11-30 09:30:00"]<-749000-745847
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-09-28 08:10:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-09-28 08:10:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-12-13 09:21:00"]<-741150
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-12-13 09:21:00"]<-745711
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-12-13 09:21:00"]<-745711-741150
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-12-14 10:25:00"]<-737932
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-12-14 10:25:00"]<-741067
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-12-14 10:25:00"]<-741067-737932
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2021-12-27 10:18:00"]<-734515
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2021-12-27 10:18:00"]<-736997
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2021-12-27 10:18:00"]<-736997-734515
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2021-12-28 10:48:00"]<-731561
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2021-12-28 10:48:00"]<-734447
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2021-12-28 10:48:00"]<-734447-731561
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-09-28 11:25:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-09-28 11:25:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2022-01-11 09:14:00"]<-724454
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2022-01-11 09:14:00"]<-729502
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2022-01-11 09:14:00"]<-729502-724454 
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2022-01-10 10:54:00"]<-729767
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2022-01-10 10:54:00"]<-731057
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2022-01-10 10:54:00"]<-731057-729767   
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2022-01-25 09:28:00"]<-713547
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2022-01-25 09:28:00"]<-718350
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2022-01-25 09:28:00"]<-718350-713547
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="STTD_2022-01-24 12:33:00"]<-720225
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="STTD_2022-01-24 12:33:00"]<-724020
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="STTD_2022-01-24 12:33:00"]<-724020-720225  
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id=="SHR_2022-02-08 09:38:00"]<-703484
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id=="SHR_2022-02-08 09:38:00"]<-708021
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id=="SHR_2022-02-08 09:38:00"]<-708021-703484
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id==""]<-
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id==""]<-
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id==""]<-   
-  
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id==""]<-
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id==""]<-
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id==""]<-   
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-10-12 08:24:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-10-12 08:24:00"])
 
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id==""]<-
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id==""]<-
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id==""]<-   
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-10-13 11:07:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-10-13 11:07:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-10-18 08:23:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-10-18 08:23:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-10-19 08:13:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-10-19 08:13:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-11-15 10:05:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-11-15 10:05:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-11-16 09:48:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-11-16 09:48:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-11-29 09:19:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-11-29 09:19:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-11-30 09:30:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-11-30 09:30:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-12-13 09:21:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-12-13 09:21:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-12-14 10:25:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-12-14 10:25:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-12-27 10:18:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2021-12-27 10:18:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-12-28 10:48:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2021-12-28 10:48:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-01-11 09:14:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-01-11 09:14:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-01-10 10:54:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-01-10 10:54:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-01-25 09:28:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-01-25 09:28:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-01-24 12:33:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-01-24 12:33:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-02-08 09:38:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-02-08 09:38:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-02-07 10:17:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-02-07 10:17:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-02-22 09:52:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-02-22 09:52:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-02-23 10:01:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-02-23 10:01:00"])
   
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id==""]<-
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id==""]<-
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id==""]<-   
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-03-14 09:27:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-03-14 09:27:00"])
   
-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id==""]<-
-samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id==""]<-
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id==""]<-   
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-03-15 08:37:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-03-15 08:37:00"])
   
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-03-28 08:01:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-03-28 08:01:00"])
   
-  
-  
-  
-  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-03-29 09:00:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-03-29 09:00:00"])  
     
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-04-11 08:05:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-04-11 08:05:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-04-12 08:26:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-04-12 08:26:00"])
+  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-04-25 08:07:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-04-25 08:07:00"])  
     
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-04-26 08:55:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-04-26 08:55:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-05-09 10:39:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-05-09 10:39:00"])
+  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-05-10 08:34:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-05-10 08:34:00"])  
+    
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-05-23 10:12:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-05-23 10:12:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-06-06 07:24:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-06-06 07:24:00"])
+  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-06-07 08:17:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-06-07 08:17:00"])  
+    
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-06-20 08:25:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-06-20 08:25:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-06-21 08:09:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-06-21 08:09:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-07-12 09:31:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-07-12 09:31:00"])
+  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-07-13 09:07:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-07-13 09:07:00"])  
+    
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-07-26 09:10:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-07-26 09:10:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-07-27 08:59:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-07-27 08:59:00"])
+  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-08-09 09:02:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-08-09 09:02:00"])  
+    
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-08-10 09:23:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-08-10 09:23:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== ""] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== ""])
+#SHR_2022-09-06 07:29:00
+  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-09-07 06:20:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-09-07 06:20:00"])  
+    
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-09-20 08:57:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-09-20 08:57:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-09-21 09:24:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-09-21 09:24:00"])
+  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-10-04 08:25:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-10-04 08:25:00"])  
+    
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-10-18 09:19:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-10-18 09:19:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-10-19 08:42:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-10-19 08:42:00"])
+  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-11-01 08:57:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-11-01 08:57:00"])  
+    
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-11-14 10:27:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-11-14 10:27:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-11-15 10:08:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-11-15 10:08:00"])
+  
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-11-29 10:22:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-11-29 10:22:00"])  
+    
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-12-13 10:21:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-12-13 10:21:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-12-12 09:27:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-12-12 09:27:00"])  
+    
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-12-27 11:21:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-12-27 11:21:00"])
+
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-12-28 10:16:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-12-28 10:16:00"])  
+
+
 
 #fix the same flow meter values in samp3
 
@@ -590,126 +580,150 @@ samp3$FlowMeterStart[samp3$InvertDataID==978] <- 788767
 samp3$FlowMeterEnd[samp3$InvertDataID==978] <- 	795100
 samp3$Flowdiff[samp3$InvertDataID==978] <- 795100-788767
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2020-11-30 10:13:00"] <- 598353
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2020-11-30 10:13:00"] <- 603427
-samp3$Flowdiff[samp3$event_id== "SHR_2020-11-30 10:13:00"] <- 603427-598353
+samp3$Flowdiff[samp3$event_id== "SHR_2020-11-30 10:13:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2020-11-30 10:13:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-04-27 09:33:00"]<- 987030
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-04-27 09:33:00"]<- 992157
-samp3$Flowdiff[samp3$event_id=="STTD_2021-04-27 09:33:00"]<- 992157-987030
+samp3$Flowdiff[samp3$event_id== "STTD_2021-04-27 09:33:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-04-27 09:33:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-05-24 09:44:00"]<-962445
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-05-24 09:44:00"]<-974411
-samp3$Flowdiff[samp3$event_id=="SHR_2021-05-24 09:44:00"]<-974411-962445
+samp3$Flowdiff[samp3$event_id== "SHR_2021-05-24 09:44:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-05-24 09:44:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-05-25 09:16:00"]<-957174
-samp3$FlowMeterEnd[samp3s$event_id=="STTD_2021-05-25 09:16:00"]<-961755
-samp3$Flowdiff[samp3$event_id=="STTD_2021-05-25 09:16:00"]<-961755-957174
+samp3$Flowdiff[samp3$event_id== "STTD_2021-05-25 09:16:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-05-25 09:16:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-06-07 09:02:00"]<-946267
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-06-07 09:02:00"]<-957000
-samp3$Flowdiff[samp3$event_id=="SHR_2021-06-07 09:02:00"]<-957000-946267
+samp3$Flowdiff[samp3$event_id== "SHR_2021-06-07 09:02:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-06-07 09:02:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-06-09 09:37:00"]<-945753
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-06-09 09:37:00"]<-946108
-samp3$Flowdiff[samp3$event_id=="STTD_2021-06-09 09:37:00"]<-946108-945753
+samp3$Flowdiff[samp3$event_id== "STTD_2021-06-09 09:37:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-06-09 09:37:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-06-21 08:58:00"]<-934553
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-06-21 08:58:00"]<-945578
-samp3$Flowdiff[samp3$event_id=="SHR_2021-06-21 08:58:00"]<-945578-934553
+samp3$Flowdiff[samp3$event_id== "SHR_2021-06-21 08:58:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-06-21 08:58:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-06-22 09:17:00"]<-930003
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-06-22 09:17:00"]<-934500
-samp3$Flowdiff[samp3$event_id=="STTD_2021-06-22 09:17:00"]<-934500-930003
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-07-06 09:03:00"]<-925636
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-07-06 09:03:00"]<-929896
-samp3$Flowdiff[samp3$event_id=="STTD_2021-07-06 09:03:00"]<-929896-925636
+samp3$Flowdiff[samp3$event_id== "STTD_2021-06-22 09:17:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-06-22 09:17:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-08-31 08:06:00"]<-839104
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-08-31 08:06:00"]<-849068
-samp3$Flowdiff[samp3$event_id=="SHR_2021-08-31 08:06:00"]<-849068-839104
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-08-31 11:06:00"]<-834952
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-08-31 11:06:00"]<-838900
-samp3$Flowdiff[samp3$event_id=="STTD_2021-08-31 11:06:00"]<-838900-834952
+samp3$Flowdiff[samp3$event_id== "STTD_2021-07-06 09:03:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-07-06 09:03:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-09-14 07:51:00"]<-825385
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-09-14 07:51:00"]<-834847
-samp3$Flowdiff[samp3$event_id=="SHR_2021-09-14 07:51:00"]<-834847-825385
+samp3$Flowdiff[samp3$event_id== "SHR_2021-08-31 08:06:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-08-31 08:06:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-09-14 11:34:00"]<-818234
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-09-14 11:34:00"]<-825276
-samp3$Flowdiff[samp3$event_id=="STTD_2021-09-14 11:34:00"]<-825276-818234
+samp3$Flowdiff[samp3$event_id== "STTD_2021-08-31 11:06:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-08-31 11:06:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-09-28 08:10:00"]<-808333
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-09-28 08:10:00"]<-818171
-samp3$Flowdiff[samp3$event_id=="SHR_2021-09-28 08:10:00"]<-818171-808333
+samp3$Flowdiff[samp3$event_id== "SHR_2021-09-14 07:51:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-09-14 07:51:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-10-12 08:24:00"]<-795151
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-10-12 08:24:00"]<-805190
-samp3$Flowdiff[samp3$event_id=="SHR_2021-10-12 08:24:00"]<-805190-795151
+samp3$Flowdiff[samp3$event_id== "STTD_2021-09-14 11:34:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-09-14 11:34:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-10-13 11:07:00"]<-788937
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-10-13 11:07:00"]<-794960
-samp3$Flowdiff[samp3$event_id=="STTD_2021-10-13 11:07:00"]<- 794960-788937
+samp3$Flowdiff[samp3$event_id== "SHR_2021-09-28 08:10:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-09-28 08:10:00"])
 
-samp3$FlowMeterStart[samp3ys$event_id=="SHR_2021-10-18 08:23:00"]<-779507
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-10-18 08:23:00"]<-788877
-samp3$Flowdiff[samp3$event_id=="SHR_2021-10-18 08:23:00"]<-788877-779507
+samp3$Flowdiff[samp3$event_id== "STTD_2021-09-28 11:25:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-09-28 11:25:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-10-19 08:13:00"]<-775811
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-10-19 08:13:00"]<-779403
-samp3$Flowdiff[samp3$event_id=="STTD_2021-10-19 08:13:00"]<-779403-775811
+samp3$Flowdiff[samp3$event_id== "SHR_2021-10-12 08:24:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-10-12 08:24:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-11-15 10:05:00"]<-757646
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-11-15 10:05:00"]<-764877
-samp3$Flowdiff[samp3$event_id=="SHR_2021-11-15 10:05:00"]<-764877-757646
+samp3$Flowdiff[samp3$event_id== "STTD_2021-10-13 11:07:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-10-13 11:07:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-11-16 09:48:00"]<-754627
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-11-16 09:48:00"]<-757538
-samp3$Flowdiff[samp3$event_id=="STTD_2021-11-16 09:48:00"]<-757538-754627
+samp3$Flowdiff[samp3$event_id== "SHR_2021-10-18 08:23:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-10-18 08:23:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-11-29 09:19:00"]<-749206
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-11-29 09:19:00"]<-754562
-samp3$Flowdiff[samp3$event_id=="SHR_2021-11-29 09:19:00"]<-754562-749206
+samp3$Flowdiff[samp3$event_id== "STTD_2021-10-19 08:13:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-10-19 08:13:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-12-13 09:21:00"]<-741150
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-12-13 09:21:00"]<-745711
-samp3$Flowdiff[samp3$event_id=="SHR_2021-12-13 09:21:00"]<-745711-741150
+samp3$Flowdiff[samp3$event_id== "SHR_2021-11-15 10:05:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-11-15 10:05:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-12-14 10:25:00"]<-737932
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-12-14 10:25:00"]<-741067
-samp3$Flowdiff[samp3$event_id=="STTD_2021-12-14 10:25:00"]<-741067-737932
+samp3$Flowdiff[samp3$event_id== "STTD_2021-11-16 09:48:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-11-16 09:48:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2021-12-27 10:18:00"]<-734515
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2021-12-27 10:18:00"]<-736997
-samp3$Flowdiff[samp3$event_id=="SHR_2021-12-27 10:18:00"]<-736997-734515
+samp3$Flowdiff[samp3$event_id== "SHR_2021-11-29 09:19:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-11-29 09:19:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2021-12-28 10:48:00"]<-731561
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2021-12-28 10:48:00"]<-734447
-samp3$Flowdiff[samp3$event_id=="STTD_2021-12-28 10:48:00"]<-734447-731561
+samp3$Flowdiff[samp3$event_id== "STTD_2021-11-30 09:30:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-11-30 09:30:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2022-01-11 09:14:00"]<-724454
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2022-01-11 09:14:00"]<-729502
-samp3$Flowdiff[samp3$event_id=="SHR_2022-01-11 09:14:00"]<-729502-724454 
+samp3$Flowdiff[samp3$event_id== "SHR_2021-12-13 09:21:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-12-13 09:21:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2022-01-10 10:54:00"]<-729767
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2022-01-10 10:54:00"]<-731057
-samp3$Flowdiff[samp3$event_id=="STTD_2022-01-10 10:54:00"]<-731057-729767 
+samp3$Flowdiff[samp3$event_id== "STTD_2021-12-14 10:25:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-12-14 10:25:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2022-01-25 09:28:00"]<-713547
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2022-01-25 09:28:00"]<-718350
-samp3$Flowdiff[samp3$event_id=="SHR_2022-01-25 09:28:00"]<-718350-713547
+samp3$Flowdiff[samp3$event_id== "SHR_2021-12-27 10:18:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2021-12-27 10:18:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="STTD_2022-01-24 12:33:00"]<-720225
-samp3$FlowMeterEnd[samp3$event_id=="STTD_2022-01-24 12:33:00"]<-724020
-samp3$Flowdiff[samp3$event_id=="STTD_2022-01-24 12:33:00"]<-724020-720225
+samp3$Flowdiff[samp3$event_id== "STTD_2021-12-28 10:48:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2021-12-28 10:48:00"])
 
-samp3$FlowMeterStart[samp3$event_id=="SHR_2022-02-08 09:38:00"]<-703484
-samp3$FlowMeterEnd[samp3$event_id=="SHR_2022-02-08 09:38:00"]<-708021
-samp3$Flowdiff[samp3$event_id=="SHR_2022-02-08 09:38:00"]<-708021-703484
+samp3$Flowdiff[samp3$event_id== "SHR_2022-01-11 09:14:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-01-11 09:14:00"])
 
+samp3$Flowdiff[samp3$event_id== "STTD_2022-01-10 10:54:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-01-10 10:54:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-01-25 09:28:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-01-25 09:28:00"])
+
+samp3$Flowdiff[samp3$event_id== "STTD_2022-01-24 12:33:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-01-24 12:33:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-02-08 09:38:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-02-08 09:38:00"])
+
+samp3$Flowdiff[samp3$event_id== "STTD_2022-02-07 10:17:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-02-07 10:17:00"])
+
+samp3$Flowdiff[samp3$event_id== "STTD_2022-02-22 09:52:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-02-22 09:52:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-02-23 10:01:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-02-23 10:01:00"])
+  
+samp3$Flowdiff[samp3$event_id== "STTD_2022-03-14 09:27:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-03-14 09:27:00"])
+  
+samp3$Flowdiff[samp3$event_id== "SHR_2022-03-15 08:37:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-03-15 08:37:00"])
+  
+samp3$Flowdiff[samp3$event_id== "STTD_2022-03-28 08:01:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-03-28 08:01:00"])
+  
+samp3$Flowdiff[samp3$event_id== "SHR_2022-03-29 09:00:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-03-29 09:00:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "STTD_2022-04-11 08:05:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-04-11 08:05:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-04-12 08:26:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-04-12 08:26:00"])
+  
+samp3$Flowdiff[samp3$event_id== "STTD_2022-04-25 08:07:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-04-25 08:07:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "SHR_2022-04-26 08:55:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-04-26 08:55:00"])
+
+samp3$Flowdiff[samp3$event_id== "STTD_2022-05-09 10:39:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-05-09 10:39:00"])
+  
+samp3$Flowdiff[samp3$event_id== "SHR_2022-05-10 08:34:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-05-10 08:34:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "STTD_2022-05-23 10:12:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-05-23 10:12:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-06-06 07:24:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-06-06 07:24:00"])
+  
+samp3$Flowdiff[samp3$event_id== "STTD_2022-06-07 08:17:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-06-07 08:17:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "SHR_2022-06-20 08:25:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-06-20 08:25:00"])
+
+samp3$Flowdiff[samp3$event_id== "STTD_2022-06-21 08:09:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-06-21 08:09:00"])
+
+samp3$Flowdiff[samp3$event_id== "STTD_2022-07-12 09:31:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-07-12 09:31:00"])
+  
+samp3$Flowdiff[samp3$event_id== "SHR_2022-07-13 09:07:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-07-13 09:07:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "STTD_2022-07-26 09:10:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-07-26 09:10:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-07-27 08:59:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-07-27 08:59:00"])
+  
+samp3$Flowdiff[samp3$event_id== "STTD_2022-08-09 09:02:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-08-09 09:02:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "SHR_2022-08-10 09:23:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-08-10 09:23:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-09-06 07:29:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-09-06 07:29:00"])
+#SHR_2022-09-06 07:29:00
+  
+samp3$Flowdiff[samp3$event_id== "STTD_2022-09-07 06:20:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-09-07 06:20:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "STTD_2022-09-20 08:57:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-09-20 08:57:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-09-21 09:24:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-09-21 09:24:00"])
+  
+samp3$Flowdiff[samp3$event_id== "STTD_2022-10-04 08:25:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-10-04 08:25:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "STTD_2022-10-18 09:19:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-10-18 09:19:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-10-19 08:42:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-10-19 08:42:00"])
+  
+samp3$Flowdiff[samp3$event_id== "SHR_2022-11-01 08:57:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-11-01 08:57:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "STTD_2022-11-14 10:27:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-11-14 10:27:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-11-15 10:08:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-11-15 10:08:00"])
+  
+samp3$Flowdiff[samp3$event_id== "STTD_2022-11-29 10:22:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-11-29 10:22:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "STTD_2022-12-13 10:21:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-12-13 10:21:00"])
+
+samp3$Flowdiff[samp3$event_id== "SHR_2022-12-12 09:27:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-12-12 09:27:00"])  
+    
+samp3$Flowdiff[samp3$event_id== "SHR_2022-12-27 11:21:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-12-27 11:21:00"])
+
+samp3$Flowdiff[samp3$event_id== "STTD_2022-12-28 10:16:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-12-28 10:16:00"])
 
 
 
