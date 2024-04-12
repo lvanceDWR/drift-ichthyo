@@ -537,8 +537,8 @@ samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-08-09 09:02:00"] 
     
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-08-10 09:23:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-08-10 09:23:00"])
 
-samp_catch_phys$Flowdiff[samp_catch_phys$event_id== ""] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== ""])
-#SHR_2022-09-06 07:29:00
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "SHR_2022-09-06 07:29:00"] <- abs((999999-samp_catch_phys$FlowMeterStart[samp_catch_phys$event_id== "SHR_2022-09-06 07:29:00"]) + samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id== "SHR_2022-09-06 07:29:00"])
+
   
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-09-07 06:20:00"] <- abs(samp_catch_phys$Flowdiff[samp_catch_phys$event_id== "STTD_2022-09-07 06:20:00"])  
     
@@ -694,8 +694,7 @@ samp3$Flowdiff[samp3$event_id== "STTD_2022-08-09 09:02:00"] <- abs(samp3$Flowdif
     
 samp3$Flowdiff[samp3$event_id== "SHR_2022-08-10 09:23:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-08-10 09:23:00"])
 
-samp3$Flowdiff[samp3$event_id== "SHR_2022-09-06 07:29:00"] <- abs(samp3$Flowdiff[samp3$event_id== "SHR_2022-09-06 07:29:00"])
-#SHR_2022-09-06 07:29:00
+samp3$Flowdiff[samp3$event_id== "SHR_2022-09-06 07:29:00"] <- abs((999999-samp3$FlowMeterStart[samp3$event_id== "SHR_2022-09-06 07:29:00"]) + samp3$FlowMeterEnd[samp3$event_id== "SHR_2022-09-06 07:29:00"])
   
 samp3$Flowdiff[samp3$event_id== "STTD_2022-09-07 06:20:00"] <- abs(samp3$Flowdiff[samp3$event_id== "STTD_2022-09-07 06:20:00"])  
     
@@ -732,7 +731,7 @@ samp3$Flowdiff[samp3$event_id== "STTD_2022-12-28 10:16:00"] <- abs(samp3$Flowdif
 16. Merge data with lab/sampling QAQC 
     * Replace NA with blank
 ```{r}
-FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "PhysicalDataID") %>%
+FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id") %>%
   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
          Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
          Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
