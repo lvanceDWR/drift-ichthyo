@@ -735,7 +735,8 @@ FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id") %>%
   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
          Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
          Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
-         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), ""))
+         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), "")) %>%
+  select(-c(PhysicalDataID.y))
 ```
 
 17. Make a table of summarized flowmeter values for different conditions
