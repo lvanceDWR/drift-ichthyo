@@ -239,6 +239,9 @@ samp_catch_phys <- bind_rows(samp_catch_phys0, gap)
 sampcatchphysMerge <- bind_rows(samp_catch_phys, samp_catch_phys2) %>%
   relocate(event_id, Datetime)
 
+#create exported joined data file for ease of publishing data in future
+write_csv(sampcatchphysMerge, paste("R_write/SamplingDrift1998-2022.csv"))
+
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
   unique() %>%
