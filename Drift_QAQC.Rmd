@@ -1179,7 +1179,7 @@ inv_select <- CPUEQAQC %>%
          CommentLab = Comment_LAB,
          CommentFM = Comment_FM,
          CommentCPUE = Comment_CPUE) %>%
-  select(c(Datetime, Station,
+  select(c(event_id, Datetime, Station,
            WY, WYClass, Inundation,
            WeatherCode, Tide, MicrocystisVisualRank,
            WaterTemperature:Turbidity,
@@ -1202,7 +1202,7 @@ inv_all <- left_join(inv_select, tax) %>%
 
 # Rearrange 
 inv_arrange <- inv_all %>% 
-  select(c(Datetime:Turbidity, SetTime:VolumeAdj, ConditionCode:FieldComments, LabComments:Category, OrganismID, TaxonRank, TaxonName, LifeStage:CommentCPUE))
+  select(c(event_id:Turbidity, SetTime:VolumeAdj, ConditionCode:FieldComments, LabComments:Category, OrganismID, TaxonRank, TaxonName, LifeStage:CommentCPUE))
 
 ```
 
