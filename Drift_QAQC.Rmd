@@ -1226,7 +1226,8 @@ inv_final <- inv_arrange %>%
          CommentFM = CommentFM_1,
          CommentCPUE = CommentCPUE_1) %>%
   mutate(QCFlags = paste(FlagSamp, " ", FlagLab, " ", FlagFM, " ", FlagCPUE)) %>%
-  mutate(QCComments = paste(CommentSamp, " ", CommentLab, " ",CommentFM, " ",  CommentCPUE))
+  mutate(QCComments = paste(CommentSamp, " ", CommentLab, " ",CommentFM, " ",  CommentCPUE)) %>%
+  relocate(FlowMeterSpeed, .before = "FlowMeterStart")
 
 ## Filter rows with a 7
 threes <- inv_final%>%
