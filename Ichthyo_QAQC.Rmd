@@ -198,10 +198,71 @@ IchAccessA <- NoData
 #this should have a date/time column for ease of combining with excel data later on
 ```
 
+5. Ensure Access data is in correct date/time format for later QA/QC
+```{r}
+
+IchAccess$Date<-as.Date(IchAccess$Date,"%m/%d/%Y")
+IchAccess$Year <- year(IchAccess$Date)
+IchAccess$Month <- month(IchAccess$Date)
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+IchAccess$MonthAbb <- mymonths[IchAccess$Month ]
+IchAccess$Datetime = paste(IchAccess$Date, IchAccess$Time)
+IchAccess$Datetime <- ymd_hm(IchAccess$Datetime)
+IchAccess$Time <- strptime(IchAccess$Time, format = "%H:%M", tz = "") %>%
+  strftime(IchAccess$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+IchAccess$Time <- hms::as_hms(IchAccess$Time)
+
+
+IchAccessA$Date<-as.Date(IchAccessA$Date,"%m/%d/%Y")
+IchAccessA$Year <- year(IchAccessA$Date)
+IchAccessA$Month <- month(IchAccessA$Date)
+IchAccessA$MonthAbb <- mymonths[IchAccessA$Month ]
+IchAccessA$Datetime = paste(IchAccessA$Date, IchAccessA$Time)
+IchAccessA$Datetime <- ymd_hm(IchAccessA$Datetime)
+IchAccessA$Time <- strptime(IchAccessA$Time, format = "%H:%M", tz = "") %>%
+  strftime(IchAccessA$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+IchAccessA$Time <- hms::as_hms(IchAccessA$Time)
+
+
+```
+
 
 
 5. Now clean up the columns and formatting for the lab data that came back 2019 onward that is housed in Excel. This will eventually be combined with the data from Access so that the complete data set is in one data frame.
 ```{r}
+
+IchLabData <- IchLabData %>%
+  rename(Program = 'Measuring program short name',
+         Date = 'Sampling Event Date',
+         Time = 'Sampling Event Time',
+         Station = 'Sampling Area Number',
+         SamplingNumber = 'Sampling Event Number',
+         SampleID = 'Sample ID',
+         OrganismType = 'Observation Type Short Name',
+         OrganismGroup = 'Attribute',
+         ScientificName = 'Observable',
+         TotalCountSpecies = 'Value...10',
+         TL = 'Value...11',
+         FL = 'Value...12',
+         LifeStage = 'Value...13',
+         LarvalLifeStage = '...14',) %>%
+  filter(!is.na(Program)) %>%
+  select(-c(SamplingNumber, SampleID, Program))
+
+#format date and time columns for ability to combine with Access data
+IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
+IchLabData$Year <- year(IchLabData$Date)
+IchLabData$Month <- month(IchLabData$Date)
+IchLabData$MonthAbb <- mymonths[ IchLabData$Month ]
+IchLabData$Datetime = paste(IchLabData$Date, IchLabData$Time)
+IchLabData$Datetime <- ymd_hm(IchLabData$Datetime)
+IchLabData$Time <- strptime(IchLabData$Time, format = "%H:%M", tz = "") %>%
+  strftime(IchLabData$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+IchLabData$Time <- hms::as_hms(IchLabData$Time)
+
 
 ```
 
