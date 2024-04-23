@@ -83,4 +83,98 @@ View(IEPFish)
 
 ```
 
+4. Adjust Channel Location Column in Access data; Combine QA/QC'd physical data with larval sampling data and rename those columns. In 2015 tows were done to determine if channel location created bias in sampling.
+```{r}
+
+CatchSpecies <- left_join(CatchData, Species)
+View(CatchSpecies)
+
+#using "center" as default if no channel location is specified as most tows are done as center of channel as possible following SOPs
+
+CatchSpecies2 <- mutate(CatchSpecies, ChannelLocation = case_when(is.na(ChannelLocation) ~ "Center", TRUE ~ ChannelLocation))
+
+IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
+View(IchSample)
+
+# rename columns to help simplify before pivoting to simplify column names and make tidy
+
+IchSample2 <- IchSample %>%
+  rename(Start_MidWest = "LarvalStartMeter_Mid_West",
+         End_MidWest = "LarvalEndMeter_Mid_West",
+         Start_NearWest = "LarvalStartMeter_Near_West",
+         End_NearWest = "LarvalEndMeter_Near_West",
+         Start_MidEast = "LarvalStartMeter_Mid_East",
+         End_MidEast = "LarvalEndMeter_Mid_East",
+         Start_NearEast = "LarvalStartMeter_Near_East",
+         End_NearEast = "LarvalEndMeter_Near_East",
+         Start_MidBottom = "LarvalStartMeter_Mid_Bottom",
+         End_MidBottom = "LarvalEndMeter_Mid_Bottom") %>%
+  select(-c(SamplingEnteredByAccess, SamplingQAQCByAccess,
+            StartTime, StopTime, "2ndStartTime_East", "2ndStopTime_East",
+            Bottom_StartTime, "FlowMeterSpeed.x", "MeterSetTime", "FlowMeterStart",
+            "FlowMeterEnd", "FieldComments.x", "ConditionCode.x")) %>%
+  rename(ConditionCode = "ConditionCode.y",
+         FlowMeterSpeed = "FlowMeterSpeed.y",
+         FieldComments = "FieldComments.y")
+View(IchSample2)
+
+#now use pivot longer to create separate columns of "meter start" and "location"
+
+StartPivot <- pivot_longer(IchSample2,
+                           cols = c(Start_MidWest, Start_NearWest,
+                                    Start_MidEast, Start_NearEast,
+                                    Start_MidBottom, LarvalStartMeter), 
+                           names_to = c("TowLocation"),
+                           values_to = c("StartValue"),
+                           names_prefix = c("Start_"),
+                           values_drop_na = TRUE) %>%
+  select(-c(End_MidWest, End_NearWest,
+            End_MidEast, End_NearEast, 
+            End_MidBottom, LarvalEndMeter)) %>%
+  mutate(TowLocation = case_when(TowLocation == "LarvalStartMeter" ~ "Center",
+                                 TowLocation == "MidWest" ~ "Mid_West",
+                                 TowLocation == "MidEast" ~ "Mid_East",
+                                 TowLocation == "NearWest" ~ "Near_West",
+                                 TowLocation == "NearEast" ~ "Near_East",
+                                 TowLocation == "MidBottom" ~ "Bottom",
+                                 TRUE ~ TowLocation))
+View(StartPivot)
+
+EndPivot <- pivot_longer(IchSample2,
+                         cols = c(End_MidWest, End_NearWest,
+                                  End_MidEast, End_NearEast,
+                                  End_MidBottom, LarvalEndMeter), 
+                         names_to = c("TowLocation"),
+                         values_to = c("EndValue"),
+                         names_prefix = c("End_"),
+                         values_drop_na = TRUE) %>%
+  select(-c(Start_MidWest, Start_NearWest,
+            Start_MidEast, Start_NearEast, 
+            Start_MidBottom, LarvalStartMeter)) %>%
+  mutate(TowLocation = case_when(TowLocation == "LarvalEndMeter" ~ "Center",
+                                 TowLocation == "MidWest" ~ "Mid_West",
+                                 TowLocation == "MidEast" ~ "Mid_East",
+                                 TowLocation == "NearWest" ~ "Near_West",
+                                 TowLocation == "NearEast" ~ "Near_East",
+                                 TowLocation == "MidBottom" ~ "Bottom",
+                                 TRUE ~ TowLocation))
+View(EndPivot)
+
+Pivot1 <- left_join(StartPivot, EndPivot)
+View(Pivot1)
+
+Pivot3 <- filter(Pivot1, !is.na(LarvalDataID)) %>%
+  left_join(CatchSpecies2, by = c("LarvalDataID", "TowLocation" = "ChannelLocation"))
+View(Pivot3)
+
+
+```
+
+
+
+
+
+
+
+
 
