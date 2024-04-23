@@ -194,9 +194,16 @@ viewAccessNA <- filter(viewNA, year(Date) < 2019)
 AccessNA <- filter(viewAccessNA, year(Date) >= 2010 & year(Date) < 2019)
 AccessNoData <- filter(viewAccessNA, year(Date) < 2010)
 
-
+IchAccessA <- NoData
+#this should have a date/time column for ease of combining with excel data later on
 ```
 
+
+
+5. Now clean up the columns and formatting for the lab data that came back 2019 onward that is housed in Excel. This will eventually be combined with the data from Access so that the complete data set is in one data frame.
+```{r}
+
+```
 
 
 
