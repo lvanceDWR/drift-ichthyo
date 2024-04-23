@@ -167,6 +167,33 @@ Pivot3 <- filter(Pivot1, !is.na(LarvalDataID)) %>%
   left_join(CatchSpecies2, by = c("LarvalDataID", "TowLocation" = "ChannelLocation"))
 View(Pivot3)
 
+# larval code mainly utilized for linking things in access database, now that 
+# things are linked, not necessary to keep so can be dropped here
+
+IchAccess <- Pivot3 %>%
+  filter(Station == "STTD" | Station == "SHR") %>%
+  select(-c(LarvalCode.x, LarvalCode.y))
+View(IchAccess)
+
+# this ensures looking at data that is in access, not excel
+# this means these larvaldataID are not affected by the data gap to address
+# between access and excel
+# some of these NA are "no catch" and not blanks - think about a solution? 110 values
+# early data (i.e. 1998 -2003 not found via contractor data records...)
+
+# narrow down how many can be confirmed "no catch" (2010 onward) versus
+# how many must be marked as "no data" (2009 and earlier) due to not being able 
+# to confirm with contractor data and verifying it's not an additional mistaken entry
+
+viewNA <- filter(IchAccess, is.na(LarvalCatchID))
+# some include the data gap between access and excel
+
+viewAccessNA <- filter(viewNA, year(Date) < 2019)
+
+
+AccessNA <- filter(viewAccessNA, year(Date) >= 2010 & year(Date) < 2019)
+AccessNoData <- filter(viewAccessNA, year(Date) < 2010)
+
 
 ```
 
