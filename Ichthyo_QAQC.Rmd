@@ -194,6 +194,15 @@ viewAccessNA <- filter(viewNA, year(Date) < 2019)
 AccessNA <- filter(viewAccessNA, year(Date) >= 2010 & year(Date) < 2019)
 AccessNoData <- filter(viewAccessNA, year(Date) < 2010)
 
+# now rename each group of data appropriately and ensure # replaced values equal to 
+# what was narrowed down between the two date ranges
+NOSpecimens = mutate(IchAccess, SpeciesCode = case_when(IchAccess$Date %in% viewAccessNA$Date & year(Date) >= 2010
+                                                        & year(Date) < 2019 & is.na(SpeciesCode) ~ 
+                                                          "NONE", TRUE ~ SpeciesCode))
+
+NoData = mutate(NOSpecimens, SpeciesCode = case_when(IchAccess$Date %in% viewAccessNA$Date & year(Date) < 2010
+                                                     & is.na(SpeciesCode) ~ "NODATA", TRUE ~ SpeciesCode))
+
 IchAccessA <- NoData
 #this should have a date/time column for ease of combining with excel data later on
 ```
