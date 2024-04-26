@@ -259,7 +259,8 @@ IchLabData <- IchLabData %>%
          LifeStage = 'Value...13',
          LarvalLifeStage = '...14',) %>%
   filter(!is.na(Program)) %>%
-  select(-c(SamplingNumber, SampleID, Program))
+  select(-c(SamplingNumber, SampleID, Program)) %>%
+  mutate(Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time)), Time= NULL)
 
 #format date and time columns for ability to combine with Access data
 IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
@@ -275,7 +276,29 @@ IchLabData$Time <- hms::as_hms(IchLabData$Time)
 
 ```
 
+6. Update the species data frame to match updates to how the contractors ID species. 
+```{r}
+#per contractor form Menidia sp. = common name silverside
+# between lab data in excel and lab data from access, add to the 
+# species lookup table to cover everything for joining 
 
+SpeciesUpdate <- Species %>%
+  add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
+  add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
+  add_row(SpeciesCode = "NONE", CommonName = "NoCatch", ScientificName = "No Catch") %>%
+  add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
+  add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
+
+SpeciesUpdate2 <- SpeciesUpdate %>%
+  filter(!is.na(ScientificName)) %>%
+  filter(SpeciesCode != "TSE") %>%
+  filter(SpeciesCode != "ASE")
+
+# removing TSE - threadfin shad eggs and ASE american shad eggs in this version 
+# since it does not appear contractor has made a comment re: eggs
+# also the "animal tissue, baby clam, etc" is removed since those NA don't match
+# correctly when tied to the excel data
+```
 
 
 
