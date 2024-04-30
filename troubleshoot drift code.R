@@ -83,6 +83,14 @@ catch2$Time <- strptime(catch2$Time, format = "%H:%M", tz = "") %>%
   strftime(catch2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
 catch2$Time <- hms::as_hms(catch2$Time)
 
+
+
+#correct the time for catch2 on dates:8/31/21 STTD 11:06, 8/31/21 SHR 8:06; 9/28/21 SHR 8:10
+
+
+
+
+
 samp2$Date<-as.Date(samp2$Date,"%m/%d/%Y")
 samp2$Year <- year(samp2$Date)
 samp2$Month <- month(samp2$Date)
