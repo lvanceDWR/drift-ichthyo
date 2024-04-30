@@ -86,7 +86,8 @@ catch2$Time <- hms::as_hms(catch2$Time)
 
 
 #correct the time for catch2 on dates:8/31/21 STTD 11:06, 8/31/21 SHR 8:06; 9/28/21 SHR 8:10
-
+time <- catch2 %>%
+  filter(Time == "11:05:00")
 
 
 
