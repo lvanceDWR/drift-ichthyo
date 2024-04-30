@@ -87,9 +87,10 @@ catch2$Time <- hms::as_hms(catch2$Time)
 
 #correct the time for catch2 on dates:8/31/21 STTD 11:06, 8/31/21 SHR 8:06; 9/28/21 SHR 8:10
 time <- catch2 %>%
-  filter(Time == "11:05:00")
-
-
+  filter(Time == "11:05" | (Time == "08:05" & Date == "08/31/2021") | Time == "08:09")
+str(time)
+time2 <- str_replace(time$Time, "11:05", "11:06")
+# just correct in csv and note instead?
 
 
 samp2$Date<-as.Date(samp2$Date,"%m/%d/%Y")
