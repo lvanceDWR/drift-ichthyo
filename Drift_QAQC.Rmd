@@ -306,7 +306,7 @@ write.csv(SamplingQAQC, paste("R_write/SamplingQAQC_", today, ".csv"))
 12. Read edited file in
 
 ```{r}
-SamplingQAQC_fill <- read.csv("R_write/SamplingQAQC_ Notated_20240305.csv")
+SamplingQAQC_fill <- read.csv("R_write/SamplingQAQC_ Notated_20240430.csv")
 SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
   select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
 ```
