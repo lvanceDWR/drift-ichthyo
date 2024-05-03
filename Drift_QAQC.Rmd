@@ -306,7 +306,7 @@ write.csv(SamplingQAQC, paste("R_write/SamplingQAQC_", today, ".csv"))
 12. Read edited file in
 
 ```{r}
-SamplingQAQC_fill <- read.csv("R_write/SamplingQAQC_ Notated_20240430.csv")
+SamplingQAQC_fill <- read.csv("R_write/SamplingQAQC_ Notated_20240430 .csv")
 SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
   select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
 ```
@@ -1184,10 +1184,7 @@ inv_select <- CPUEQAQC %>%
            WeatherCode, Tide, MicrocystisVisualRank,
            WaterTemperature:Turbidity,
            ConditionCode,FieldComments, 
-           SetTime:FlowMeterEnd, Flowdiff, FlowdiffAdj, Volume, VolumeAdj,
-           LabComments, 
-           Category, TaxonName, LifeStage, Count, CPUE, CPUEAdj, 
-           FlagPhys, CommentPhys, FlagSamp, CommentSamp, FlagLab, CommentLab, FlagFM, CommentFM, FlagCPUE, CommentCPUE)) 
+           SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, Flowdiff, FlowdiffAdj, Volume, VolumeAdj,LabComments, Category, TaxonName, LifeStage, Count, CPUE, CPUEAdj, FlagPhys, CommentPhys, FlagSamp, CommentSamp, FlagLab, CommentLab, FlagFM, CommentFM, FlagCPUE, CommentCPUE)) 
 
 # Modify some taxa to join correctly
 inv_select$TaxonName[inv_select$TaxonName == "affinis"]  <- "Gambusia affinis" 
