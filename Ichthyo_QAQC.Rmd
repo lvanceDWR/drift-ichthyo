@@ -24,7 +24,6 @@ rm(list=ls(all=TRUE))
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
-library(moderndive)
 library(knitr)
 library(gridExtra)
 library(stringr)
@@ -60,6 +59,9 @@ IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 IchLabData <- read_csv("ichthyo data/IchLabExcelData.csv", skip=1)
 
+######## Bring in Inundation data and Water Year type Data ###################
+wy <- read_csv("WaterYearType_CDEC.csv") 
+inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
 
 ```
 
