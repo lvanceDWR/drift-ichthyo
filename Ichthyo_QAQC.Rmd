@@ -212,30 +212,8 @@ IchAccessA <- NoData
 5. Ensure Access data is in correct date/time format for later QA/QC
 ```{r}
 
-IchAccess$Date<-as.Date(IchAccess$Date,"%m/%d/%Y")
-IchAccess$Year <- year(IchAccess$Date)
-IchAccess$Month <- month(IchAccess$Date)
-mymonths <- c("Jan","Feb","Mar",
-              "Apr","May","Jun",
-              "Jul","Aug","Sep",
-              "Oct","Nov","Dec")
-IchAccess$MonthAbb <- mymonths[IchAccess$Month ]
-IchAccess$Datetime = paste(IchAccess$Date, IchAccess$Time)
-IchAccess$Datetime <- ymd_hm(IchAccess$Datetime)
-IchAccess$Time <- strptime(IchAccess$Time, format = "%H:%M", tz = "") %>%
-  strftime(IchAccess$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
-IchAccess$Time <- hms::as_hms(IchAccess$Time)
-
-
-IchAccessA$Date<-as.Date(IchAccessA$Date,"%m/%d/%Y")
-IchAccessA$Year <- year(IchAccessA$Date)
-IchAccessA$Month <- month(IchAccessA$Date)
-IchAccessA$MonthAbb <- mymonths[IchAccessA$Month ]
-IchAccessA$Datetime = paste(IchAccessA$Date, IchAccessA$Time)
-IchAccessA$Datetime <- ymd_hm(IchAccessA$Datetime)
-IchAccessA$Time <- strptime(IchAccessA$Time, format = "%H:%M", tz = "") %>%
-  strftime(IchAccessA$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
-IchAccessA$Time <- hms::as_hms(IchAccessA$Time)
+str(IchAccess)
+str(IchAccessA)
 
 
 ```
@@ -261,8 +239,7 @@ IchLabData <- IchLabData %>%
          LifeStage = 'Value...13',
          LarvalLifeStage = '...14',) %>%
   filter(!is.na(Program)) %>%
-  select(-c(SamplingNumber, SampleID, Program)) %>%
-  mutate(Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time)), Time= NULL)
+  select(-c(SamplingNumber, SampleID, Program, OrganismType, OrganismGroup))
 
 #format date and time columns for ability to combine with Access data
 IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
