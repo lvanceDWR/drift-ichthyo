@@ -245,6 +245,10 @@ IchLabData <- IchLabData %>%
 IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
 IchLabData$Year <- year(IchLabData$Date)
 IchLabData$Month <- month(IchLabData$Date)
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
 IchLabData$MonthAbb <- mymonths[ IchLabData$Month ]
 
 #combine lab data with physical data in preparation for binding with Access
@@ -254,7 +258,8 @@ IchLabPhysData <- left_join(PhysData, IchLabData) %>%
 
 #set up for the overlap of lab data in 2019 when databases shifted
 LabGap <- IchLabData %>%
-  filter(Date < "2020-02-24")
+  filter(Date < "2020-02-24") %>%
+  mutate(FL = as.numeric(FL))
 View(LabGap)
 
 ```
