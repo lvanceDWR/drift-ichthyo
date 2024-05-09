@@ -44,7 +44,7 @@ PhysData <-read_csv("drift data/LT_phys_qc_20240118.csv")
 CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
 Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
 SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
-Sampling2 <- read_csv("ichtyo data/IchSampleData.csv")
+Sampling2 <- read_csv("ichthyo data/IchSampData.csv")
 IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 ########## Read in Excel Catch data ###########################################
