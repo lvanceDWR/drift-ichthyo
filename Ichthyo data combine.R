@@ -44,6 +44,7 @@ PhysData <-read_csv("drift data/LT_phys_qc_20240118.csv")
 CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
 Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
 SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
+Sampling2 <- read_csv("ichtyo data/IchSampleData.csv")
 IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 ########## Read in Excel Catch data ###########################################
@@ -210,7 +211,7 @@ unique(Pivot1$TowLocation)
 
 IchAccess <- Pivot3 %>%
   filter(Station == "STTD" | Station == "SHR") %>%
-  select(-c(LarvalCode.x, LarvalCode.y))
+  select(-c(LarvalCode.x, LarvalCode.y, ConditionCode.x,))
 View(IchAccess)
 
 # this ensures looking at data that is in access, not excel
