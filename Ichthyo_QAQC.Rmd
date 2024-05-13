@@ -65,7 +65,7 @@ inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
 
 ```
 
-3. Rename some columns
+3. Rename some columns and drop any unnecessary columns
 ```{r filter, results = FALSE, message = FALSE, warning = FALSE}
 
 Species <- Species %>%
@@ -76,12 +76,18 @@ View(Species)
 
 SamplingData <- SamplingData %>%
   rename (SamplingQAQCByAccess = "QA/QC'dBy",
-          SamplingEnteredByAccess = 'EnteredBy')
+          SamplingEnteredByAccess = 'EnteredBy',
+          FieldCommentsLarval = "FieldComments") %>%
+  select(-c(SamplingEnteredByAccess, SamplingQAQCByAccess))
 View(SamplingData)
 
 IEPFish <- IEPFish %>%
   select(-c("...5":"...17"))
 View(IEPFish)
+
+PhysData <- PhysData %>%
+  select(-c(MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed))
+#these flow meter values relate to drift data, not ichthyo
 
 ```
 
