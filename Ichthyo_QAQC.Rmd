@@ -89,6 +89,10 @@ PhysData <- PhysData %>%
   select(-c(MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed))
 #these flow meter values relate to drift data, not ichthyo
 
+CatchData <- CatchData %>%
+  rename(CommentsCatch = Comments)
+#help distinguish comments columns
+
 ```
 
 4. Adjust Channel Location Column in Access data; Combine QA/QC'd physical data with larval sampling data and rename those columns. In 2015 tows were done to determine if channel location created bias in sampling.
