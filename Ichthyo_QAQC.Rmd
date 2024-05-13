@@ -275,7 +275,7 @@ View(LabGap)
 IchAccessFilter <- IchAccessA %>%
   filter(Date > "2019-04-15") %>%
   select(-c(TL, FL, ScientificName, SpeciesCode, Count,
-            Comments, CommonName, Stage))
+            CommonName, Stage))
 
 ```
 
