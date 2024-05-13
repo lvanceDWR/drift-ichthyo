@@ -85,12 +85,21 @@ View(Species)
 
 SamplingData <- SamplingData %>%
   rename (SamplingQAQCByAccess = "QA/QC'dBy",
-          SamplingEnteredByAccess = 'EnteredBy')
+          SamplingEnteredByAccess = 'EnteredBy',
+          FieldCommentsLarval = "FieldComments") %>%
+  select(-c(SamplingEnteredByAccess, SamplingQAQCByAccess))
 View(SamplingData)
 
 IEPFish <- IEPFish %>%
   select(-c("...5":"...17"))
 View(IEPFish)
+
+PhysData <- PhysData %>%
+  select(-c(MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed, ConditionCode))
+#these flow meter values relate to drift data, not ichthyo
+
+CatchData <- CatchData %>%
+  rename(CommentsCatch = Comments)
 
 #figure out how to match IEP fish code with YBFMP fish code later..some don't have
 #a corresponding code
@@ -148,8 +157,7 @@ IchSample2 <- IchSample %>%
          End_NearEast = "LarvalEndMeter_Near_East",
          Start_MidBottom = "LarvalStartMeter_Mid_Bottom",
          End_MidBottom = "LarvalEndMeter_Mid_Bottom") %>%
-  select(-c(SamplingEnteredByAccess, SamplingQAQCByAccess,
-            StartTime, StopTime, "2ndStartTime_East", "2ndStopTime_East",
+  select(-c(StartTime, StopTime, "2ndStartTime_East", "2ndStopTime_East",
             Bottom_StartTime))
 View(IchSample2)
 
@@ -211,7 +219,7 @@ unique(Pivot1$TowLocation)
 
 IchAccess <- Pivot3 %>%
   filter(Station == "STTD" | Station == "SHR") %>%
-  select(-c(LarvalCode.x, LarvalCode.y, ConditionCode.x,))
+  select(-c(LarvalCode.x, LarvalCode.y))
 View(IchAccess)
 
 # this ensures looking at data that is in access, not excel

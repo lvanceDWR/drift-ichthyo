@@ -86,7 +86,7 @@ IEPFish <- IEPFish %>%
 View(IEPFish)
 
 PhysData <- PhysData %>%
-  select(-c(MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed))
+  select(-c(MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed, ConditionCode))
 #these flow meter values relate to drift data, not ichthyo
 
 CatchData <- CatchData %>%
@@ -121,13 +121,8 @@ IchSample2 <- IchSample %>%
          End_NearEast = "LarvalEndMeter_Near_East",
          Start_MidBottom = "LarvalStartMeter_Mid_Bottom",
          End_MidBottom = "LarvalEndMeter_Mid_Bottom") %>%
-  select(-c(SamplingEnteredByAccess, SamplingQAQCByAccess,
-            StartTime, StopTime, "2ndStartTime_East", "2ndStopTime_East",
-            Bottom_StartTime, "FlowMeterSpeed.x", "MeterSetTime", "FlowMeterStart",
-            "FlowMeterEnd", "FieldComments.x", "ConditionCode.x")) %>%
-  rename(ConditionCode = "ConditionCode.y",
-         FlowMeterSpeed = "FlowMeterSpeed.y",
-         FieldComments = "FieldComments.y")
+  select(-c(StartTime, StopTime, "2ndStartTime_East", "2ndStopTime_East",
+            Bottom_StartTime))
 View(IchSample2)
 
 #now use pivot longer to create separate columns of "meter start" and "location"
