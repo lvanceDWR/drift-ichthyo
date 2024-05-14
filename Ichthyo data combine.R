@@ -77,6 +77,8 @@ str(CatchData)
 #           FieldCommentsAccess = 'Comments')
 # View(PhysData)
 
+## make change in time for 5/6/2019 since event ID relies on time, date and station
+
 Species <- Species %>%
   rename (SpeciesCode = "Code",
           CommonName = "Species",
