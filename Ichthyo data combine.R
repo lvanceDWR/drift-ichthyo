@@ -51,6 +51,10 @@ IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 IchLabData <- read_csv("ichthyo data/IchLabExcelData.csv", skip=1)
 
+
+wy <- read_csv("WaterYearType_CDEC.csv") 
+inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
+
 ###################### ACCESS DATA ############################################
 # 
 # PhysData <- read_csv("drift data/TblPhysicalDataAccess.csv") #physical data is shared with drift & ich, tows done at same time
