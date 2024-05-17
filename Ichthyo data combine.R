@@ -312,7 +312,7 @@ View(IchLab2)
 
 str(IchLab2)
 
-IchLab2 <- mutate(IchLab2, Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time)), Time= NULL) %>%
+IchLab2 <- mutate(IchLab2, Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time))) %>%
   select(-c(Program))
 
 View(IchLab2)
@@ -492,107 +492,107 @@ str(IchSampling3)
 # lab data in lower trophic excel databases. combine water quality with sampling data
 # (1:1 combine) and then combine lab data #name columns appropriately
 
-read_csv("drift data/LTWQ2020onward.csv")
-
-#determine and label column names
-
-WaterQuality <- read_csv("drift data/LTWQ2020onward.csv", skip =1)
-
-View(WaterQuality)
-
-WaterQuality <- WaterQuality %>%
-  rename(Program = "Measuring Program Name",
-         Station = "Station Name",
-         StationNumber = "Station Number",
-         SamplingNumber = "Sampling Number (event)",
-         Date = "WDL SAM_COLLECTION_DATE",
-         Time = "Collection Time",
-         SampleNumber = "Sample Number",
-         SampleDate = "Sample Date",
-         SampleTime = "Sample Time",
-         FieldCheck = "Field Check",
-         SecchiDiskDepth = "secchi",
-         WaterTemperature = "water.temp",
-         DO = "DO.probe",
-         SpCnd = "sp.cond",
-         MicrocystisVisualRank = "microcyst",
-         VegetationRank = "VegRank",
-         Turbidity = "turb")
-
-View(WaterQuality)
-
-str(WaterQuality)
-
-#need to filter out first row - descriptor row
-
-WaterQuality2 <- filter(WaterQuality, !is.na(Program))
-
-View(WaterQuality2)
-
-str(WaterQuality2)
-
-#make sure to change time to proper formats before adjusting rows and columns
-
-WaterQuality3 <- mutate(WaterQuality2, Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time)), Time= NULL)
-
-View(WaterQuality3)
+# read_csv("drift data/LTWQ2020onward.csv")
+# 
+# #determine and label column names
+# 
+# WaterQuality <- read_csv("drift data/LTWQ2020onward.csv", skip =1)
+# 
+# View(WaterQuality)
+# 
+# WaterQuality <- WaterQuality %>%
+#   rename(Program = "Measuring Program Name",
+#          Station = "Station Name",
+#          StationNumber = "Station Number",
+#          SamplingNumber = "Sampling Number (event)",
+#          Date = "WDL SAM_COLLECTION_DATE",
+#          Time = "Collection Time",
+#          SampleNumber = "Sample Number",
+#          SampleDate = "Sample Date",
+#          SampleTime = "Sample Time",
+#          FieldCheck = "Field Check",
+#          SecchiDiskDepth = "secchi",
+#          WaterTemperature = "water.temp",
+#          DO = "DO.probe",
+#          SpCnd = "sp.cond",
+#          MicrocystisVisualRank = "microcyst",
+#          VegetationRank = "VegRank",
+#          Turbidity = "turb")
+# 
+# View(WaterQuality)
+# 
+# str(WaterQuality)
+# 
+# #need to filter out first row - descriptor row
+# 
+# WaterQuality2 <- filter(WaterQuality, !is.na(Program))
+# 
+# View(WaterQuality2)
+# 
+# str(WaterQuality2)
+# 
+# #make sure to change time to proper formats before adjusting rows and columns
+# 
+# WaterQuality3 <- mutate(WaterQuality2, Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time)), Time= NULL)
+# 
+# View(WaterQuality3)
 
 #need to filter out columns that are blank, and columns that can be left out for 
 # QAQC and publishing
-
-WaterQuality3 <- WaterQuality3 %>%
-  select(-c(`Run Number`, `Run Name`, SampleNumber, SampleDate, SampleTime,
-            Recorder, FieldChecker, Crew, LightData, LarvalData, DriftData,
-            `150_ZoopsData`, `50_ZoopsData`, PhytoData, ChlData, NutrData,
-            EnteredBy, QAQCBy, FieldCheck, StationNumber, Depth1Irr, Depth2Irr, 
-            Depth3Irr, Depth4Irr,SurfaceIrr, SubIrr1, SubIrr2, SubIrr3, SubIrr4,
-            LabOrField, Program))
-View(WaterQuality3)
-
-#will need to filter out information that is for NDFA since
-#no ich tows done during NDFA/NDFS
-
-WaterQuality4 <- WaterQuality3 %>%
-  filter(Program == "YBFMP" | Program == "Shared")
-View(WaterQuality4)
+# 
+# WaterQuality3 <- WaterQuality3 %>%
+#   select(-c(`Run Number`, `Run Name`, SampleNumber, SampleDate, SampleTime,
+#             Recorder, FieldChecker, Crew, LightData, LarvalData, DriftData,
+#             `150_ZoopsData`, `50_ZoopsData`, PhytoData, ChlData, NutrData,
+#             EnteredBy, QAQCBy, FieldCheck, StationNumber, Depth1Irr, Depth2Irr, 
+#             Depth3Irr, Depth4Irr,SurfaceIrr, SubIrr1, SubIrr2, SubIrr3, SubIrr4,
+#             LabOrField, Program))
+# View(WaterQuality3)
+# 
+# #will need to filter out information that is for NDFA since
+# #no ich tows done during NDFA/NDFS
+# 
+# WaterQuality4 <- WaterQuality3 %>%
+#   filter(Program == "YBFMP" | Program == "Shared")
+# View(WaterQuality4)
 
 # this still includes LIS data, which no tows are done at LIS for ich for YBFMP
 # no SHR data from 2017 on is needed...hopefully left join takes care of this 
 # otherwise will need to filter that out later
 
-WaterQuality5 <- WaterQuality3 %>%
-  filter(Program == "NDFA")
-View(WaterQuality5)
-
-WaterQuality6 <-WaterQuality3 %>%
-  filter(Program == "NDFS")
-View(WaterQuality6)
-
-#previous 2 df created to double check the total number of objects against original
-#to ensure nothing was missed in filtering (5 and 6)
-
-IchSamplingWater <- left_join(IchSampling3, WaterQuality4)
-View(IchSamplingWater)
+# WaterQuality5 <- WaterQuality3 %>%
+#   filter(Program == "NDFA")
+# View(WaterQuality5)
+# 
+# WaterQuality6 <-WaterQuality3 %>%
+#   filter(Program == "NDFS")
+# View(WaterQuality6)
+# 
+# #previous 2 df created to double check the total number of objects against original
+# #to ensure nothing was missed in filtering (5 and 6)
+# 
+# IchSamplingWater <- left_join(IchSampling3, WaterQuality4)
+# View(IchSamplingWater)
 
 #should not be any tows from SHR included since SHR was not sampled 2017 onward
 
-SHR <- filter(IchSamplingWater, Station == "SHR")
-View(SHR)
-# the two points found show in comments that the ich net was used for comparison, 
-# not for an actual tow
-
-
-IchSamplingWater2 <- IchSamplingWater %>%
-  filter(Station == "STTD") %>%
-  rename(StartValue = "FlowMeterStart",
-         EndValue = "FlowMeterEnd")
-View(IchSamplingWater2)
+# SHR <- filter(IchSamplingWater, Station == "SHR")
+# View(SHR)
+# # the two points found show in comments that the ich net was used for comparison, 
+# # not for an actual tow
+# 
+# 
+# IchSamplingWater2 <- IchSamplingWater %>%
+#   filter(Station == "STTD") %>%
+#   rename(StartValue = "FlowMeterStart",
+#          EndValue = "FlowMeterEnd")
+# View(IchSamplingWater2)
 
 # since data is incomplete for 2022, filter out 2022
-
-IchSamplingWater3 <- IchSamplingWater2 %>%
-  filter(year(Date) < 2022)
-View(IchSamplingWater3)
+# 
+# IchSamplingWater3 <- IchSamplingWater2 %>%
+#   filter(year(Date) < 2022)
+# View(IchSamplingWater3)
 
 # 2-10-2020 no catch, 3-10-2020 no catch. ensure NA is taken care of being joining
 # with species data

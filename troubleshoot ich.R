@@ -1,0 +1,276 @@
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(gridExtra)
+library(stringr)
+library(plotly)
+library(viridis)
+library(kableExtra)
+library(lubridate)
+library(readxl)
+library(readr)
+library(anytime)
+library(magrittr)
+library(janitor)
+library(tidylog)
+
+################# bring in qa/qc physical data #################################
+PhysData <-read_csv("drift data/LT_phys_qc_20240118.csv")
+
+######### Read in Access catch data ###########################################
+
+CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
+Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
+SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
+Sampling2 <- read_csv("ichthyo data/IchSampData.csv")
+IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
+
+########## Read in Excel Catch data ###########################################
+
+IchLabData <- read_csv("ichthyo data/IchLabExcelData.csv", skip=1)
+
+
+wy <- read_csv("WaterYearType_CDEC.csv") 
+inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
+
+
+Species <- Species %>%
+  rename (SpeciesCode = "Code",
+          CommonName = "Species",
+          ScientificName = "Scientific Name")
+View(Species)
+
+SamplingData <- SamplingData %>%
+  rename (SamplingQAQCByAccess = "QA/QC'dBy",
+          SamplingEnteredByAccess = 'EnteredBy',
+          FieldCommentsLarval = "FieldComments") %>%
+  select(-c(SamplingEnteredByAccess, SamplingQAQCByAccess))
+View(SamplingData)
+
+IEPFish <- IEPFish %>%
+  select(-c("...5":"...17"))
+View(IEPFish)
+
+PhysData <- PhysData %>%
+  select(-c(MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed, ConditionCode))
+#these flow meter values relate to drift data, not ichthyo
+
+CatchData <- CatchData %>%
+  rename(CommentsCatch = Comments)
+
+
+
+CheckLocation <- filter(CatchData, !is.na(ChannelLocation))
+
+#confirms that channel location/tow location included with speciated data
+
+#combine and update catch/species data for channel location
+CatchSpecies <- left_join(CatchData, Species)
+View(CatchSpecies)
+
+CatchSpecies2 <- mutate(CatchSpecies, ChannelLocation = case_when(is.na(ChannelLocation) ~ "Center", TRUE ~ ChannelLocation))
+
+IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
+View(IchSample)
+
+# rename columns to help simplify before pivoting
+
+IchSample2 <- IchSample %>%
+  rename(Start_MidWest = "LarvalStartMeter_Mid_West",
+         End_MidWest = "LarvalEndMeter_Mid_West",
+         Start_NearWest = "LarvalStartMeter_Near_West",
+         End_NearWest = "LarvalEndMeter_Near_West",
+         Start_MidEast = "LarvalStartMeter_Mid_East",
+         End_MidEast = "LarvalEndMeter_Mid_East",
+         Start_NearEast = "LarvalStartMeter_Near_East",
+         End_NearEast = "LarvalEndMeter_Near_East",
+         Start_MidBottom = "LarvalStartMeter_Mid_Bottom",
+         End_MidBottom = "LarvalEndMeter_Mid_Bottom") %>%
+  select(-c(StartTime, StopTime, "2ndStartTime_East", "2ndStopTime_East",
+            Bottom_StartTime))
+View(IchSample2)
+
+StartPivot <- pivot_longer(IchSample2,
+                           cols = c(Start_MidWest, Start_NearWest,
+                                    Start_MidEast, Start_NearEast,
+                                    Start_MidBottom, LarvalStartMeter), 
+                           names_to = c("TowLocation"),
+                           values_to = c("StartValue"),
+                           names_prefix = c("Start_"),
+                           values_drop_na = TRUE) %>%
+  select(-c(End_MidWest, End_NearWest,
+            End_MidEast, End_NearEast, 
+            End_MidBottom, LarvalEndMeter)) %>%
+  mutate(TowLocation = case_when(TowLocation == "LarvalStartMeter" ~ "Center",
+                                 TowLocation == "MidWest" ~ "Mid_West",
+                                 TowLocation == "MidEast" ~ "Mid_East",
+                                 TowLocation == "NearWest" ~ "Near_West",
+                                 TowLocation == "NearEast" ~ "Near_East",
+                                 TowLocation == "MidBottom" ~ "Bottom",
+                                 TRUE ~ TowLocation))
+View(StartPivot)
+
+EndPivot <- pivot_longer(IchSample2,
+                         cols = c(End_MidWest, End_NearWest,
+                                  End_MidEast, End_NearEast,
+                                  End_MidBottom, LarvalEndMeter), 
+                         names_to = c("TowLocation"),
+                         values_to = c("EndValue"),
+                         names_prefix = c("End_"),
+                         values_drop_na = TRUE) %>%
+  select(-c(Start_MidWest, Start_NearWest,
+            Start_MidEast, Start_NearEast, 
+            Start_MidBottom, LarvalStartMeter)) %>%
+  mutate(TowLocation = case_when(TowLocation == "LarvalEndMeter" ~ "Center",
+                                 TowLocation == "MidWest" ~ "Mid_West",
+                                 TowLocation == "MidEast" ~ "Mid_East",
+                                 TowLocation == "NearWest" ~ "Near_West",
+                                 TowLocation == "NearEast" ~ "Near_East",
+                                 TowLocation == "MidBottom" ~ "Bottom",
+                                 TRUE ~ TowLocation))
+View(EndPivot)
+
+Pivot1 <- left_join(StartPivot, EndPivot)
+View(Pivot1)
+
+Pivot3 <- filter(Pivot1, !is.na(LarvalDataID)) %>%
+  left_join(CatchSpecies2, by = c("LarvalDataID", "TowLocation" = "ChannelLocation"))
+View(Pivot3)
+
+# checking values between the two dataframes before joining, ensuring everything matches
+# for "channel location" and "tow location" as they are essentially the same
+
+unique(CatchSpecies2$ChannelLocation)
+unique(Pivot1$TowLocation)
+
+# larval code mainly utilized for linking things in access database, now that 
+# things are linked, not necessary to keep so can be dropped here
+
+IchAccess <- Pivot3 %>%
+  filter(Station == "STTD" | Station == "SHR") %>%
+  select(-c(LarvalCode.x, LarvalCode.y))
+View(IchAccess)
+
+viewNA <- filter(IchAccess, is.na(LarvalCatchID))
+# some include the data gap between access and excel
+
+viewAccessNA <- filter(viewNA, year(Date) < 2019)
+
+
+AccessNA <- filter(viewAccessNA, year(Date) >= 2010 & year(Date) < 2019)
+AccessNoData <- filter(viewAccessNA, year(Date) < 2010)
+
+
+
+# now rename each group of data appropriately and ensure # replaced values equal to 
+# what was narrowed down between the two date ranges
+
+NOSpecimens = mutate(IchAccess, SpeciesCode = case_when(IchAccess$Date %in% viewAccessNA$Date & year(Date) >= 2010
+                                                        & year(Date) < 2019 & is.na(SpeciesCode) ~ 
+                                                          "NONE", TRUE ~ SpeciesCode))
+
+NoData = mutate(NOSpecimens, SpeciesCode = case_when(IchAccess$Date %in% viewAccessNA$Date & year(Date) < 2010
+                                                     & is.na(SpeciesCode) ~ "NODATA", TRUE ~ SpeciesCode))
+
+IchAccessA <- NoData
+
+
+
+
+IchLabData <- IchLabData %>%
+  rename(Program = 'Measuring program short name',
+         Date = 'Sampling Event Date',
+         Time = 'Sampling Event Time',
+         Station = 'Sampling Area Number',
+         SamplingNumber = 'Sampling Event Number',
+         SampleID = 'Sample ID',
+         OrganismType = 'Observation Type Short Name',
+         OrganismGroup = 'Attribute',
+         ScientificName = 'Observable',
+         TotalCountSpecies = 'Value...10',
+         TL = 'Value...11',
+         FL = 'Value...12',
+         LifeStage = 'Value...13',
+         LarvalLifeStage = '...14',) %>%
+  filter(!is.na(Program)) %>%
+  select(-c(SamplingNumber, SampleID, Program, OrganismType, OrganismGroup, Time))
+
+#format date and time columns for ability to combine with Access data
+IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
+IchLabData$Year <- year(IchLabData$Date)
+IchLabData$Month <- month(IchLabData$Date)
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+IchLabData$MonthAbb <- mymonths[ IchLabData$Month ]
+
+#combine lab data with physical data in preparation for binding with Access
+IchLabPhysData <- left_join(PhysData, IchLabData) %>%
+  filter(year(Date) > 2018)
+
+
+
+
+IchSampling <- IchSampling %>%
+  rename(Program = 'Measuring program short name',
+         Date = 'Sampling Event Date',
+         Time = 'Sampling Event Time',
+         Station = 'Sampling Area Number',
+         SamplingNumber = 'Sampling Event Number',
+         PhysicalDataID = '...6',
+         ConditionCode = 'Condition Code',
+         SamplingAltered = 'Sampling Altered',
+         MeterSetTime = 'Set Time',
+         FlowMeterStart = 'Flow Meter Start',
+         FlowMeterEnd = 'Flow Meter End',
+         FlowMeter50Start = 'Flow Meter Start (50)',
+         FlowMeter50End = 'Flow Meter End (50)',
+         FlowMeterSpeed = 'Flow Meter Speed',
+         PhysicalDataIDx = 'Physical Data ID',
+         EnteredBy = 'Entered by',
+         QAQCBy = "QAQC'd by",
+         FieldComments = 'Field Comments',
+         LabComments = 'Lab Comments',
+         SampleVolume = 'Sample Volume',
+         SubsampleNumber = 'Subsample Number',
+         DilutionVolume = 'Dilution Volume',
+         SlideCount = 'Slide Count',
+         MeshSize = 'Observation Area Name',
+         Observation = 'Observation Area Number',
+         SpotNumber = 'Spot Number',
+         SpotCode = 'Spot Code (original/duplicate)')
+
+View(IchSampling)
+
+#filtering the na rows removes the excess at the end of the file and the descriptor row without losing column names
+
+IchSampling2 <- filter(IchSampling, !is.na(Program))
+
+View(IchSampling2)
+
+#structure helps show what types your columns are so if any need to change it's easier to find
+
+str(IchSampling2)
+
+#mutating date and time into date/time column for ease of combining data
+
+IchSampling2 <- mutate(IchSampling2, Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time)), Time = NULL)
+
+#add Time = NULL to get rid of character vs time issue
+
+#filtering the rows helps to remove the demonstration data that was in the file
+
+IchSampling2 <- filter(IchSampling2, year(Date)>2018)
+View(IchSampling2)
+
+
+IchSampling3 <- IchSampling2 %>%
+  select(-c(PhysicalDataID, PhysicalDataIDx, FlowMeter50Start, FlowMeter50End,
+            EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation, Program))
+View(IchSampling3)
+
+str(IchSampling3)
+
