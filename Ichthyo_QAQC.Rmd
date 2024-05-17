@@ -255,14 +255,23 @@ mymonths <- c("Jan","Feb","Mar",
               "Jul","Aug","Sep",
               "Oct","Nov","Dec")
 IchLabData$MonthAbb <- mymonths[ IchLabData$Month ]
+IchLabData$Datetime = paste(IchLabData$Date, IchLabData$Time)
+IchLabData$Datetime <- ymd_hm(IchLabData$Datetime)
+IchLabData$Time <- strptime(IchLabData$Time, format = "%H:%M", tz = "") %>%
+  strftime(IchLabData$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+IchLabData$Time <- hms::as_hms(IchLabData$Time)z
+
+IchLabData2 <- IchLabData %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id, Datetime)
 
 #combine lab data with physical data in preparation for binding with Access
-IchLabPhysData <- left_join(PhysData, IchLabData) %>%
+IchLabPhysData <- left_join(PhysData, IchLabData2) %>%
   filter(year(Date) > 2018)
 
 
 #set up for the overlap of lab data in 2019 when databases shifted
-LabGap <- IchLabData %>%
+LabGap <- IchLabData2 %>%
   filter(Date < "2020-02-24") %>%
   mutate(FL = as.numeric(FL))
 View(LabGap)
