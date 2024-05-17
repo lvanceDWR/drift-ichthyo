@@ -195,7 +195,7 @@ IchLabData <- IchLabData %>%
          LifeStage = 'Value...13',
          LarvalLifeStage = '...14',) %>%
   filter(!is.na(Program)) %>%
-  select(-c(SamplingNumber, SampleID, Program, OrganismType, OrganismGroup, Time))
+  select(-c(SamplingNumber, SampleID, Program, OrganismType, OrganismGroup))
 
 #format date and time columns for ability to combine with Access data
 IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
@@ -206,9 +206,18 @@ mymonths <- c("Jan","Feb","Mar",
               "Jul","Aug","Sep",
               "Oct","Nov","Dec")
 IchLabData$MonthAbb <- mymonths[ IchLabData$Month ]
+IchLabData$Datetime = paste(IchLabData$Date, IchLabData$Time)
+IchLabData$Datetime <- ymd_hm(IchLabData$Datetime)
+IchLabData$Time <- strptime(IchLabData$Time, format = "%H:%M", tz = "") %>%
+  strftime(IchLabData$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+IchLabData$Time <- hms::as_hms(IchLabData$Time)
+
+IchLabData2 <- IchLabData %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id, Datetime)
 
 #combine lab data with physical data in preparation for binding with Access
-IchLabPhysData <- left_join(PhysData, IchLabData) %>%
+IchLabPhysData <- left_join(PhysData, IchLabData2) %>%
   filter(year(Date) > 2018)
 
 
