@@ -24,7 +24,7 @@ PhysData <-read_csv("drift data/LT_phys_qc_20240118.csv")
 CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
 Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
 SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
-Sampling2 <- read_csv("ichthyo data/IchSampData.csv")
+Sampling2 <- read_csv("ichthyo data/IchSampData.csv", skip = 1)
 IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 ########## Read in Excel Catch data ###########################################
@@ -218,6 +218,9 @@ IchLabData2 <- IchLabData %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
   relocate(event_id, Datetime)
 
+#combine lab data with "sampling data to ensure no missing field comments for ich tows
+
+
 #combine lab data with physical data in preparation for binding with Access
 IchLabPhysData <- left_join(PhysData, IchLabData2) %>%
   filter(year(Date) > 2018)
@@ -225,7 +228,7 @@ IchLabPhysData <- left_join(PhysData, IchLabData2) %>%
 
 
 
-IchSampling <- IchSampling %>%
+IchSampling <- Sampling2 %>%
   rename(Program = 'Measuring program short name',
          Date = 'Sampling Event Date',
          Time = 'Sampling Event Time',
