@@ -253,7 +253,6 @@ IchAccessA <- NoData
 str(IchAccess)
 str(IchAccessA)
 
-
 ```
 
 
@@ -294,9 +293,96 @@ IchLabData$Time <- strptime(IchLabData$Time, format = "%H:%M", tz = "") %>%
   strftime(IchLabData$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
 IchLabData$Time <- hms::as_hms(IchLabData$Time)z
 
+#create an event_id for consistency across datasets and across databases 
 IchLabData2 <- IchLabData %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
   relocate(event_id, Datetime)
+
+
+```
+
+6 Clean up sampling data from Excel to merge with lab data, then merge that dataframe with Phys data for complete data from Excel
+```{r}
+IchSampling <- Sampling2 %>%
+  rename(Program = 'Measuring program short name',
+         Date = 'Sampling Event Date',
+         Time = 'Sampling Event Time',
+         Station = 'Sampling Area Number',
+         SamplingNumber = 'Sampling Event Number',
+         PhysicalDataID = '...6',
+         ConditionCode = 'Condition Code',
+         SamplingAltered = 'Sampling Altered',
+         MeterSetTime = 'Set Time',
+         FlowMeterStart = 'Flow Meter Start',
+         FlowMeterEnd = 'Flow Meter End',
+         FlowMeter50Start = 'Flow Meter Start (50)',
+         FlowMeter50End = 'Flow Meter End (50)',
+         FlowMeterSpeed = 'Flow Meter Speed',
+         PhysicalDataIDx = 'Physical Data ID',
+         EnteredBy = 'Entered by',
+         QAQCBy = "QAQC'd by",
+         FieldCommentsExcel = 'Field Comments',
+         LabComments = 'Lab Comments',
+         SampleVolume = 'Sample Volume',
+         SubsampleNumber = 'Subsample Number',
+         DilutionVolume = 'Dilution Volume',
+         SlideCount = 'Slide Count',
+         MeshSize = 'Observation Area Name',
+         Observation = 'Observation Area Number',
+         SpotNumber = 'Spot Number',
+         SpotCode = 'Spot Code (original/duplicate)')
+
+View(IchSampling)
+
+#filtering the na rows removes the excess at the end of the file and the descriptor row without losing column names
+
+IchSampling2 <- filter(IchSampling, !is.na(Program))
+
+View(IchSampling2)
+
+#structure helps show what types your columns are so if any need to change it's easier to find
+
+str(IchSampling2)
+
+#mutating date and time into date/time column for ease of combining data
+
+IchSampling2$Date<-as.Date(IchSampling2$Date,"%m/%d/%Y")
+IchSampling2$Year <- year(IchSampling2$Date)
+IchSampling2$Month <- month(IchSampling2$Date)
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+IchSampling2$MonthAbb <- mymonths[ IchSampling2$Month ]
+IchSampling2$Datetime = paste(IchSampling2$Date, IchSampling2$Time)
+IchSampling2$Datetime <- ymd_hm(IchSampling2$Datetime)
+IchSampling2$Time <- strptime(IchSampling2$Time, format = "%H:%M", tz = "") %>%
+  strftime(IchSampling2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+IchSampling2$Time <- hms::as_hms(IchSampling2$Time)
+
+#filtering the rows helps to remove the demonstration data that was in the file
+
+IchSampling2 <- filter(IchSampling2, year(Date)>2018)
+View(IchSampling2)
+
+#drop unnecessary columns and create event id column for ease of merging with phys data and catch data
+
+IchSampling3 <- IchSampling2 %>%
+  select(-c(PhysicalDataID, PhysicalDataIDx, FlowMeter50Start, FlowMeter50End,
+            EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation, Program, SamplingNumber,
+            SubsampleNumber,DilutionVolume,SlideCount)) %>%
+  rename(FieldCommentsExcel = "FieldComments") %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id, Datetime)
+View(IchSampling3)
+```
+
+
+
+
+```{r}
+#combine sampling data with lab data
+
 
 #combine lab data with physical data in preparation for binding with Access
 IchLabPhysData <- left_join(PhysData, IchLabData2) %>%
@@ -308,11 +394,11 @@ LabGap <- IchLabData2 %>%
   filter(Date < "2020-02-24") %>%
   mutate(FL = as.numeric(FL))
 View(LabGap)
-
 ```
 
 
-6. filter Acess data for dates that overlap with Excel
+
+ filter Access data for dates that overlap with Excel
 ```{r}
 IchAccessFilter <- IchAccessA %>%
   filter(Date > "2019-04-15") %>%
@@ -323,7 +409,7 @@ IchAccessFilter <- IchAccessA %>%
 
 
 
-7. Update the species data frame to match updates to how the contractors ID species. 
+ Update the species data frame to match updates to how the contractors ID species. 
 ```{r}
 #per contractor form Menidia sp. = common name silverside
 # between lab data in excel and lab data from access, add to the 

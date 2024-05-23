@@ -221,9 +221,9 @@ IchLabData2 <- IchLabData %>%
 #combine lab data with "sampling data to ensure no missing field comments for ich tows
 
 
-#combine lab data with physical data in preparation for binding with Access
-IchLabPhysData <- left_join(PhysData, IchLabData2) %>%
-  filter(year(Date) > 2018)
+# #combine lab data with physical data in preparation for binding with Access
+# IchLabPhysData <- left_join(PhysData, IchLabData2) %>%
+#   filter(year(Date) > 2018)
 
 
 
@@ -285,17 +285,27 @@ IchSampling2$Time <- strptime(IchSampling2$Time, format = "%H:%M", tz = "") %>%
   strftime(IchSampling2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
 IchSampling2$Time <- hms::as_hms(IchSampling2$Time)
 
-
 #filtering the rows helps to remove the demonstration data that was in the file
 
 IchSampling2 <- filter(IchSampling2, year(Date)>2018)
 View(IchSampling2)
 
+#drop unnecessary columns and create event id column for ease of merging with phys data and catch data
 
 IchSampling3 <- IchSampling2 %>%
   select(-c(PhysicalDataID, PhysicalDataIDx, FlowMeter50Start, FlowMeter50End,
-            EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation, Program))
+            EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation, Program, SamplingNumber,
+            SubsampleNumber,DilutionVolume,SlideCount)) %>%
+  rename(FieldCommentsExcel = "FieldComments") %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id, Datetime)
 View(IchSampling3)
 
 str(IchSampling3)
 
+
+# combine sampling data with lab data before joining to phys data to ensure completeness of data
+IchSamplingLab <- left_join(IchLabData2, IchSampling3)
+
+#combine sampling lab data with phys data to ensure water quality is included
+IchPhysSampLab <- left_join(PhysData, IchSamplingLab)
