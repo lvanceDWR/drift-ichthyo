@@ -246,7 +246,7 @@ IchSampling <- Sampling2 %>%
          PhysicalDataIDx = 'Physical Data ID',
          EnteredBy = 'Entered by',
          QAQCBy = "QAQC'd by",
-         FieldComments = 'Field Comments',
+         FieldCommentsExcel = 'Field Comments',
          LabComments = 'Lab Comments',
          SampleVolume = 'Sample Volume',
          SubsampleNumber = 'Subsample Number',
@@ -271,9 +271,20 @@ str(IchSampling2)
 
 #mutating date and time into date/time column for ease of combining data
 
-IchSampling2 <- mutate(IchSampling2, Date=mdy(Date),DateTime = ymd_hm(paste(as.character(Date), Time)), Time = NULL)
+IchSampling2$Date<-as.Date(IchSampling2$Date,"%m/%d/%Y")
+IchSampling2$Year <- year(IchSampling2$Date)
+IchSampling2$Month <- month(IchSampling2$Date)
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+IchSampling2$MonthAbb <- mymonths[ IchSampling2$Month ]
+IchSampling2$Datetime = paste(IchSampling2$Date, IchSampling2$Time)
+IchSampling2$Datetime <- ymd_hm(IchSampling2$Datetime)
+IchSampling2$Time <- strptime(IchSampling2$Time, format = "%H:%M", tz = "") %>%
+  strftime(IchSampling2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+IchSampling2$Time <- hms::as_hms(IchSampling2$Time)
 
-#add Time = NULL to get rid of character vs time issue
 
 #filtering the rows helps to remove the demonstration data that was in the file
 

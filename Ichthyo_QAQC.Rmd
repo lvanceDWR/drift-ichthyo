@@ -53,6 +53,7 @@ PhysData <-read_csv("drift data/LT_phys_qc_20240118.csv")
 CatchData <- read_csv("ichthyo data/TblLarvalCatchDataAccess.csv")
 Species <- read_csv("ichthyo data/TblLarvalLookUpV2.csv")
 SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
+Sampling2 <- read_csv("ichthyo data/IchSampData.csv", skip = 1)
 IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 ########## Read in Excel Catch data ###########################################
@@ -92,6 +93,35 @@ PhysData <- PhysData %>%
 CatchData <- CatchData %>%
   rename(CommentsCatch = Comments)
 #help distinguish comments columns
+
+IchSampling <- Sampling2 %>%
+  rename(Program = 'Measuring program short name',
+         Date = 'Sampling Event Date',
+         Time = 'Sampling Event Time',
+         Station = 'Sampling Area Number',
+         SamplingNumber = 'Sampling Event Number',
+         PhysicalDataID = '...6',
+         ConditionCode = 'Condition Code',
+         SamplingAltered = 'Sampling Altered',
+         MeterSetTime = 'Set Time',
+         FlowMeterStart = 'Flow Meter Start',
+         FlowMeterEnd = 'Flow Meter End',
+         FlowMeter50Start = 'Flow Meter Start (50)',
+         FlowMeter50End = 'Flow Meter End (50)',
+         FlowMeterSpeed = 'Flow Meter Speed',
+         PhysicalDataIDx = 'Physical Data ID',
+         EnteredBy = 'Entered by',
+         QAQCBy = "QAQC'd by",
+         FieldCommentsExcel = 'Field Comments',
+         LabComments = 'Lab Comments',
+         SampleVolume = 'Sample Volume',
+         SubsampleNumber = 'Subsample Number',
+         DilutionVolume = 'Dilution Volume',
+         SlideCount = 'Slide Count',
+         MeshSize = 'Observation Area Name',
+         Observation = 'Observation Area Number',
+         SpotNumber = 'Spot Number',
+         SpotCode = 'Spot Code (original/duplicate)')
 
 ```
 
