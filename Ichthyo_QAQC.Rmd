@@ -58,6 +58,9 @@ IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
 ########## Read in Excel Catch data ###########################################
 
+#note there was a transciption error for time sent to contractors on COC for 5/6/2019 - corrected
+# in csv (9:56 incorrect, 9:53 correct per datasheet)
+
 IchLabData <- read_csv("ichthyo data/IchLabExcelData.csv", skip=1)
 
 ######## Bring in Inundation data and Water Year type Data ###################
