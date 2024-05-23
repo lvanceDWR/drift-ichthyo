@@ -151,7 +151,8 @@ unique(Pivot1$TowLocation)
 IchAccess <- Pivot3 %>%
   filter(Station == "STTD" | Station == "SHR") %>%
   select(-c(LarvalCode.x, LarvalCode.y)) %>%
-  rename(FieldCommentsAccess = "FieldComments")
+  rename(FieldCommentsAccess = "FieldComments") %>%
+  relocate(event_id, Datetime)
 View(IchAccess)
 
 viewNA <- filter(IchAccess, is.na(LarvalCatchID))
