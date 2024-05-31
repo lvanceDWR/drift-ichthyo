@@ -191,7 +191,7 @@ IchAccessB <- IchAccessA %>%
 IchAccessC <- IchAccessA %>%
   filter(Date > "2019-04-16" & Date < "2020-01-30")
 
-
+#bring in lab data from Excel, then separate to what does and does not overlap
 IchLabData <- IchLabData %>%
   rename(Program = 'Measuring program short name',
          Date = 'Sampling Event Date',
@@ -231,12 +231,6 @@ IchLabData2 <- IchLabData %>%
   filter(year(Date)<2023)
 
 #combine lab data with "sampling data to ensure no missing field comments for ich tows
-
-
-# #combine lab data with physical data in preparation for binding with Access
-# IchLabPhysData <- left_join(PhysData, IchLabData2) %>%
-#   filter(year(Date) > 2018)
-
 
 
 
