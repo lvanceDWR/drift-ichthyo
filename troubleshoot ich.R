@@ -309,4 +309,29 @@ str(IchSampling3)
 IchSamplingLab <- left_join(IchLabData2, IchSampling3)
 
 #combine sampling lab data with phys data to ensure water quality is included
-IchPhysSampLab <- left_join(PhysData, IchSamplingLab)
+IchPhysSampLab <- left_join(PhysData, IchSamplingLab) %>%
+  filter(year(Date)>2018)
+#this is all the access data
+
+
+#ensure that the gap data is accounted for
+
+# filter lab data from excel to the date range that needs to be merged with access
+
+LabGap <- IchLabData2 %>%
+  filter(Date < "2020-02-24")
+View(LabGap)
+str(LabGap)
+
+#ensure FL is correct column type
+LabGapA <- LabGap %>%
+  mutate(FL = as.numeric(FL))
+View(LabGapA)
+
+#access data that needs to be matched with excel
+IchAccessFilter <- IchAccessA %>%
+  filter(Date > "2019-04-15") %>%
+  select(-c(TL, FL, ScientificName, SpeciesCode, Count,
+           CommonName, Stage, Datetime))
+View(IchAccessFilter)
+
