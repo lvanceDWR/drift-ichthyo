@@ -178,7 +178,18 @@ NoData = mutate(NOSpecimens, SpeciesCode = case_when(IchAccess$Date %in% viewAcc
 
 IchAccessA <- NoData
 
+#lab data in excel 4-22-19 onward. Access phys data through 1/27/2020
+#filter physical data file to account for this overlap
+Phys2019 <- PhysData %>% 
+  filter(Date > "2019-04-16" & Date < "2020-01-30")
 
+#access data that does not overlap with excel
+IchAccessB <- IchAccessA %>%
+  filter(Date< "2019-04-22")
+
+#access data that does overlap with excel
+IchAccessC <- IchAccessA %>%
+  filter(Date > "2019-04-16" & Date < "2020-01-30")
 
 
 IchLabData <- IchLabData %>%
