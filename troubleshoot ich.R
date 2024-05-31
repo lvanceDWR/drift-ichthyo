@@ -216,7 +216,8 @@ IchLabData$Time <- hms::as_hms(IchLabData$Time)
 
 IchLabData2 <- IchLabData %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
-  relocate(event_id, Datetime)
+  relocate(event_id, Datetime)%>%
+  filter(year(Date)<2023)
 
 #combine lab data with "sampling data to ensure no missing field comments for ich tows
 
@@ -296,9 +297,9 @@ IchSampling3 <- IchSampling2 %>%
   select(-c(PhysicalDataID, PhysicalDataIDx, FlowMeter50Start, FlowMeter50End,
             EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation, Program, SamplingNumber,
             SubsampleNumber,DilutionVolume,SlideCount)) %>%
-  rename(FieldCommentsExcel = "FieldComments") %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
-  relocate(event_id, Datetime)
+  relocate(event_id, Datetime) %>%
+  filter(year(Date)<2023)
 View(IchSampling3)
 
 str(IchSampling3)
