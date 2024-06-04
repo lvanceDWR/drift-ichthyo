@@ -181,7 +181,7 @@ IchAccessA <- NoData
 #lab data in excel 4-22-19 onward. Access phys data through 1/27/2020
 #filter physical data file to account for this overlap
 Phys2019 <- PhysData %>% 
-  filter(Date > "2019-04-16" & Date < "2020-01-30")
+  filter(Date > "2019-04-16" & Date < "2020-01-01")
 
 #access data that does not overlap with excel
 IchAccessB <- IchAccessA %>%
@@ -189,7 +189,7 @@ IchAccessB <- IchAccessA %>%
 
 #access data that does overlap with excel
 IchAccessC <- IchAccessA %>%
-  filter(Date > "2019-04-16" & Date < "2020-01-30")
+  filter(Date > "2019-04-16" & Date < "2020-01-01")
 
 testjoin <- left_join(IchAccessC, IchSampling3)
 
@@ -240,6 +240,12 @@ IchLabData2 <- IchLabData %>%
 
 #combine lab data with "sampling data to ensure no missing field comments for ich tows
 
+#create two lab data frames. one 4-22-2019 to end of 2019, one 2020 to 2022
+IchLab2019 <- IchLabData2 %>%
+  filter(year(Date) == 2019)
+
+IchLabExcel <- IchLabData2 %>%
+  filter(year(Date) > 2019)
 
 
 IchSampling <- Sampling2 %>%
@@ -330,21 +336,21 @@ IchPhysSampLab <- left_join(PhysData, IchSamplingLab) %>%
 #ensure that the gap data is accounted for
 
 # filter lab data from excel to the date range that needs to be merged with access
-
-LabGap <- IchLabData2 %>%
-  filter(Date < "2020-02-24")
-View(LabGap)
-str(LabGap)
-
-#ensure FL is correct column type
-LabGapA <- LabGap %>%
-  mutate(FL = as.numeric(FL))
-View(LabGapA)
-
-#access data that needs to be matched with excel
-IchAccessFilter <- IchAccessA %>%
-  filter(Date > "2019-04-15") %>%
-  select(-c(TL, FL, ScientificName, SpeciesCode, Count,
-           CommonName, Stage, Datetime))
-View(IchAccessFilter)
+# 
+# LabGap <- IchLabData2 %>%
+#   filter(Date < "2020-02-24")
+# View(LabGap)
+# str(LabGap)
+# 
+# #ensure FL is correct column type
+# LabGapA <- LabGap %>%
+#   mutate(FL = as.numeric(FL))
+# View(LabGapA)
+# 
+# #access data that needs to be matched with excel
+# IchAccessFilter <- IchAccessA %>%
+#   filter(Date > "2019-04-15") %>%
+#   select(-c(TL, FL, ScientificName, SpeciesCode, Count,
+#            CommonName, Stage, Datetime))
+# View(IchAccessFilter)
 
