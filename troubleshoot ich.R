@@ -191,6 +191,14 @@ IchAccessB <- IchAccessA %>%
 IchAccessC <- IchAccessA %>%
   filter(Date > "2019-04-16" & Date < "2020-01-30")
 
+testjoin <- left_join(IchAccessC, IchSampling3)
+
+#lab data for 4/22/2019 onward is in Excel
+#physical data overlaps for 01/06/2020 and 01/27/2020 - use excel phys data for this, remove from access phys data
+#join phys data from 4/22/2019 to end of 2019 with catch data from Excel
+#combine lab data from 01/06/2020 and 01/27/2020 with excel
+#once all these separate pieces are accounted for, bind all dataframes to create complete ich catch data 1999-2022
+
 #bring in lab data from Excel, then separate to what does and does not overlap
 IchLabData <- IchLabData %>%
   rename(Program = 'Measuring program short name',
