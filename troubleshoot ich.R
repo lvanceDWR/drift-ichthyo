@@ -368,33 +368,27 @@ IchFullData <- bind_rows(IchAccessOverlap, IchExcelOverlap)
 #export bound file
 write_csv(IchFullData, "test files/FullData.csv")
 
-# # combine sampling data with lab data before joining to phys data to ensure completeness of data
-# IchSamplingLab <- left_join(IchLabData2, IchSampling3)
-# 
-# #combine sampling lab data with phys data to ensure water quality is included
-# IchPhysSampLab <- left_join(PhysData, IchSamplingLab) %>%
-#   filter(year(Date)>2018)
-# #this is all the access data
+
+#per contractor form Menidia sp. = common name silverside
+# between lab data in excel and lab data from access, add to the 
+# species lookup table to cover everything for joining 
+
+SpeciesUpdate <- Species %>%
+  add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
+  add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
+  add_row(SpeciesCode = "NONE", CommonName = "NoCatch", ScientificName = "No Catch") %>%
+  add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
+  add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
+
+SpeciesUpdate2 <- SpeciesUpdate %>%
+  filter(!is.na(ScientificName)) %>%
+  filter(SpeciesCode != "TSE") %>%
+  filter(SpeciesCode != "ASE")
+
+# removing TSE - threadfin shad eggs and ASE american shad eggs in this version 
+# since it does not appear contractor has made a comment re: eggs
+# also the "animal tissue, baby clam, etc" is removed since those NA don't match
+# correctly when tied to the excel data
 
 
-#ensure that the gap data is accounted for
-
-# filter lab data from excel to the date range that needs to be merged with access
-# 
-# LabGap <- IchLabData2 %>%
-#   filter(Date < "2020-02-24")
-# View(LabGap)
-# str(LabGap)
-# 
-# #ensure FL is correct column type
-# LabGapA <- LabGap %>%
-#   mutate(FL = as.numeric(FL))
-# View(LabGapA)
-# 
-# #access data that needs to be matched with excel
-# IchAccessFilter <- IchAccessA %>%
-#   filter(Date > "2019-04-15") %>%
-#   select(-c(TL, FL, ScientificName, SpeciesCode, Count,
-#            CommonName, Stage, Datetime))
-# View(IchAccessFilter)
 
