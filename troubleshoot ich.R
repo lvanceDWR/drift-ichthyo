@@ -184,6 +184,7 @@ Phys2019 <- PhysData %>%
   filter(Date > "2019-04-16" & Date < "2020-01-01")
 
 #access data that does not overlap with excel
+#this is full data - physical, sampling, catch that is in access
 IchAccessB <- IchAccessA %>%
   filter(Date< "2019-04-22")
 
@@ -191,7 +192,10 @@ IchAccessB <- IchAccessA %>%
 IchAccessC <- IchAccessA %>%
   filter(Date > "2019-04-16" & Date < "2020-01-01")
 
-testjoin <- left_join(IchAccessC, IchSampling3)
+# testjoin <- left_join(IchAccessC, IchSampling3)
+
+write_csv(IchAccessB, paste("test files/AccessCatchData.csv"))
+write_csv(,paste("test files/overlapdata.csv"))
 
 #lab data for 4/22/2019 onward is in Excel
 #physical data overlaps for 01/06/2020 and 01/27/2020 - use excel phys data for this, remove from access phys data
@@ -242,7 +246,8 @@ IchLabData2 <- IchLabData %>%
 
 #create two lab data frames. one 4-22-2019 to end of 2019, one 2020 to 2022
 IchLab2019 <- IchLabData2 %>%
-  filter(year(Date) == 2019)
+  filter(year(Date) == 2019) %>%
+  mutate(FL = as.numeric(FL))
 
 IchLabExcel <- IchLabData2 %>%
   filter(year(Date) > 2019)
@@ -324,13 +329,52 @@ View(IchSampling3)
 str(IchSampling3)
 
 
-# combine sampling data with lab data before joining to phys data to ensure completeness of data
-IchSamplingLab <- left_join(IchLabData2, IchSampling3)
+#2020 overlap between access and excel
+IchOverlap <- IchSampling3 %>%
+  filter(Date == "2020-01-06" | Date == "2020-01-27")
 
-#combine sampling lab data with phys data to ensure water quality is included
-IchPhysSampLab <- left_join(PhysData, IchSamplingLab) %>%
-  filter(year(Date)>2018)
-#this is all the access data
+IchOverlapCatch <- left_join(IchOverlap, IchLabExcel)
+
+IchSampling4 <- IchSampling3 %>%
+  filter(!(Date == "2020-01-06" | Date == "2020-01-27"))
+
+IchExcelCatch <- left_join(IchSampling4, IchLabExcel)
+
+#test binding the two jan 2020 overlap dates with the rest of the excel catch data - success
+tesbind <- bind_rows(IchOverlapCatch, IchExcelCatch)
+
+#next step is binding these to the 2019 overlap
+#phys2019, ichaccessC, and ichlab2019
+#sampling2019 is for ichthyo only - phys data file has both drift and ich - ich is not done at shr and last ich tow in 2019 was july
+Sampling2019 <- left_join(Phys2019, IchAccessC) %>%
+  filter(!(Station == "SHR")) %>%
+  filter(!(is.na(StartValue))) %>%
+  select(-c(ScientificName, TL, FL))
+
+
+str(Sampling2019)
+str(IchLab2019)
+#now to combine that sampling data with the lab data to get full catch
+IchCatch2019 <- left_join(Sampling2019, IchLab2019)
+
+#bind access to 2019, then bind that combined dataframe to excel
+IchAccessOverlap <- bind_rows(IchAccessB, IchCatch2019)
+
+IchExcelOverlap <- bind_rows(IchOverlapCatch, IchExcelCatch) %>%
+  mutate(FL = as.numeric(FL))
+
+IchFullData <- bind_rows(IchAccessOverlap, IchExcelOverlap)
+
+#export bound file
+write_csv(IchFullData, "test files/FullData.csv")
+
+# # combine sampling data with lab data before joining to phys data to ensure completeness of data
+# IchSamplingLab <- left_join(IchLabData2, IchSampling3)
+# 
+# #combine sampling lab data with phys data to ensure water quality is included
+# IchPhysSampLab <- left_join(PhysData, IchSamplingLab) %>%
+#   filter(year(Date)>2018)
+# #this is all the access data
 
 
 #ensure that the gap data is accounted for
