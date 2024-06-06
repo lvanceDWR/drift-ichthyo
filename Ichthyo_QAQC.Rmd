@@ -247,61 +247,25 @@ IchAccessA <- NoData
 #this should have a date/time column for ease of combining with excel data later on
 ```
 
-5. Ensure Access data is in correct date/time format for later QA/QC
+5. Filter the data that came from Access to account for divisions of physical, sampling, and lab data collection due to changes in anticipated database formats. 4/22/2019 catch/lab data was entered into Excel. Sampling data for 01/06/2020 and 01/27/2020 were entered into both Access and Excel but Excel has the corresponding field comments.
 ```{r}
+#lab data in excel 4-22-19 onward. Access phys data through 1/27/2020
+#filter physical data file to account for this overlap
+Phys2019 <- PhysData %>% 
+  filter(Date > "2019-04-16" & Date < "2020-01-01")
 
-str(IchAccess)
-str(IchAccessA)
+#access data that does not overlap with excel
+#this is full data - physical, sampling, catch that is in access
+IchAccessB <- IchAccessA %>%
+  filter(Date< "2019-04-22")
 
+#access data that does overlap with excel. 
+IchAccessC <- IchAccessA %>%
+  filter(Date > "2019-04-16" & Date < "2020-01-01")
 ```
 
 
-
-5. Now clean up the columns and formatting for the lab data that came back 2019 onward that is housed in Excel. This will eventually be combined with the data from Access so that the complete data set is in one data frame.
-```{r}
-
-IchLabData <- IchLabData %>%
-  rename(Program = 'Measuring program short name',
-         Date = 'Sampling Event Date',
-         Time = 'Sampling Event Time',
-         Station = 'Sampling Area Number',
-         SamplingNumber = 'Sampling Event Number',
-         SampleID = 'Sample ID',
-         OrganismType = 'Observation Type Short Name',
-         OrganismGroup = 'Attribute',
-         ScientificName = 'Observable',
-         TotalCountSpecies = 'Value...10',
-         TL = 'Value...11',
-         FL = 'Value...12',
-         LifeStage = 'Value...13',
-         LarvalLifeStage = '...14',) %>%
-  filter(!is.na(Program)) %>%
-  select(-c(SamplingNumber, SampleID, Program, OrganismType, OrganismGroup, Time))
-
-#format date and time columns for ability to combine with Access data
-IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
-IchLabData$Year <- year(IchLabData$Date)
-IchLabData$Month <- month(IchLabData$Date)
-mymonths <- c("Jan","Feb","Mar",
-              "Apr","May","Jun",
-              "Jul","Aug","Sep",
-              "Oct","Nov","Dec")
-IchLabData$MonthAbb <- mymonths[ IchLabData$Month ]
-IchLabData$Datetime = paste(IchLabData$Date, IchLabData$Time)
-IchLabData$Datetime <- ymd_hm(IchLabData$Datetime)
-IchLabData$Time <- strptime(IchLabData$Time, format = "%H:%M", tz = "") %>%
-  strftime(IchLabData$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
-IchLabData$Time <- hms::as_hms(IchLabData$Time)z
-
-#create an event_id for consistency across datasets and across databases 
-IchLabData2 <- IchLabData %>%
-  mutate(event_id = paste0(Station, "_", Datetime)) %>%
-  relocate(event_id, Datetime)
-
-
-```
-
-6 Clean up sampling data from Excel to merge with lab data, then merge that dataframe with Phys data for complete data from Excel
+ Clean up columns and formatting for the sampling data from Excel, for ease of combining data before binding
 ```{r}
 IchSampling <- Sampling2 %>%
   rename(Program = 'Measuring program short name',
@@ -335,14 +299,7 @@ IchSampling <- Sampling2 %>%
 View(IchSampling)
 
 #filtering the na rows removes the excess at the end of the file and the descriptor row without losing column names
-
 IchSampling2 <- filter(IchSampling, !is.na(Program))
-
-View(IchSampling2)
-
-#structure helps show what types your columns are so if any need to change it's easier to find
-
-str(IchSampling2)
 
 #mutating date and time into date/time column for ease of combining data
 
@@ -361,49 +318,125 @@ IchSampling2$Time <- strptime(IchSampling2$Time, format = "%H:%M", tz = "") %>%
 IchSampling2$Time <- hms::as_hms(IchSampling2$Time)
 
 #filtering the rows helps to remove the demonstration data that was in the file
-
 IchSampling2 <- filter(IchSampling2, year(Date)>2018)
 View(IchSampling2)
 
 #drop unnecessary columns and create event id column for ease of merging with phys data and catch data
-
 IchSampling3 <- IchSampling2 %>%
   select(-c(PhysicalDataID, PhysicalDataIDx, FlowMeter50Start, FlowMeter50End,
             EnteredBy, QAQCBy, SpotCode, SpotNumber, Observation, Program, SamplingNumber,
             SubsampleNumber,DilutionVolume,SlideCount)) %>%
-  rename(FieldCommentsExcel = "FieldComments") %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
-  relocate(event_id, Datetime)
+  relocate(event_id, Datetime) %>%
+  filter(year(Date)<2023)
 View(IchSampling3)
 ```
 
-
-
-
+ Now split the sampling from Excel to account for overlap between Access and Excel. Dates 01/06/2020 and 01/27/2020 sampling was entered into both Access and Excel. The appropriate comments for sampling data are housed in the Excel files so utilize that. Also create a data frame housing just the sampling data for 4/22/2019 through 7/15/2019 - that sampling data and physical data was entered into Access, but due to the delay in receiving confirmation of catch data from contractors the lab data was entered into Access
 ```{r}
-#combine sampling data with lab data
+#2020 overlap between access and excel
+IchOverlap <- IchSampling3 %>%
+  filter(Date == "2020-01-06" | Date == "2020-01-27")
+
+#filtering the rest of the access data that is not the above two dates to move forward
+IchSampling4 <- IchSampling3 %>%
+  filter(!(Date == "2020-01-06" | Date == "2020-01-27"))
 
 
-#combine lab data with physical data in preparation for binding with Access
-IchLabPhysData <- left_join(PhysData, IchLabData2) %>%
-  filter(year(Date) > 2018)
 
+```
 
-#set up for the overlap of lab data in 2019 when databases shifted
-LabGap <- IchLabData2 %>%
-  filter(Date < "2020-02-24") %>%
+ Now clean up the columns and formatting for the lab data that came back 2019 onward that is housed in Excel. This will eventually be combined with the data from Access so that the complete data set is in one data frame.
+```{r}
+#bring in lab data from Excel, then separate to what does and does not overlap
+IchLabData <- IchLabData %>%
+  rename(Program = 'Measuring program short name',
+         Date = 'Sampling Event Date',
+         Time = 'Sampling Event Time',
+         Station = 'Sampling Area Number',
+         SamplingNumber = 'Sampling Event Number',
+         SampleID = 'Sample ID',
+         OrganismType = 'Observation Type Short Name',
+         OrganismGroup = 'Attribute',
+         ScientificName = 'Observable',
+         TotalCountSpecies = 'Value...10',
+         TL = 'Value...11',
+         FL = 'Value...12',
+         LifeStage = 'Value...13',
+         LarvalLifeStage = '...14',) %>%
+  filter(!is.na(Program)) %>%
+  select(-c(SamplingNumber, SampleID, Program, OrganismType, OrganismGroup))
+
+#format date and time columns for ability to combine with Access data
+IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
+IchLabData$Year <- year(IchLabData$Date)
+IchLabData$Month <- month(IchLabData$Date)
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+IchLabData$MonthAbb <- mymonths[ IchLabData$Month ]
+IchLabData$Datetime = paste(IchLabData$Date, IchLabData$Time)
+IchLabData$Datetime <- ymd_hm(IchLabData$Datetime)
+IchLabData$Time <- strptime(IchLabData$Time, format = "%H:%M", tz = "") %>%
+  strftime(IchLabData$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+IchLabData$Time <- hms::as_hms(IchLabData$Time)
+
+IchLabData2 <- IchLabData %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id, Datetime)%>%
+  filter(year(Date)<2023)
+
+#combine lab data with "sampling data to ensure no missing field comments for ich tows
+
+#create two lab data frames. one 4-22-2019 to end of 2019, one 2020 to 2022
+IchLab2019 <- IchLabData2 %>%
+  filter(year(Date) == 2019) %>%
   mutate(FL = as.numeric(FL))
-View(LabGap)
+
+IchLabExcel <- IchLabData2 %>%
+  filter(year(Date) > 2019)
+
+```
+
+ Merge each section of data with catch data before binding rows together
+```{r}
+#2020 overlap between access and excel
+IchOverlapCatch <- left_join(IchOverlap, IchLabExcel)
+
+#remainder of data strictly entered into Excel merge with catch
+IchExcelCatch <- left_join(IchSampling4, IchLabExcel)
+
+#next step is binding these to the 2019 overlap
+#phys2019, ichaccessC, and ichlab2019
+#sampling2019 is for ichthyo only - phys data file has both drift and ich - ich is not done at shr and last ich tow in 2019 was july
+Sampling2019 <- left_join(Phys2019, IchAccessC) %>%
+  filter(!(Station == "SHR")) %>%
+  filter(!(is.na(StartValue))) %>%
+  select(-c(ScientificName, TL, FL))
+
+#now to combine that sampling data with the lab data to get full catch
+IchCatch2019 <- left_join(Sampling2019, IchLab2019)
+
+#bind access to 2019, then bind that combined dataframe to excel
+IchAccessOverlap <- bind_rows(IchAccessB, IchCatch2019)
+
+IchExcelOverlap <- bind_rows(IchOverlapCatch, IchExcelCatch) %>%
+  mutate(FL = as.numeric(FL))
+
+IchFullData <- bind_rows(IchAccessOverlap, IchExcelOverlap)
+
+#write to a csv for ease of future publishings
+#export bound file
+write_csv(IchFullData, "test files/IchFullData1998-2022.csv")
+
 ```
 
 
 
- filter Access data for dates that overlap with Excel
+
 ```{r}
-IchAccessFilter <- IchAccessA %>%
-  filter(Date > "2019-04-15") %>%
-  select(-c(TL, FL, ScientificName, SpeciesCode, Count,
-            CommonName, Stage))
+
 
 ```
 
