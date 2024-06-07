@@ -249,13 +249,20 @@ IchLab2019 <- IchLabData2 %>%
   filter(year(Date) == 2019) %>%
   mutate(FL = as.numeric(FL))
 
+IchLab2019$ScientificName <- str_replace_all(IchLab2019$ScientificName, "Menidia berylina", "Menidia beryllina")
+
 IchLabExcel <- IchLabData2 %>%
   filter(year(Date) > 2019)
+
+#correct scientific name misspelling
+IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menidia berylina", "Menidia beryllina")
 
 #important to account for changes in scientific name and species code notation from contractors here - merge these
 #lab data with speciesupdate2 before binding with the data from Access
 
+IchLab2019S <- left_join(IchLab2019, SpeciesUpdate2)
 
+IchLabExcelS <- left_join(IchLabExcel, SpeciesUpdate2)
 
 #note that the counts for lab are different from how counts were notated in Access - will need to update this to make sure
 #all the counts match prior to publishing
@@ -340,12 +347,12 @@ str(IchSampling3)
 IchOverlap <- IchSampling3 %>%
   filter(Date == "2020-01-06" | Date == "2020-01-27")
 
-IchOverlapCatch <- left_join(IchOverlap, IchLabExcel)
+IchOverlapCatch <- left_join(IchOverlap, IchLabExcelS)
 
 IchSampling4 <- IchSampling3 %>%
   filter(!(Date == "2020-01-06" | Date == "2020-01-27"))
 
-IchExcelCatch <- left_join(IchSampling4, IchLabExcel)
+IchExcelCatch <- left_join(IchSampling4, IchLabExcelS)
 
 #test binding the two jan 2020 overlap dates with the rest of the excel catch data - success
 tesbind <- bind_rows(IchOverlapCatch, IchExcelCatch)
@@ -356,13 +363,13 @@ tesbind <- bind_rows(IchOverlapCatch, IchExcelCatch)
 Sampling2019 <- left_join(Phys2019, IchAccessC) %>%
   filter(!(Station == "SHR")) %>%
   filter(!(is.na(StartValue))) %>%
-  select(-c(ScientificName, TL, FL))
+  select(-c(ScientificName, TL, FL, SpeciesCode, CommonName))
 
 
 str(Sampling2019)
 str(IchLab2019)
 #now to combine that sampling data with the lab data to get full catch
-IchCatch2019 <- left_join(Sampling2019, IchLab2019)
+IchCatch2019 <- left_join(Sampling2019, IchLab2019S)
 
 #bind access to 2019, then bind that combined dataframe to excel
 IchAccessOverlap <- bind_rows(IchAccessB, IchCatch2019)
