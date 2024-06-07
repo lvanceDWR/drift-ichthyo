@@ -252,6 +252,13 @@ IchLab2019 <- IchLabData2 %>%
 IchLabExcel <- IchLabData2 %>%
   filter(year(Date) > 2019)
 
+#important to account for changes in scientific name and species code notation from contractors here - merge these
+#lab data with speciesupdate2 before binding with the data from Access
+
+
+
+#note that the counts for lab are different from how counts were notated in Access - will need to update this to make sure
+#all the counts match prior to publishing
 
 IchSampling <- Sampling2 %>%
   rename(Program = 'Measuring program short name',
