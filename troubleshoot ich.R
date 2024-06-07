@@ -404,5 +404,14 @@ SpeciesUpdate2 <- SpeciesUpdate %>%
 # also the "animal tissue, baby clam, etc" is removed since those NA don't match
 # correctly when tied to the excel data
 
+#find method to add a column for individual measurement counts instead of total counts
+# first verify that "total count species" column is only 4/22/2019 onward
 
+viewtotal <- IchFullData %>%
+  filter(!is.na(TotalCountSpecies))
 
+viewNAtotal <- IchFullData%>%
+  filter(is.na(TotalCountSpecies))
+
+view2019 <- IchFullData %>%
+  filter(Date > "2019-04-15")
