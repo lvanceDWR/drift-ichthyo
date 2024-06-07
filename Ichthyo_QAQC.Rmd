@@ -342,8 +342,6 @@ IchOverlap <- IchSampling3 %>%
 IchSampling4 <- IchSampling3 %>%
   filter(!(Date == "2020-01-06" | Date == "2020-01-27"))
 
-
-
 ```
 
  Now clean up the columns and formatting for the lab data that came back 2019 onward that is housed in Excel. This will eventually be combined with the data from Access so that the complete data set is in one data frame.
@@ -397,6 +395,10 @@ IchLab2019 <- IchLabData2 %>%
 IchLabExcel <- IchLabData2 %>%
   filter(year(Date) > 2019)
 
+#correct any scientific name misspellings before adding species codes
+IchLab2019$ScientificName <- str_replace_all(IchLab2019$ScientificName, "Menidia berylina", "Menidia beryllina")
+IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menidia berylina", "Menidia beryllina")
+
 ```
 
  Add in some updates to the species dataframe to account for changes in contractor notation of ID'd species
@@ -414,16 +416,20 @@ SpeciesUpdate2 <- SpeciesUpdate %>%
   filter(SpeciesCode != "TSE") %>%
   filter(SpeciesCode != "ASE")
 
+#now add species codes and common names before joining data
+IchLab2019S <- left_join(IchLab2019, SpeciesUpdate2)
+
+IchLabExcelS <- left_join(IchLabExcel, SpeciesUpdate2)
 ```
 
 
  Merge each section of data with catch data before binding rows together
 ```{r}
 #2020 overlap between access and excel
-IchOverlapCatch <- left_join(IchOverlap, IchLabExcel)
+IchOverlapCatch <- left_join(IchOverlap, IchLabExcelS)
 
 #remainder of data strictly entered into Excel merge with catch
-IchExcelCatch <- left_join(IchSampling4, IchLabExcel)
+IchExcelCatch <- left_join(IchSampling4, IchLabExcelS)
 
 #next step is binding these to the 2019 overlap
 #phys2019, ichaccessC, and ichlab2019
@@ -431,10 +437,10 @@ IchExcelCatch <- left_join(IchSampling4, IchLabExcel)
 Sampling2019 <- left_join(Phys2019, IchAccessC) %>%
   filter(!(Station == "SHR")) %>%
   filter(!(is.na(StartValue))) %>%
-  select(-c(ScientificName, TL, FL))
+  select(-c(ScientificName, TL, FL, SpeciesCode, CommonName))
 
 #now to combine that sampling data with the lab data to get full catch
-IchCatch2019 <- left_join(Sampling2019, IchLab2019)
+IchCatch2019 <- left_join(Sampling2019, IchLab2019S)
 
 #bind access to 2019, then bind that combined dataframe to excel
 IchAccessOverlap <- bind_rows(IchAccessB, IchCatch2019)
