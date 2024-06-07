@@ -399,6 +399,24 @@ IchLabExcel <- IchLabData2 %>%
 
 ```
 
+ Add in some updates to the species dataframe to account for changes in contractor notation of ID'd species
+```{r}
+#additional items for species due to changes in contractor notation
+SpeciesUpdate <- Species %>%
+  add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
+  add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
+  add_row(SpeciesCode = "NONE", CommonName = "NoCatch", ScientificName = "No Catch") %>%
+  add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
+  add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
+
+SpeciesUpdate2 <- SpeciesUpdate %>%
+  filter(!is.na(ScientificName)) %>%
+  filter(SpeciesCode != "TSE") %>%
+  filter(SpeciesCode != "ASE")
+
+```
+
+
  Merge each section of data with catch data before binding rows together
 ```{r}
 #2020 overlap between access and excel
