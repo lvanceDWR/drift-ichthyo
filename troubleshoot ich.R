@@ -194,8 +194,8 @@ IchAccessC <- IchAccessA %>%
 
 # testjoin <- left_join(IchAccessC, IchSampling3)
 
-write_csv(IchAccessB, paste("test files/AccessCatchData.csv"))
-write_csv(,paste("test files/overlapdata.csv"))
+# write_csv(IchAccessB, paste("test files/AccessCatchData.csv"))
+# write_csv(,paste("test files/overlapdata.csv"))
 
 #lab data for 4/22/2019 onward is in Excel
 #physical data overlaps for 01/06/2020 and 01/27/2020 - use excel phys data for this, remove from access phys data
@@ -415,3 +415,8 @@ viewNAtotal <- IchFullData%>%
 
 view2019 <- IchFullData %>%
   filter(Date > "2019-04-15")
+
+test2019 <- IchFullData %>%
+  mutate(IndividualCount = if_else(TotalCountSpecies >= 1, 1, NA))
+#this worked - is there a way to combine this with the already existing count column so it isn't excessive? besides manually?
+
