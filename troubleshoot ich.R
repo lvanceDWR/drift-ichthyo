@@ -439,4 +439,86 @@ samp_catch_physMerge <- IchFullData %>%
   mutate(WY = ifelse(Month >9, Year + 1, Year)) %>%
   left_join(wy, by = "WY") %>%
   select(-c(Index, WYType)) %>%
-  mutate(Flowdiff = FlowMeterEnd-FlowMeterStart)
+  mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart))
+
+
+################################################################################################
+
+SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 | !is.na(LabComments))
+SamplingQAQC$Flag_SAMP <-  ""
+SamplingQAQC$Comment_SAMP <-""
+SamplingQAQC$Flag_LAB <- ""
+SamplingQAQC$Comment_LAB <- ""
+today <- today()
+write.csv(SamplingQAQC, paste("R_write/IchSamplingQAQC_", today, ".csv"))
+
+
+SamplingQAQC_fill <- read.csv("R_write/SamplingQAQC_ Notated_20240430 .csv")
+SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
+  select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
+
+###############################################################################################
+inundation <- inundation %>%
+  rename(Date = Dates)
+inundation$Date<-as.Date(inundation$Date,"%m/%d/%Y")
+
+inundation <- inundation %>%
+  mutate(Month = month(Date),
+         Year = year(Date),
+         WY = ifelse(Month > 9, Year + 1, Year))
+
+# Modify sample table to include Flowdiff
+samp3 <-sampUnique %>%
+  mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart),
+         Flowdiff_s = Flowdiff/MeterSetTime) 
+
+# merged inundation and sampling
+inundation_flow <- left_join(samp3, inundation, by = "Date") %>%
+  filter(Flowdiff<100000) %>%
+  filter(Station == "STTD") %>%
+  mutate(Flowdiff_s = Flowdiff/MeterSetTime,
+         Inundation_n = ifelse(Inundation == "TRUE", 40000, 0))
+
+# all inundation
+inundation2 <- inundation %>%
+  mutate(Inundation_n = ifelse(Inundation == "TRUE", 40000, 0),
+         Inundation_n_low = ifelse(Inundation == "TRUE", 5000,0))
+
+# Plot - only inundation events that correspond with sampling date
+inplot1 <- ggplot(inundation_flow) + 
+  geom_point(aes(x = Date, y = Flowdiff)) + 
+  geom_col(aes(x = Date, y = Inundation_n), fill = "blue", linewidth = 2) + 
+  labs(title = "Flowdiff with Inundation events corresponding with sample dates") +
+  facet_grid(Station~.) +
+  theme_bw()
+
+ggplotly(inplot1)
+
+# Plot - All inundation events
+inplot2 <- ggplot() +
+  geom_point(data = inundation_flow, aes(x = Date, y = Flowdiff)) +
+  labs(title = "Flowdiff with all Inundation") +
+  geom_col(data = inundation2, aes(x = Date, y = Inundation_n), fill = 
+             "blue", alpha = 0.6) + theme_bw()
+ggplotly(inplot2)
+
+inplot3 <- ggplot() +
+  geom_point(data = inundation_flow, aes(x = Date, y = Flowdiff_s)) +
+  labs(title = "Standardized Flowdiff with all Inundation") +
+  geom_col(data = inundation2, aes(x = Date, y = Inundation_n_low), fill = 
+             "blue", alpha = 0.6) + theme_bw()
+
+grid.arrange(inplot1, inplot2, inplot3, nrow = 3)
+
+
+# Allow 10 days after last "inundation=TRUE" to also count as inundated. Merge with sample data. 
+inundation4 <- inundation %>%
+  mutate(Inundation2 = ifelse(lead(Inundation, 10) == "TRUE", "TRUE", Inundation)) %>%
+  select(c(Date, Month:Inundation2))
+
+
+
+
+
+
+

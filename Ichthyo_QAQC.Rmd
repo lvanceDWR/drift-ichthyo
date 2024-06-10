@@ -472,28 +472,78 @@ write_csv(IchFullData, "test files/IchFullData1998-2022.csv")
 
 ```
 
-
- 
-
+ Find unique values. Create data frame with water year and water type added in for analysis in QA/QC. \
 ```{r}
 
+sampUnique <- IchFullData %>%
+  unique() %>%
+  arrange(Datetime)
+
+samp_catch_physMerge <- IchFullData %>%
+  mutate(WY = ifelse(Month >9, Year + 1, Year)) %>%
+  left_join(wy, by = "WY") %>%
+  select(-c(Index, WYType)) %>%
+  mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart))
 
 ```
 
+## QAQC 
+
+* QC Flags: Blank = no issues/1 = Comment but deemed Acceptable/ 2 = Suspect/ 3 = Highly Suspect
+* Flag_SAMP: Sampling issues
+* Flag_LAB: Lab issues
+* Flag_FM: Flowmeter
+* Flag_CPUE: CPUE
+
+### QAQC Sampling and Lab issues
+
+6. Export sampling table
+7. Look at field sampling comments
+8. Flag comments reflecting poor data quality (Flag_SAMP)
+9. Add comment about what was flagged
+    * FMMISSING if lacking flowmeter values
+    * SAMP for other sampling issues 
+    * Leave blank if no issues
+10. Look at lab comments and flag if poor data quality
+11. Add Comment_LAB
+    * LAB if lab issues (e.g. unable to meet meso or microtally)
+    * Leave blank if no issues
+
+* This part is manual. Think about how to make this codeable, change our condition code flags or add a flag as part of data entry? 
+* The following section creates blank columns before creating the csv to manually filter through comments and add appropriate notation before reading the file back in at step 12
 
 
 ```{r}
-
+SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 | !is.na(LabComments))
+SamplingQAQC$Flag_SAMP <-  ""
+SamplingQAQC$Comment_SAMP <-""
+SamplingQAQC$Flag_LAB <- ""
+SamplingQAQC$Comment_LAB <- ""
+today <- today()
+write.csv(SamplingQAQC, paste("R_write/IchSamplingQAQC_", today, ".csv"))
 ```
 
-
+Now that file is notated, read back in and select for the flags and comments. 
 ```{r}
-
+SamplingQAQC_fill <- read.csv("R_write/IchSamplingQAQC_ Notated_.csv")
+SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
+  select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
 ```
 
+### QAQC Flowmeters
 
+13. Inundation data
+
+    This data comes from Water Data Library, Stations at Fremont Weir (A02170) and I Street Bridge . If Stage Height > 32ft at Fremont Weir, Inundation = TRUE. If there is no data at Fremont Weir, and Stage Height > 17 ft at I Street Bridge, Inundation = TRUE. There was also 2 days of lag time added in for inundation (variable Inundation2). 
+    
+* Inundation used to QA/QC STTD data. 
 
 ```{r}
+#first make sure inundation columns match ich data frame 
+inundation <- inundation %>%
+  rename(Date = Dates)
+inundation$Date<-as.Date(inundation$Date,"%m/%d/%Y")
+
 
 ```
 
