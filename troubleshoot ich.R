@@ -186,11 +186,17 @@ Phys2019 <- PhysData %>%
 #access data that does not overlap with excel
 #this is full data - physical, sampling, catch that is in access
 IchAccessB <- IchAccessA %>%
-  filter(Date< "2019-04-22")
+  filter(Date< "2019-04-22") %>%
+  rename(FlowMeterStart = StartValue,
+         FlowMeterEnd = EndValue,
+         MeterSetTime = SetTime)
 
 #access data that does overlap with excel
 IchAccessC <- IchAccessA %>%
-  filter(Date > "2019-04-16" & Date < "2020-01-01")
+  filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
+  rename(FlowMeterStart = StartValue,
+         FlowMeterEnd = EndValue,
+         MeterSetTime = SetTime)
 
 # testjoin <- left_join(IchAccessC, IchSampling3)
 
@@ -362,7 +368,7 @@ tesbind <- bind_rows(IchOverlapCatch, IchExcelCatch)
 #sampling2019 is for ichthyo only - phys data file has both drift and ich - ich is not done at shr and last ich tow in 2019 was july
 Sampling2019 <- left_join(Phys2019, IchAccessC) %>%
   filter(!(Station == "SHR")) %>%
-  filter(!(is.na(StartValue))) %>%
+  filter(!(is.na(FlowMeterStart))) %>%
   select(-c(ScientificName, TL, FL, SpeciesCode, CommonName))
 
 
@@ -371,8 +377,10 @@ str(IchLab2019)
 #now to combine that sampling data with the lab data to get full catch
 IchCatch2019 <- left_join(Sampling2019, IchLab2019S)
 
+
 #bind access to 2019, then bind that combined dataframe to excel
 IchAccessOverlap <- bind_rows(IchAccessB, IchCatch2019)
+
 
 IchExcelOverlap <- bind_rows(IchOverlapCatch, IchExcelCatch) %>%
   mutate(FL = as.numeric(FL)) %>%
@@ -423,3 +431,12 @@ test2019 <- IchFullData %>%
 #maybe do this before binding rows to create full data set and call the column "Count" so it binds nicely?
 
 
+sampUnique <- IchFullData %>%
+  unique() %>%
+  arrange(Datetime)
+
+samp_catch_physMerge <- IchFullData %>%
+  mutate(WY = ifelse(Month >9, Year + 1, Year)) %>%
+  left_join(wy, by = "WY") %>%
+  select(-c(Index, WYType)) %>%
+  mutate(Flowdiff = FlowMeterEnd-FlowMeterStart)
