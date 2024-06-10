@@ -375,7 +375,8 @@ IchCatch2019 <- left_join(Sampling2019, IchLab2019S)
 IchAccessOverlap <- bind_rows(IchAccessB, IchCatch2019)
 
 IchExcelOverlap <- bind_rows(IchOverlapCatch, IchExcelCatch) %>%
-  mutate(FL = as.numeric(FL))
+  mutate(FL = as.numeric(FL)) %>%
+  mutate(Count = if_else(TotalCountSpecies >= 1, 1, NA))
 
 IchFullData <- bind_rows(IchAccessOverlap, IchExcelOverlap)
 
@@ -419,4 +420,6 @@ view2019 <- IchFullData %>%
 test2019 <- IchFullData %>%
   mutate(IndividualCount = if_else(TotalCountSpecies >= 1, 1, NA))
 #this worked - is there a way to combine this with the already existing count column so it isn't excessive? besides manually?
+#maybe do this before binding rows to create full data set and call the column "Count" so it binds nicely?
+
 

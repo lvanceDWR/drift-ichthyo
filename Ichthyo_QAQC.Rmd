@@ -404,6 +404,9 @@ IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menid
  Add in some updates to the species dataframe to account for changes in contractor notation of ID'd species
 ```{r}
 #additional items for species due to changes in contractor notation
+#per contractor form Menidia sp. = common name silverside
+# between lab data in excel and lab data from access, add to the 
+# species lookup table to cover everything for joining 
 SpeciesUpdate <- Species %>%
   add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
   add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
@@ -411,6 +414,10 @@ SpeciesUpdate <- Species %>%
   add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
   add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
 
+# removing TSE - threadfin shad eggs and ASE american shad eggs in this version 
+# since it does not appear contractor has made a comment re: eggs
+# also the "animal tissue, baby clam, etc" is removed since those NA don't match
+# correctly when tied to the excel data
 SpeciesUpdate2 <- SpeciesUpdate %>%
   filter(!is.na(ScientificName)) %>%
   filter(SpeciesCode != "TSE") %>%
@@ -445,8 +452,11 @@ IchCatch2019 <- left_join(Sampling2019, IchLab2019S)
 #bind access to 2019, then bind that combined dataframe to excel
 IchAccessOverlap <- bind_rows(IchAccessB, IchCatch2019)
 
+#Due to shifting lower trophic data into Excel for storage based on a database format, lab data from 4/22/2019 onward has a "TotalCountSpecies" column along with up to 20 individual larval fish measurements. This could be confusing for users unfamiliar, so adding an "count" column before binding dataframes together should help with this. 
+
 IchExcelOverlap <- bind_rows(IchOverlapCatch, IchExcelCatch) %>%
-  mutate(FL = as.numeric(FL))
+  mutate(FL = as.numeric(FL))%>%
+  mutate(Count = if_else(TotalCountSpecies >= 1, 1, NA))
 
 IchFullData <- bind_rows(IchAccessOverlap, IchExcelOverlap)
 
@@ -457,7 +467,7 @@ write_csv(IchFullData, "test files/IchFullData1998-2022.csv")
 ```
 
 
-
+ 
 
 ```{r}
 
@@ -466,28 +476,8 @@ write_csv(IchFullData, "test files/IchFullData1998-2022.csv")
 
 
 
- Update the species data frame to match updates to how the contractors ID species. 
 ```{r}
-#per contractor form Menidia sp. = common name silverside
-# between lab data in excel and lab data from access, add to the 
-# species lookup table to cover everything for joining 
 
-SpeciesUpdate <- Species %>%
-  add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
-  add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
-  add_row(SpeciesCode = "NONE", CommonName = "NoCatch", ScientificName = "No Catch") %>%
-  add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
-  add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
-
-SpeciesUpdate2 <- SpeciesUpdate %>%
-  filter(!is.na(ScientificName)) %>%
-  filter(SpeciesCode != "TSE") %>%
-  filter(SpeciesCode != "ASE")
-
-# removing TSE - threadfin shad eggs and ASE american shad eggs in this version 
-# since it does not appear contractor has made a comment re: eggs
-# also the "animal tissue, baby clam, etc" is removed since those NA don't match
-# correctly when tied to the excel data
 ```
 
 
