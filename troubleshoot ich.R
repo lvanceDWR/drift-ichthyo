@@ -189,14 +189,16 @@ IchAccessB <- IchAccessA %>%
   filter(Date< "2019-04-22") %>%
   rename(FlowMeterStart = StartValue,
          FlowMeterEnd = EndValue,
-         MeterSetTime = SetTime)
+         MeterSetTime = SetTime) %>%
+  select(-c(FieldCommentsAccess))
 
 #access data that does overlap with excel
 IchAccessC <- IchAccessA %>%
   filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
   rename(FlowMeterStart = StartValue,
          FlowMeterEnd = EndValue,
-         MeterSetTime = SetTime)
+         MeterSetTime = SetTime) %>%
+  select(-c(FieldCommentsAccess))
 
 # testjoin <- left_join(IchAccessC, IchSampling3)
 
@@ -262,6 +264,28 @@ IchLabExcel <- IchLabData2 %>%
 
 #correct scientific name misspelling
 IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menidia berylina", "Menidia beryllina")
+
+#per contractor form Menidia sp. = common name silverside
+# between lab data in excel and lab data from access, add to the 
+# species lookup table to cover everything for joining 
+
+SpeciesUpdate <- Species %>%
+  add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
+  add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
+  add_row(SpeciesCode = "NONE", CommonName = "NoCatch", ScientificName = "No Catch") %>%
+  add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
+  add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
+
+SpeciesUpdate2 <- SpeciesUpdate %>%
+  filter(!is.na(ScientificName)) %>%
+  filter(SpeciesCode != "TSE") %>%
+  filter(SpeciesCode != "ASE")
+
+# removing TSE - threadfin shad eggs and ASE american shad eggs in this version 
+# since it does not appear contractor has made a comment re: eggs
+# also the "animal tissue, baby clam, etc" is removed since those NA don't match
+# correctly when tied to the excel data
+
 
 #important to account for changes in scientific name and species code notation from contractors here - merge these
 #lab data with speciesupdate2 before binding with the data from Access
@@ -353,12 +377,14 @@ str(IchSampling3)
 IchOverlap <- IchSampling3 %>%
   filter(Date == "2020-01-06" | Date == "2020-01-27")
 
-IchOverlapCatch <- left_join(IchOverlap, IchLabExcelS)
+IchOverlapCatch <- left_join(IchOverlap, IchLabExcelS) %>%
+  rename(FieldComments = FieldCommentsExcel)
 
 IchSampling4 <- IchSampling3 %>%
   filter(!(Date == "2020-01-06" | Date == "2020-01-27"))
 
-IchExcelCatch <- left_join(IchSampling4, IchLabExcelS)
+IchExcelCatch <- left_join(IchSampling4, IchLabExcelS) %>%
+  rename(FieldComments = FieldCommentsExcel)
 
 #test binding the two jan 2020 overlap dates with the rest of the excel catch data - success
 tesbind <- bind_rows(IchOverlapCatch, IchExcelCatch)
@@ -369,7 +395,7 @@ tesbind <- bind_rows(IchOverlapCatch, IchExcelCatch)
 Sampling2019 <- left_join(Phys2019, IchAccessC) %>%
   filter(!(Station == "SHR")) %>%
   filter(!(is.na(FlowMeterStart))) %>%
-  select(-c(ScientificName, TL, FL, SpeciesCode, CommonName))
+  select(-c(ScientificName, TL, FL, SpeciesCode, CommonName, FieldComments))
 
 
 str(Sampling2019)
@@ -392,44 +418,28 @@ IchFullData <- bind_rows(IchAccessOverlap, IchExcelOverlap)
 write_csv(IchFullData, "test files/FullData.csv")
 
 
-#per contractor form Menidia sp. = common name silverside
-# between lab data in excel and lab data from access, add to the 
-# species lookup table to cover everything for joining 
-
-SpeciesUpdate <- Species %>%
-  add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
-  add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
-  add_row(SpeciesCode = "NONE", CommonName = "NoCatch", ScientificName = "No Catch") %>%
-  add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
-  add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
-
-SpeciesUpdate2 <- SpeciesUpdate %>%
-  filter(!is.na(ScientificName)) %>%
-  filter(SpeciesCode != "TSE") %>%
-  filter(SpeciesCode != "ASE")
-
-# removing TSE - threadfin shad eggs and ASE american shad eggs in this version 
-# since it does not appear contractor has made a comment re: eggs
-# also the "animal tissue, baby clam, etc" is removed since those NA don't match
-# correctly when tied to the excel data
 
 #find method to add a column for individual measurement counts instead of total counts
 # first verify that "total count species" column is only 4/22/2019 onward
 
-viewtotal <- IchFullData %>%
-  filter(!is.na(TotalCountSpecies))
-
-viewNAtotal <- IchFullData%>%
-  filter(is.na(TotalCountSpecies))
-
-view2019 <- IchFullData %>%
-  filter(Date > "2019-04-15")
-
-test2019 <- IchFullData %>%
-  mutate(IndividualCount = if_else(TotalCountSpecies >= 1, 1, NA))
+# viewtotal <- IchFullData %>%
+#   filter(!is.na(TotalCountSpecies))
+# 
+# viewNAtotal <- IchFullData%>%
+#   filter(is.na(TotalCountSpecies))
+# 
+# view2019 <- IchFullData %>%
+#   filter(Date > "2019-04-15")
+# 
+# test2019 <- IchFullData %>%
+  # mutate(IndividualCount = if_else(TotalCountSpecies >= 1, 1, NA))
 #this worked - is there a way to combine this with the already existing count column so it isn't excessive? besides manually?
 #maybe do this before binding rows to create full data set and call the column "Count" so it binds nicely?
 
+IchFullData <- IchFullData%>%
+  relocate(event_id, Datetime, Date, Time, PhysicalDataID, Station, YSI, WeatherCode, Tide, FlowDirection,
+           ConditionCode, VegetationRank, MicrocystisVisualRank, WaterTemperature, Secchi, Conductivity, SpCnd, 
+           pH, DO, Turbidity, MeterSetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, TowLocation, SampleVolume)
 
 sampUnique <- IchFullData %>%
   unique() %>%
