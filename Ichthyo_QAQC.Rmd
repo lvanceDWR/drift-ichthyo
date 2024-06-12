@@ -260,14 +260,16 @@ IchAccessB <- IchAccessA %>%
   filter(Date< "2019-04-22")%>%
   rename(FlowMeterStart = StartValue,
          FlowMeterEnd = EndValue,
-         MeterSetTime = SetTime)
+         MeterSetTime = SetTime)%>%
+  select(-c(FieldCommentsAccess))
 
 #access data that does overlap with excel. 
 IchAccessC <- IchAccessA %>%
   filter(Date > "2019-04-16" & Date < "2020-01-01")%>%
   rename(FlowMeterStart = StartValue,
          FlowMeterEnd = EndValue,
-         MeterSetTime = SetTime)
+         MeterSetTime = SetTime)%>%
+  select(-c(FieldCommentsAccess))
 ```
 
 
@@ -439,10 +441,14 @@ IchLabExcelS <- left_join(IchLabExcel, SpeciesUpdate2)
  Merge each section of data with catch data before binding rows together
 ```{r}
 #2020 overlap between access and excel
-IchOverlapCatch <- left_join(IchOverlap, IchLabExcelS)
+IchOverlapCatch <- left_join(IchOverlap, IchLabExcelS)%>%
+  rename(FieldComments = FieldCommentsExcel)
 
 #remainder of data strictly entered into Excel merge with catch
-IchExcelCatch <- left_join(IchSampling4, IchLabExcelS)
+IchExcelCatch <- left_join(IchSampling4, IchLabExcelS)%>%
+  rename(FieldComments = FieldCommentsExcel)%>%
+  filter(Station == "STTD")
+#removes the times ich net was used at SHR for comparison - no actual tow done
 
 #next step is binding these to the 2019 overlap
 #phys2019, ichaccessC, and ichlab2019
@@ -458,9 +464,32 @@ IchCatch2019 <- left_join(Sampling2019, IchLab2019S)
 #bind access to 2019, then bind that combined dataframe to excel
 IchAccessOverlap <- bind_rows(IchAccessB, IchCatch2019)
 
+IchAccessOverlapA <- IchAccessOverlap %>%
+  rename(FieldComments = FieldCommentsLarval,
+         LabComments = CommentsCatch)
+
+#making sure to add in water quality data to catch and sampling data
+PhysExcel <- PhysData %>%
+  filter(year(Date) > 2019) %>%
+  filter(Station == "STTD")
+
+PhysExcelOverlap <- PhysExcel %>%
+  filter(Date == "2020-01-06" | Date == "2020-01-27") %>%
+  select(-c(FieldComments, MeshSize))
+
+PhysExcelB <- PhysExcel %>%
+  filter(Date >= "2020-02-10") %>%
+  select(-c(FieldComments, MeshSize, SamplingAltered)) %>%
+  filter(Date < "2022-07-01") %>%
+  filter(Station == "STTD") %>%
+  unique()
+
+IchOverlapCatchA <- left_join(PhysExcelOverlap, IchOverlapCatch)
+IchExcelCatchA <- left_join(IchExcelCatch, PhysExcelB)
+
 #Due to shifting lower trophic data into Excel for storage based on a database format, lab data from 4/22/2019 onward has a "TotalCountSpecies" column along with up to 20 individual larval fish measurements. This could be confusing for users unfamiliar, so adding an "count" column before binding dataframes together should help with this. 
 
-IchExcelOverlap <- bind_rows(IchOverlapCatch, IchExcelCatch) %>%
+IchExcelOverlap <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
   mutate(FL = as.numeric(FL))%>%
   mutate(Count = if_else(TotalCountSpecies >= 1, 1, NA))
 
