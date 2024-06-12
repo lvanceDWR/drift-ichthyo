@@ -384,7 +384,9 @@ IchSampling4 <- IchSampling3 %>%
   filter(!(Date == "2020-01-06" | Date == "2020-01-27"))
 
 IchExcelCatch <- left_join(IchSampling4, IchLabExcelS) %>%
-  rename(FieldComments = FieldCommentsExcel)
+  rename(FieldComments = FieldCommentsExcel) %>%
+  filter(Station == "STTD")
+#removes the times ich net was used at SHR for comparison - no actual tow done
 
 #test binding the two jan 2020 overlap dates with the rest of the excel catch data - success
 tesbind <- bind_rows(IchOverlapCatch, IchExcelCatch)
@@ -407,12 +409,39 @@ IchCatch2019 <- left_join(Sampling2019, IchLab2019S)
 #bind access to 2019, then bind that combined dataframe to excel
 IchAccessOverlap <- bind_rows(IchAccessB, IchCatch2019)
 
+IchAccessOverlapA <- IchAccessOverlap %>%
+  rename(FieldComments = FieldCommentsLarval,
+         LabComments = CommentsCatch)
 
-IchExcelOverlap <- bind_rows(IchOverlapCatch, IchExcelCatch) %>%
+PhysExcel <- PhysData %>%
+  filter(year(Date) > 2019) %>%
+  filter(Station == "STTD")
+
+PhysExcelOverlap <- PhysExcel %>%
+  filter(Date == "2020-01-06" | Date == "2020-01-27") %>%
+  select(-c(FieldComments, MeshSize))
+
+PhysExcelB <- PhysExcel %>%
+  filter(Date >= "2020-02-10") %>%
+  select(-c(FieldComments, MeshSize, SamplingAltered)) %>%
+  filter(Date < "2022-07-01") %>%
+  filter(Station == "STTD") %>%
+  unique()
+
+IchOverlapCatchA <- left_join(PhysExcelOverlap, IchOverlapCatch)
+IchExcelCatchA <- left_join(IchExcelCatch, PhysExcelB)
+
+IchExcelOverlap <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
   mutate(FL = as.numeric(FL)) %>%
   mutate(Count = if_else(TotalCountSpecies >= 1, 1, NA))
 
-IchFullData <- bind_rows(IchAccessOverlap, IchExcelOverlap)
+
+
+
+
+# IchExcelOverlapA <- left_join(IchExcelOverlap, PhysExcel)
+
+IchFullData <- bind_rows(IchAccessOverlapA, IchExcelOverlap)
 
 #export bound file
 write_csv(IchFullData, "test files/FullData.csv")
