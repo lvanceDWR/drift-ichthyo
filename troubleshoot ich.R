@@ -268,6 +268,7 @@ IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menid
 #per contractor form Menidia sp. = common name silverside
 # between lab data in excel and lab data from access, add to the 
 # species lookup table to cover everything for joining 
+#double check species names
 
 SpeciesUpdate <- Species %>%
   add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
