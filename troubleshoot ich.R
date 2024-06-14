@@ -435,9 +435,39 @@ IchExcelOverlap <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
   mutate(FL = as.numeric(FL)) %>%
   mutate(Count = if_else(TotalCountSpecies >= 1, 1, NA))
 
+#find way to summarize total counts per fork length of each species on each sampling date 
+IchExcelOverlapTT <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
+  mutate(FL = as.numeric(FL)) %>%
+  mutate(CountIndividual = if_else(TotalCountSpecies >= 1, 1, NA)) 
 
+IchExelOverlapTTT <- IchExcelOverlapTT%>%
+  arrange(ymd(IchExcelOverlapTT$Date)) %>%
+  group_by(event_id, PhysicalDataID, Datetime, Date, Time, Station, YSI, WeatherCode,Tide, MicrocystisVisualRank,
+           WaterTemperature, Secchi, Conductivity, SpCnd, pH, DO, Turbidity, FlowDirection, VegetationRank, ConditionCode, SamplingAltered,
+           FieldComments_WQ, Flag_PQC, Comment_PQC, DataCorrectionComments, Year, Month, MonthAbb,
+           MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed,MeshSize, FieldComments,
+           SampleVolume, LabComments, SpeciesCode, ScientificName, CommonName, TL,
+           FL, LifeStage, LarvalLifeStage, TotalCountSpecies, CountIndividual) %>%
+  summarise(Count = sum(CountIndividual))
 
+# ### the code below works, but doesn't include all columns
+# IchExelOverlapTTT <- IchExcelOverlapTT%>%
+#   arrange(ymd(IchExcelOverlapTT$Date)) %>%
+#   group_by(event_id, Datetime, Date, Time, Station, CountIndividual) %>%
+#   summarise(Count = sum(CountIndividual))
+# 
+# IchExelOverlapTTT <- IchExcelOverlapTT%>%
+#   arrange(ymd(IchExcelOverlapTT$Date)) %>%
+#   group_by(event_id, Datetime, Date, Time, Station, SpeciesCode, ScientificName, CommonName, FL, CountIndividual) %>%
+#   summarise(Count = sum(CountIndividual))
 
+#referencenotes
+# Df = df %>%
+# group_by(sampleID, ..... fork length)
+# %>%
+# summarize(Count = sum(Count))
+# summarize(Count = n())
+# group_by(SampleID:speceis)
 
 # IchExcelOverlapA <- left_join(IchExcelOverlap, PhysExcel)
 
