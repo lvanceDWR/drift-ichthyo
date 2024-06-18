@@ -435,7 +435,6 @@ IchExcelCatchA <- left_join(IchExcelCatch, PhysExcelB)
 IchExcelOverlap <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
   mutate(FL = as.numeric(FL)) %>%
   mutate(CountIndividual = if_else(TotalCountSpecies >= 1, 1, NA))%>%
-  arrange(ymd(IchExcelOverlapTT$Date)) %>%
   group_by(event_id, PhysicalDataID, Datetime, Date, Time, Station, YSI, WeatherCode,Tide, MicrocystisVisualRank,
            WaterTemperature, Secchi, Conductivity, SpCnd, pH, DO, Turbidity, FlowDirection, VegetationRank, ConditionCode, SamplingAltered,
            FieldComments_WQ, Flag_PQC, Comment_PQC, DataCorrectionComments, Year, Month, MonthAbb,
