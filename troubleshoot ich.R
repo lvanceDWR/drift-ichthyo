@@ -541,7 +541,7 @@ inundation <- inundation %>%
   rename(Date = Dates)
 inundation$Date<-as.Date(inundation$Date,"%m/%d/%Y")
 
-inundation <- inundation %>%
+inundation2 <- inundation %>%
   mutate(Month = month(Date),
          Year = year(Date),
          WY = ifelse(Month > 9, Year + 1, Year)) %>%
@@ -553,14 +553,14 @@ samp3 <-sampUnique %>%
          Flowdiff_s = Flowdiff/MeterSetTime) 
 
 # merged inundation and sampling
-inundation_flow <- left_join(samp3, inundation, by = "Date") %>%
+inundation_flow <- left_join(samp3, inundation2, by = "Date") %>%
   filter(Flowdiff<100000) %>%
   filter(Station == "STTD") %>%
   mutate(Flowdiff_s = Flowdiff/MeterSetTime,
          Inundation_n = ifelse(Inundation == "TRUE", 40000, 0))
 
 # all inundation
-inundation2 <- inundation %>%
+inundation3 <- inundation %>%
   mutate(Inundation_n = ifelse(Inundation == "TRUE", 40000, 0),
          Inundation_n_low = ifelse(Inundation == "TRUE", 5000,0))
 
@@ -578,14 +578,14 @@ ggplotly(inplot1)
 inplot2 <- ggplot() +
   geom_point(data = inundation_flow, aes(x = Date, y = Flowdiff)) +
   labs(title = "Flowdiff with all Inundation") +
-  geom_col(data = inundation2, aes(x = Date, y = Inundation_n), fill = 
+  geom_col(data = inundation3, aes(x = Date, y = Inundation_n), fill = 
              "blue", alpha = 0.6) + theme_bw()
 ggplotly(inplot2)
 
 inplot3 <- ggplot() +
   geom_point(data = inundation_flow, aes(x = Date, y = Flowdiff_s)) +
   labs(title = "Standardized Flowdiff with all Inundation") +
-  geom_col(data = inundation2, aes(x = Date, y = Inundation_n_low), fill = 
+  geom_col(data = inundation3, aes(x = Date, y = Inundation_n_low), fill = 
              "blue", alpha = 0.6) + theme_bw()
 
 grid.arrange(inplot1, inplot2, inplot3, nrow = 3)
@@ -594,11 +594,40 @@ grid.arrange(inplot1, inplot2, inplot3, nrow = 3)
 # Allow 10 days after last "inundation=TRUE" to also count as inundated. Merge with sample data. 
 inundation4 <- inundation %>%
   mutate(Inundation2 = ifelse(lead(Inundation, 10) == "TRUE", "TRUE", Inundation)) %>%
-  select(c(Date, Month:Inundation2))
+  select(c(Date:Inundation2))
+
+samp_catch_phys <- left_join(samp_catch_physMerge, inundation4)
+
+#14. Look at distribution of flowmeter values
+
+# Histogram of values
+samp_catch_phys$Month <- ordered(samp_catch_phys$Month)
+FlowHist <- ggplot(samp_catch_phys, aes(Flowdiff)) + geom_histogram() +
+  facet_wrap(~Station) + theme_bw()
+ggplotly(FlowHist)
+
+# SHR vs STTD boxplot
+FlowBox <- ggplot(samp_catch_phys) + geom_boxplot(aes(x = Station, y = Flowdiff)) + theme_bw()
+
+# SHR vs STTD boxplot by month
+FlowBoxMonth <- ggplot(samp_catch_phys) + geom_boxplot(aes(x = Month, y = Flowdiff, fill = Month)) + facet_wrap(~Station) + scale_fill_viridis(discrete = TRUE) + theme_bw() 
+
+# SHR vs STTD boxplot by year
+FlowBoxYear <- ggplot(samp_catch_phys) + geom_boxplot(aes(x = ordered(WY), y = Flowdiff, fill = ordered(WY))) + facet_wrap(~Station) + theme_bw() 
+
+# SetTime vs Flowdiff by station and month
+FlowPoint <- ggplot(samp_catch_phys, aes(x = MeterSetTime, y = Flowdiff, color = Month)) + geom_point(size = 3) + facet_wrap(~Station) + theme_bw()
+
+# SetTime vs Flowdiff by station and flowmeter type
+FlowPoint2 <- ggplot(samp_catch_phys, aes(x = MeterSetTime, y = Flowdiff, color = FlowMeterSpeed)) + geom_point(size = 3) + facet_wrap(~Station) + theme_bw() + scale_color_viridis(discrete = TRUE) 
 
 
+grid.arrange(FlowBox, FlowHist)
+grid.arrange(FlowBoxMonth, FlowBoxYear)
+grid.arrange(FlowPoint, FlowPoint2)
 
 
+check <- samp_catch_phys %>% filter(Flowdiff > 50000)
 
 
 
