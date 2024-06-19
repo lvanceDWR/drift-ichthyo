@@ -390,7 +390,7 @@ IchExcelCatch <- left_join(IchSampling4, IchLabExcelS) %>%
 #removes the times ich net was used at SHR for comparison - no actual tow done
 
 #test binding the two jan 2020 overlap dates with the rest of the excel catch data - success
-tesbind <- bind_rows(IchOverlapCatch, IchExcelCatch)
+# tesbind <- bind_rows(IchOverlapCatch, IchExcelCatch)
 
 #next step is binding these to the 2019 overlap
 #phys2019, ichaccessC, and ichlab2019
@@ -443,20 +443,20 @@ IchExcelOverlap <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
            FL, LifeStage, LarvalLifeStage, TotalCountSpecies, CountIndividual) %>%
   summarise(Count = sum(CountIndividual))
 
-#find way to summarize total counts per fork length of each species on each sampling date 
-IchExcelOverlapTT <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
-  mutate(FL = as.numeric(FL)) %>%
-  mutate(CountIndividual = if_else(TotalCountSpecies >= 1, 1, NA)) 
-
-IchExelOverlapTTT <- IchExcelOverlapTT%>%
-  arrange(ymd(IchExcelOverlapTT$Date)) %>%
-  group_by(event_id, PhysicalDataID, Datetime, Date, Time, Station, YSI, WeatherCode,Tide, MicrocystisVisualRank,
-           WaterTemperature, Secchi, Conductivity, SpCnd, pH, DO, Turbidity, FlowDirection, VegetationRank, ConditionCode, SamplingAltered,
-           FieldComments_WQ, Flag_PQC, Comment_PQC, DataCorrectionComments, Year, Month, MonthAbb,
-           MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed,MeshSize, FieldComments,
-           SampleVolume, LabComments, SpeciesCode, ScientificName, CommonName, TL,
-           FL, LifeStage, LarvalLifeStage, TotalCountSpecies, CountIndividual) %>%
-  summarise(Count = sum(CountIndividual))
+# #find way to summarize total counts per fork length of each species on each sampling date 
+# IchExcelOverlapTT <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
+#   mutate(FL = as.numeric(FL)) %>%
+#   mutate(CountIndividual = if_else(TotalCountSpecies >= 1, 1, NA)) 
+# 
+# IchExelOverlapTTT <- IchExcelOverlapTT%>%
+#   arrange(ymd(IchExcelOverlapTT$Date)) %>%
+#   group_by(event_id, PhysicalDataID, Datetime, Date, Time, Station, YSI, WeatherCode,Tide, MicrocystisVisualRank,
+#            WaterTemperature, Secchi, Conductivity, SpCnd, pH, DO, Turbidity, FlowDirection, VegetationRank, ConditionCode, SamplingAltered,
+#            FieldComments_WQ, Flag_PQC, Comment_PQC, DataCorrectionComments, Year, Month, MonthAbb,
+#            MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed,MeshSize, FieldComments,
+#            SampleVolume, LabComments, SpeciesCode, ScientificName, CommonName, TL,
+#            FL, LifeStage, LarvalLifeStage, TotalCountSpecies, CountIndividual) %>%
+#   summarise(Count = sum(CountIndividual))
 
 # ### the code below works, but doesn't include all columns
 # IchExelOverlapTTT <- IchExcelOverlapTT%>%
@@ -516,7 +516,9 @@ samp_catch_physMerge <- IchFullData %>%
   mutate(WY = ifelse(Month >9, Year + 1, Year)) %>%
   left_join(wy, by = "WY") %>%
   select(-c(Index, WYType)) %>%
-  mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart))
+  mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart)) %>%
+  select(-c(LarvalDataID, LarvalCatchID, CountIndividual, TotalCountSpecies)) %>%
+  arrange(Datetime)
 
 
 ################################################################################################
@@ -542,7 +544,8 @@ inundation$Date<-as.Date(inundation$Date,"%m/%d/%Y")
 inundation <- inundation %>%
   mutate(Month = month(Date),
          Year = year(Date),
-         WY = ifelse(Month > 9, Year + 1, Year))
+         WY = ifelse(Month > 9, Year + 1, Year)) %>%
+  select(-c(Month, Year))
 
 # Modify sample table to include Flowdiff
 samp3 <-sampUnique %>%
