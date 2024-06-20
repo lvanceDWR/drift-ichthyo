@@ -212,7 +212,9 @@ View(Pivot3)
 
 IchAccess <- Pivot3 %>%
   filter(Station == "STTD" | Station == "SHR") %>%
-  select(-c(LarvalCode.x, LarvalCode.y))
+  select(-c(LarvalCode.x, LarvalCode.y)) %>%
+  rename(FieldCommentsAccess = "FieldComments") %>%
+  relocate(event_id, Datetime)
 View(IchAccess)
 
 # this ensures looking at data that is in access, not excel
@@ -508,8 +510,12 @@ write_csv(IchFullData, "test files/IchFullData1998-2022.csv")
 
 ```
 
- Find unique values. Create data frame with water year and water type added in for analysis in QA/QC. \
+ Ensure columns are in a good order, Find unique values. Create data frame with water year and water type added in for analysis in QA/QC.
 ```{r}
+IchFullData <- IchFullData%>%
+  relocate(event_id, Datetime, Date, Time, PhysicalDataID, Station, YSI, WeatherCode, Tide, FlowDirection,
+           ConditionCode, VegetationRank, MicrocystisVisualRank, WaterTemperature, Secchi, Conductivity, SpCnd, 
+           pH, DO, Turbidity, MeterSetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, TowLocation, SampleVolume)
 
 sampUnique <- IchFullData %>%
   unique() %>%
@@ -561,7 +567,7 @@ write.csv(SamplingQAQC, paste("R_write/IchSamplingQAQC_", today, ".csv"))
 
 Now that file is notated, read back in and select for the flags and comments. 
 ```{r}
-SamplingQAQC_fill <- read.csv("R_write/IchSamplingQAQC_ Notated_.csv")
+SamplingQAQC_fill <- read.csv("R_write/IchSamplingQAQC_Notated_2024-06-20.csv")
 SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
   select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
 ```
