@@ -593,7 +593,7 @@ grid.arrange(inplot1, inplot2, inplot3, nrow = 3)
 
 # Allow 10 days after last "inundation=TRUE" to also count as inundated. Merge with sample data. 
 inundation4 <- inundation %>%
-  mutate(Inundation2 = ifelse(lead(Inundation, 10) == "TRUE", "TRUE", Inundation)) %>%
+  mutate(Inundation2 = ifelse(lag(Inundation, 10) == "TRUE", "TRUE", Inundation)) %>%
   select(c(Date:Inundation2))
 
 samp_catch_phys <- left_join(samp_catch_physMerge, inundation4)
@@ -627,7 +627,14 @@ grid.arrange(FlowBoxMonth, FlowBoxYear)
 grid.arrange(FlowPoint, FlowPoint2)
 
 
-check <- samp_catch_phys %>% filter(Flowdiff > 50000)
+check <- samp_catch_phys %>% filter(Flowdiff > 40000)
+
+#fix known flowmeter errors
+#flowmeter when it reads 0, use as if it reads 1000000
+
+1000000-996009
+
+#change the same flowmeter values in samp3
 
 
 
