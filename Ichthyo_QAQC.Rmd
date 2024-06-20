@@ -458,7 +458,7 @@ IchExcelCatch <- left_join(IchSampling4, IchLabExcelS)%>%
 Sampling2019 <- left_join(Phys2019, IchAccessC) %>%
   filter(!(Station == "SHR")) %>%
   filter(!(is.na(FlowMeterStart))) %>%
-  select(-c(ScientificName, TL, FL, SpeciesCode, CommonName))
+  select(-c(ScientificName, TL, FL, SpeciesCode, CommonName, FieldComments))
 
 #now to combine that sampling data with the lab data to get full catch
 IchCatch2019 <- left_join(Sampling2019, IchLab2019S)
