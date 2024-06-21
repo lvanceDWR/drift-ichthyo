@@ -648,7 +648,7 @@ checkich <- samp_catch_phys %>% filter(Flowdiff > 40000)
 #fix known flowmeter errors
 #flowmeter when it reads 0, use as if it reads 1000000
 
-samp_catch_phys$FlowDiff[samp_catch_phys$event_id == "STTD_2015-04-30 08:16:00"] <- abs(samp_catch_phys$FlowDiff == 1000000-996009)
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2015-04-30 08:16:00"] <- 1000000-996009
 
 #change the same flowmeter values in samp3
 
