@@ -547,6 +547,11 @@ inundation2 <- inundation %>%
          WY = ifelse(Month > 9, Year + 1, Year)) %>%
   select(-c(Month, Year))
 
+inundation2a <- inundation %>%
+  mutate(Month = month(Date),
+         Year = year(Date),
+         WY = ifelse(Month > 9, Year + 1, Year))
+
 # Modify sample table to include Flowdiff
 samp3 <-sampUnique %>%
   mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart),
@@ -592,9 +597,20 @@ grid.arrange(inplot1, inplot2, inplot3, nrow = 3)
 
 
 # Allow 10 days after last "inundation=TRUE" to also count as inundated. Merge with sample data. 
-inundation4 <- inundation %>%
+inundation4 <- inundation2a %>%
   mutate(Inundation2 = ifelse(lag(Inundation, 10) == "TRUE", "TRUE", Inundation)) %>%
-  select(c(Date:Inundation2))
+  select(c(Date, Month:Inundation2))
+
+inundation4$Inundation2[inundation4$Date=="1998-01-01"] <- "FALSE"
+inundation4$Inundation2[inundation4$Date=="1998-01-02"] <- "FALSE"
+inundation4$Inundation2[inundation4$Date=="1998-01-03"] <- "FALSE"
+inundation4$Inundation2[inundation4$Date=="1998-01-04"] <- "FALSE"
+inundation4$Inundation2[inundation4$Date=="1998-01-05"] <- "FALSE"
+inundation4$Inundation2[inundation4$Date=="1998-01-06"] <- "FALSE"
+inundation4$Inundation2[inundation4$Date=="1998-01-07"] <- "FALSE"
+inundation4$Inundation2[inundation4$Date=="1998-01-08"] <- "FALSE"
+inundation4$Inundation2[inundation4$Date=="1998-01-09"] <- "FALSE"
+inundation4$Inundation2[inundation4$Date=="1998-01-10"] <- "FALSE"
 
 samp_catch_phys <- left_join(samp_catch_physMerge, inundation4)
 
@@ -627,12 +643,12 @@ grid.arrange(FlowBoxMonth, FlowBoxYear)
 grid.arrange(FlowPoint, FlowPoint2)
 
 
-check <- samp_catch_phys %>% filter(Flowdiff > 40000)
+checkich <- samp_catch_phys %>% filter(Flowdiff > 40000)
 
 #fix known flowmeter errors
 #flowmeter when it reads 0, use as if it reads 1000000
 
-1000000-996009
+samp_catch_phys$FlowDiff[samp_catch_phys$event_id == "STTD_2015-04-30 08:16:00"] <- abs(samp_catch_phys$FlowDiff == 1000000-996009)
 
 #change the same flowmeter values in samp3
 
