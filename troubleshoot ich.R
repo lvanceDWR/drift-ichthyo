@@ -650,7 +650,86 @@ checkich <- samp_catch_phys %>% filter(Flowdiff > 40000)
 
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2015-04-30 08:16:00"] <- 1000000-996009
 
+# 7/25/2012 STTD appears to be recorded correctly but flow diff is very high
+# 1/24/2012 SHR appears to be correct numbers based on datasheet but flow diff very high
+
+
 #change the same flowmeter values in samp3
 
+#16. Merge data with lab/sampling QAQC 
+#* Replace NA with blank
+#* 
+FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id")
+
+FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id") %>%
+  mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
+         Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
+         Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
+         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), "")) %>%
+  select(-c(PhysicalDataID.y))%>%
+  rename(PhysicalDataID = "PhysicalDataID.x")
+
+#does the na for meterset time need to stay in? maybe so that it runs the fucntion
+Flow.sum.STTD <- samp3 %>%
+  left_join(inundation4) %>%
+  left_join(wy)%>%
+  filter(!is.na(Flowdiff), !is.na(Inundation2),!is.na(MeterSetTime), Station=="STTD") %>%
+  mutate(Flow_s = Flowdiff/MeterSetTime) %>%
+  group_by(Station, FlowMeterSpeed, WYClass, Inundation2) %>%
+  summarize(n= n(),
+            min.Flowdiff = min(Flowdiff),
+            max.Flowdiff = max(Flowdiff),
+            median.Flowdiff = median(Flowdiff),
+            min.Flowdiff_s = min(Flow_s),
+            max.Flowdiff_s = max(Flow_s),
+            median.Flowdiff_s = median(Flow_s),
+            Flow_Q1 = quantile(Flowdiff, probs = 0.25),
+            Flow_Q3 = quantile(Flowdiff, probs = 0.75),
+            Flow_UL = Flow_Q3 + 1.5 * (Flow_Q3-Flow_Q1),
+            Flow_s_Q1 = quantile(Flow_s, probs = 0.25), 
+            Flow_s_Q3 = quantile(Flow_s, probs = 0.75),
+            Flow_s_UL = Flow_s_Q3 + 1.5 * (Flow_s_Q3-Flow_s_Q1),
+            Flow_s_MAD = mad(Flow_s))
 
 
+Flow.sum.STTD <- samp3 %>%
+  left_join(inundation4) %>%
+  left_join(wy)%>%
+  filter(!is.na(Flowdiff), !is.na(Inundation2), Station=="STTD") %>%
+  mutate(Flow_s = Flowdiff/MeterSetTime)
+
+isna <- Flow.sum.STTD %>%
+  filter(is.na(Flow_s))
+
+naset <- Flow.sum.STTD %>%
+  filter(is.na(MeterSetTime))
+
+Flow.sum.STTD %>%
+  kbl() %>%
+  kable_styling()
+
+
+Flow.sum.SHR <- samp3 %>%
+  left_join(inundation4) %>%
+  left_join(wy)%>%
+  mutate(Flow_s = Flowdiff/MeterSetTime) %>%
+  group_by(Station, FlowMeterSpeed, WYClass) %>%
+  filter(!is.na(Flowdiff), Station == "SHR") %>%
+  summarize(n= n(),
+            min.Flowdiff = min(Flowdiff),
+            max.Flowdiff = max(Flowdiff),
+            median.Flowdiff = median(Flowdiff),
+            min.Flowdiff_s = min(Flow_s),
+            max.Flowdiff_s = max(Flow_s),
+            median.Flowdiff_s = median(Flow_s),
+            Flow_Q1 = quantile(Flowdiff, probs = 0.25),
+            Flow_Q3 = quantile(Flowdiff, probs = 0.75),
+            Flow_UL = Flow_Q3 + 1.5 * (Flow_Q3-Flow_Q1),
+            Flow_s_Q1 = quantile(Flow_s, probs = 0.25), 
+            Flow_s_Q3 = quantile(Flow_s, probs = 0.75),
+            Flow_s_UL = Flow_s_Q3 + 1.5 * (Flow_s_Q3-Flow_s_Q1),
+            Flow_s_MAD = mad(Flow_s))
+
+Flow.sum.SHR %>%
+  kbl() %>%
+  kable_styling()
