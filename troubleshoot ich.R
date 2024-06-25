@@ -649,6 +649,8 @@ checkich <- samp_catch_phys %>% filter(Flowdiff > 40000)
 #flowmeter when it reads 0, use as if it reads 1000000
 
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2015-04-30 08:16:00"] <- 1000000-996009
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] <- 954818
+samp_catch-phys$Flowdiff[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] <- abs(samp_catch-phys$Flowdiff[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"])
 
 # 7/25/2012 STTD appears to be recorded correctly but flow diff is very high
 # 1/24/2012 SHR appears to be correct numbers based on datasheet but flow diff very high
@@ -708,13 +710,13 @@ Flow.sum.STTD %>%
   kbl() %>%
   kable_styling()
 
-
+#also keep the is.na meter set time here?
 Flow.sum.SHR <- samp3 %>%
   left_join(inundation4) %>%
   left_join(wy)%>%
   mutate(Flow_s = Flowdiff/MeterSetTime) %>%
   group_by(Station, FlowMeterSpeed, WYClass) %>%
-  filter(!is.na(Flowdiff), Station == "SHR") %>%
+  filter(!is.na(Flowdiff), !is.na(MeterSetTime), Station == "SHR") %>%
   summarize(n= n(),
             min.Flowdiff = min(Flowdiff),
             max.Flowdiff = max(Flowdiff),
@@ -733,3 +735,49 @@ Flow.sum.SHR <- samp3 %>%
 Flow.sum.SHR %>%
   kbl() %>%
   kable_styling()
+
+
+#outliers for flow
+
+Flow.outlier.STTD <- left_join(FM_Samp, Flow.sum.STTD) %>%
+  mutate(Flow_s = Flowdiff/MeterSetTime) %>%
+  filter(!is.na(Flowdiff), !is.na(Inundation2), Station=="STTD") %>%
+  group_by(Station, FlowMeterSpeed, WYClass) %>%
+  mutate(Flow_modZ = abs(0.6745*(Flow_s - median.Flowdiff_s)/Flow_s_MAD),
+         Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey", ifelse(Flow_modZ > 3.5, "MAD", 
+                                                                                                                      "None"))))
+
+summary(factor(Flow.outlier.STTD$Flow_Outlier))
+
+Flow.outlier.SHR <- left_join(FM_Samp, Flow.sum.SHR) %>%
+  mutate(Flow_s = Flowdiff/MeterSetTime) %>%
+  filter(!is.na(Flowdiff),  Station=="SHR") %>%
+  group_by(Station, FlowMeterSpeed, WYClass) %>%
+  mutate(Flow_modZ = abs(0.6745*(Flow_s - median.Flowdiff_s)/Flow_s_MAD),
+         Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey", ifelse(Flow_modZ > 3.5, "MAD", 
+                                                                                                                      "None"))))
+
+summary(factor(Flow.outlier.SHR$Flow_Outlier))
+
+
+FlowBoxMonth1a <- ggplot(Flow.outlier.STTD) + geom_boxplot(aes(x = WYClass, y = Flow_s)) +  scale_fill_viridis(discrete = TRUE) + theme_bw() 
+ggplotly(FlowBoxMonth1a)
+
+
+outlierWY1a <- ggplot(Flow.outlier.STTD, aes(x = WYClass, y = Flow_s, color = Flow_Outlier)) + geom_point(size = 2.5, alpha = 0.5) +
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+
+outlierMonth1a <- ggplot(Flow.outlier.STTD, aes(x = Month, y = Flow_s, color = Flow_Outlier)) + geom_point(size = 2.5, alpha = 0.5) + 
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+grid.arrange(FlowBoxMonth1a, outlierWY1a, outlierMonth1a)
+
