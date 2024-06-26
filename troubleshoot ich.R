@@ -650,10 +650,12 @@ checkich <- samp_catch_phys %>% filter(Flowdiff > 40000)
 
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2015-04-30 08:16:00"] <- 1000000-996009
 samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] <- 954818
-samp_catch-phys$Flowdiff[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] <- abs(samp_catch-phys$Flowdiff[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"])
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] <- 954818-941900
 
 # 7/25/2012 STTD appears to be recorded correctly but flow diff is very high
 # 1/24/2012 SHR appears to be correct numbers based on datasheet but flow diff very high
+# 1/23/2004 SHR appears to be correct numbers based on datasheet but flow diff very high
+# 2/16/1999 SHR appears to be correct numbers based on datasheet but flow diff very high
 
 
 #change the same flowmeter values in samp3
