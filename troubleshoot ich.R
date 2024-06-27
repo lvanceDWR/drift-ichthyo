@@ -658,8 +658,6 @@ samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id == "STTD_2012-07-25 10:11:
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
 
 
-
-# 7/25/2012 STTD appears to be recorded correctly but flow diff is very high
 # 1/24/2012 SHR appears to be correct numbers based on datasheet but flow diff very high
 # 1/23/2004 SHR appears to be correct numbers based on datasheet but flow diff very high
 # 2/16/1999 SHR appears to be correct numbers based on datasheet but flow diff very high
