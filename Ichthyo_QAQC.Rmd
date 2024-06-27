@@ -704,7 +704,10 @@ samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2015-04-30 08:16:00"]
 samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] <- 954818
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] <- 954818-941900
 
-# 7/25/2012 STTD appears to be recorded correctly but flow diff is very high
+#comment on data sheet and confirmation with NI, 7/25/2012 STTD flowmeter value was recorded incorrectly, should match flowmeter for zoop
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id == "STTD_2012-07-25 10:11:00"] <- 899989
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
+
 # 1/24/2012 SHR appears to be correct numbers based on datasheet but flow diff very high
 # 1/23/2004 SHR appears to be correct numbers based on datasheet but flow diff very high
 # 2/16/1999 SHR appears to be correct numbers based on datasheet but flow diff very high
@@ -713,6 +716,10 @@ samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] 
 samp3$Flowdiff[samp3$event_id == "STTD_2015-04-30 08:16:00"] <- 1000000-996009
 samp3$FlowMeterEnd[samp3$event_id == "SHR_2016-03-17 08:25:00"] <- 954818
 samp3$Flowdiff[samp3$event_id == "SHR_2016-03-17 08:25:00"] <- 954818-941900
+
+#comment on data sheet and confirmation with NI, 7/25/2012 STTD flowmeter value was recorded incorrectly, should match flowmeter for zoop
+samp3$FlowMeterEnd[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 899989
+samp3$Flowdiff[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
 
 ```
 
@@ -795,6 +802,30 @@ Flow.sum.SHR %>%
 
 ```
 
+```{r}
+
+Flow.outlier.STTD <- left_join(FM_Samp, Flow.sum.STTD) %>%
+  mutate(Flow_s = Flowdiff/MeterSetTime) %>%
+  filter(!is.na(Flowdiff), !is.na(Inundation2), Station=="STTD") %>%
+  group_by(Station, FlowMeterSpeed, WYClass) %>%
+  mutate(Flow_modZ = abs(0.6745*(Flow_s - median.Flowdiff_s)/Flow_s_MAD),
+         Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey", ifelse(Flow_modZ > 3.5, "MAD", 
+                                                                                                                      "None"))))
+
+summary(factor(Flow.outlier.STTD$Flow_Outlier))
+
+
+Flow.outlier.SHR <- left_join(FM_Samp, Flow.sum.SHR) %>%
+  mutate(Flow_s = Flowdiff/MeterSetTime) %>%
+  filter(!is.na(Flowdiff),  Station=="SHR") %>%
+  group_by(Station, FlowMeterSpeed, WYClass) %>%
+  mutate(Flow_modZ = abs(0.6745*(Flow_s - median.Flowdiff_s)/Flow_s_MAD),
+         Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey", ifelse(Flow_modZ > 3.5, "MAD", 
+                                                                                                                      "None"))))
+
+summary(factor(Flow.outlier.SHR$Flow_Outlier))
+
+```
 
 
 

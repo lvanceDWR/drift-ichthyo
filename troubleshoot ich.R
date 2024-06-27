@@ -717,6 +717,7 @@ Flow.sum.STTD %>%
   kbl() %>%
   kable_styling()
 
+
 #also keep the is.na meter set time here?
 Flow.sum.SHR <- samp3 %>%
   left_join(inundation4) %>%
@@ -766,7 +767,7 @@ Flow.outlier.SHR <- left_join(FM_Samp, Flow.sum.SHR) %>%
 
 summary(factor(Flow.outlier.SHR$Flow_Outlier))
 
-
+#first do for STTD
 FlowBoxMonth1a <- ggplot(Flow.outlier.STTD) + geom_boxplot(aes(x = WYClass, y = Flow_s)) +  scale_fill_viridis(discrete = TRUE) + theme_bw() 
 ggplotly(FlowBoxMonth1a)
 
@@ -788,3 +789,26 @@ outlierMonth1a <- ggplot(Flow.outlier.STTD, aes(x = Month, y = Flow_s, color = F
 
 grid.arrange(FlowBoxMonth1a, outlierWY1a, outlierMonth1a)
 
+#do the same for SHR
+FlowBoxMonth1b <- ggplot(Flow.outlier.SHR) + geom_boxplot(aes(x = WYClass, y = Flow_s)) +  scale_fill_viridis(discrete = TRUE) + theme_bw() 
+ggplotly(FlowBoxMonth1b)
+
+
+outlierWY1b <- ggplot(Flow.outlier.SHR, aes(x = WYClass, y = Flow_s, color = Flow_Outlier)) + geom_point(size = 2.5, alpha = 0.5) +   
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+
+outlierMonth1b <- ggplot(Flow.outlier.SHR, aes(x = Month, y = Flow_s, color = Flow_Outlier)) + geom_point(size = 2.5, alpha = 0.5) +   
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+grid.arrange(FlowBoxMonth1b, outlierWY1b, outlierMonth1b)
+
+#then combine
