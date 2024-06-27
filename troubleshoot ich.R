@@ -644,6 +644,7 @@ grid.arrange(FlowPoint, FlowPoint2)
 
 
 checkich <- samp_catch_phys %>% filter(Flowdiff > 40000)
+checkich2 <- samp_catch_phys %>% filter(Flowdiff <1000)
 
 #fix known flowmeter errors
 #flowmeter when it reads 0, use as if it reads 1000000
@@ -651,6 +652,12 @@ checkich <- samp_catch_phys %>% filter(Flowdiff > 40000)
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2015-04-30 08:16:00"] <- 1000000-996009
 samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] <- 954818
 samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "SHR_2016-03-17 08:25:00"] <- 954818-941900
+
+#comment on data sheet and confirmation with NI, 7/25/2012 STTD flowmeter value was recorded incorrectly, should match flowmeter for zoop
+samp_catch_phys$FlowMeterEnd[samp_catch_phys$event_id == "STTD_2012-07-25 10:11:00"] <- 899989
+samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
+
+
 
 # 7/25/2012 STTD appears to be recorded correctly but flow diff is very high
 # 1/24/2012 SHR appears to be correct numbers based on datasheet but flow diff very high
