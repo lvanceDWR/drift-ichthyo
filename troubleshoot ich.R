@@ -824,3 +824,26 @@ grid.arrange(FlowBoxMonth1b, outlierWY1b, outlierMonth1b)
 #then combine
 Flow.outlier <- rbind(Flow.outlier.SHR, Flow.outlier.STTD)
 
+# Flowmeter Flags and New Flowdiff calculated
+# 
+# Cutoffs based on looking at plots and Upper limits calculated above. 
+# 
+# Flag   | Description                | Outlier                   | Flowdiff
+# Flag 3 | Highly Suspect             | Both                      | < 200 or >= 70000 or >= 50000 if inundation = FALSE
+# Flag 2 | Suspect                    | Tukey or MAD but not Both | 200-999 
+# Flag 1 | Acceptable                 |                           | 
+#   No flag| Acceptable                 | None                      | 1000-59999
+# 
+# Add comment about what was flagged (FM for flowmeter-related)
+# 22. Calculate replacement values where Flag_FM = 3 or Comment_SAMP = FM
+# * Replacement values are median standardized flowdiff * settime based on groupings of Station, Flowmeter Speed, Water Year Class
+
+FlowmeterQAQC <- Flow.outlier %>%
+  filter(!is.na(Flowdiff), Flow_modZ>=0.00000001) %>%
+  mutate(Flag_FM = ifelse(Flow_Outlier=="Both" | Flowdiff < 200 | (Flowdiff >= 50000 & Inundation2 ==FALSE) | Flowdiff >= 70000 , 3, 
+                          ifelse(Flow_Outlier %in% c("Tukey", "MAD") | Flowdiff < 1000, 2,
+                                 "")),
+         Comment_FM = ifelse(Flag_FM %in% c(2,3), "FM", ""),
+         FlowdiffAdj = ifelse(Flag_FM == 3 | Comment_SAMP == "FM", median.Flowdiff_s * SetTime, Flowdiff))
+
+#column type error....figure this out
