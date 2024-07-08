@@ -711,17 +711,17 @@ Flow.sum.STTD <- samp3 %>%
             Flow_s_MAD = mad(Flow_s))
 
 
-Flow.sum.STTD <- samp3 %>%
-  left_join(inundation4) %>%
-  left_join(wy)%>%
-  filter(!is.na(Flowdiff), !is.na(Inundation2), Station=="STTD") %>%
-  mutate(Flow_s = Flowdiff/MeterSetTime)
-
-isna <- Flow.sum.STTD %>%
-  filter(is.na(Flow_s))
-
-naset <- Flow.sum.STTD %>%
-  filter(is.na(MeterSetTime))
+# Flow.sum.STTD <- samp3 %>%
+#   left_join(inundation4) %>%
+#   left_join(wy)%>%
+#   filter(!is.na(Flowdiff), !is.na(Inundation2), Station=="STTD") %>%
+#   mutate(Flow_s = Flowdiff/MeterSetTime)
+# 
+# isna <- Flow.sum.STTD %>%
+#   filter(is.na(Flow_s))
+# 
+# naset <- Flow.sum.STTD %>%
+#   filter(is.na(MeterSetTime))
 
 Flow.sum.STTD %>%
   kbl() %>%
@@ -822,3 +822,5 @@ outlierMonth1b <- ggplot(Flow.outlier.SHR, aes(x = Month, y = Flow_s, color = Fl
 grid.arrange(FlowBoxMonth1b, outlierWY1b, outlierMonth1b)
 
 #then combine
+Flow.outlier <- rbind(Flow.outlier.SHR, Flow.outlier.STTD)
+
