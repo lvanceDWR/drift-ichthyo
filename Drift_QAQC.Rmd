@@ -1192,7 +1192,7 @@ inv_select$TaxonName[inv_select$TaxonName == "Hydrachnidae"]  <- "Hydrachnidia"
 inv_select$LifeStage[inv_select$TaxonName == "Actinopterygii - eggs"]  <- "eggs"
 inv_select$TaxonName[inv_select$TaxonName == "Actinopterygii - eggs"]  <- "Actinopterygii" 
 
-
+############## CHECK
 # Join taxa table with the rest of the data
 inv_all <- left_join(inv_select, tax) %>%
   filter(!is.na(TaxonName))
