@@ -665,6 +665,16 @@ samp_catch_phys$Flowdiff[samp_catch_phys$event_id == "STTD_2012-07-25 10:11:00"]
 
 #change the same flowmeter values in samp3
 
+samp3$Flowdiff[samp3$event_id == "STTD_2015-04-30 08:16:00"] <- 1000000-996009
+samp3$FlowMeterEnd[samp3$event_id == "SHR_2016-03-17 08:25:00"] <- 954818
+samp3$Flowdiff[samp3$event_id == "SHR_2016-03-17 08:25:00"] <- 954818-941900
+
+#comment on data sheet and confirmation with NI, 7/25/2012 STTD flowmeter value was recorded incorrectly, should match flowmeter for zoop
+samp3$FlowMeterEnd[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 899989
+samp3$Flowdiff[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
+
+#remaining outlier values will be flagged in later qa/qc of flowmeter values
+
 #16. Merge data with lab/sampling QAQC 
 #* Replace NA with blank
 #* 
