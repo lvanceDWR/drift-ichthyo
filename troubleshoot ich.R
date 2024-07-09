@@ -645,6 +645,8 @@ grid.arrange(FlowPoint, FlowPoint2)
 
 checkich <- samp_catch_phys %>% filter(Flowdiff > 40000)
 checkich2 <- samp_catch_phys %>% filter(Flowdiff <1000)
+#checking for later outlier section
+checkich3 <- samp_catch_phys %>% filter(Flowdiff <200)
 
 #fix known flowmeter errors
 #flowmeter when it reads 0, use as if it reads 1000000
@@ -678,7 +680,7 @@ samp3$Flowdiff[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
 #16. Merge data with lab/sampling QAQC 
 #* Replace NA with blank
 #* 
-FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id")
+# FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id")
 
 FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id") %>%
   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
@@ -710,6 +712,7 @@ Flow.sum.STTD <- samp3 %>%
             Flow_s_UL = Flow_s_Q3 + 1.5 * (Flow_s_Q3-Flow_s_Q1),
             Flow_s_MAD = mad(Flow_s))
 
+str(Flow.sum.STTD)
 
 # Flow.sum.STTD <- samp3 %>%
 #   left_join(inundation4) %>%
@@ -764,6 +767,7 @@ Flow.outlier.STTD <- left_join(FM_Samp, Flow.sum.STTD) %>%
   mutate(Flow_modZ = abs(0.6745*(Flow_s - median.Flowdiff_s)/Flow_s_MAD),
          Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey", ifelse(Flow_modZ > 3.5, "MAD", 
                                                                                                                       "None"))))
+str(Flow.outlier.STTD)
 
 summary(factor(Flow.outlier.STTD$Flow_Outlier))
 
@@ -774,6 +778,7 @@ Flow.outlier.SHR <- left_join(FM_Samp, Flow.sum.SHR) %>%
   mutate(Flow_modZ = abs(0.6745*(Flow_s - median.Flowdiff_s)/Flow_s_MAD),
          Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey", ifelse(Flow_modZ > 3.5, "MAD", 
                                                                                                                       "None"))))
+str(Flow.outlier.SHR)
 
 summary(factor(Flow.outlier.SHR$Flow_Outlier))
 
@@ -847,3 +852,25 @@ FlowmeterQAQC <- Flow.outlier %>%
          FlowdiffAdj = ifelse(Flag_FM == 3 | Comment_SAMP == "FM", median.Flowdiff_s * SetTime, Flowdiff))
 
 #column type error....figure this out
+FlowmeterQAQC <- Flow.outlier %>%
+  filter(!is.na(Flowdiff), Flow_modZ>=0.00000001) %>%
+  mutate(Flag_FM = ifelse(Flow_Outlier=="Both" | Flowdiff < 200 | (Flowdiff >= 50000 & Inundation2 ==FALSE) | Flowdiff >= 70000 , 3, 
+                          ifelse(Flow_Outlier %in% c("Tukey", "MAD") | Flowdiff < 1000, 2,
+                                 "")),
+         Comment_FM = ifelse(Flag_FM %in% c(2,3), "FM", ""))
+
+FlowmeterQAQC <- Flow.outlier %>%
+  filter(!is.na(Flowdiff), Flow_modZ>=0.00000001) 
+
+str(Flow.outlier.SHR)
+str(Flow.outlier.STTD)
+
+checkflow <- Flow.outlier %>% filter(Flow_outlier == "Both")
+#error for station SHR, flowmeter speed LOW, wy class A
+
+checkflow2 <- Flow.outlier %>% filter(Flowdiff >= 50000 & Inundation2 == FALSE)
+checkflow3 <- Flow.outlier %>% filter(Flowdiff >= 70000, 3, ifelse(Flow_outlier %in% c("Tukey", "Mad")))
+checkflow4 <- Flow.outlier %>% filter(Flowdiff < 1000, 2, "")
+
+
+

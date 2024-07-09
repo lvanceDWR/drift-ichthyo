@@ -728,8 +728,6 @@ samp3$Flowdiff[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
 Merge data with lab/sampling QAQC 
 ```{r}
 
-FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id")
-
 FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id") %>%
   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
          Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
