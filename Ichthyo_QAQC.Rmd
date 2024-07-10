@@ -879,6 +879,8 @@ grid.arrange(FlowBoxMonth1b, outlierWY1b, outlierMonth1b)
 Merge the two data frames together
 ```{r}
 Flow.outlier <- rbind(Flow.outlier.SHR, Flow.outlier.STTD)
+
+Flow.outlier$FlowMeterSpeed <- str_replace_all(Flow.outlier$FlowMeterSpeed, "low", "Low")
 ```
 
 Flowmeter Flags and New Flowdiff calculated
@@ -904,5 +906,205 @@ FlowmeterQAQC <- Flow.outlier %>%
          Comment_FM = ifelse(Flag_FM %in% c(2,3), "FM", ""),
          FlowdiffAdj = ifelse(Flag_FM == 3 | Comment_SAMP == "FM", median.Flowdiff_s * SetTime, Flowdiff))
 ```
+
+
+Summarize number of outliers flagged
+```{r}
+FlowmeterQAQC$Flag_FM <- ordered(FlowmeterQAQC$Flag_FM)
+print("Flowmeter Outliers")
+summary(factor(FlowmeterQAQC$Flag_FM))
+print("Sampling Outliers")
+summary(factor(FlowmeterQAQC$Flag_SAMP))
+print("Lab Outliers")
+summary(factor(FlowmeterQAQC$Flag_LAB))
+```
+
+
+
+
+```{r}
+
+outlierPreFlow <- ggplot(FlowmeterQAQC, aes(x = factor(Month), y = Flowdiff,  text = paste('Date: ', Date,'<br>Inundation: ', Inundation2, '<br>Set time: ', MeterSetTime), color = factor(Flag_FM))) + geom_point(size = 2.5, alpha = 0.5) +  scale_color_viridis(discrete = TRUE) + labs(title = "Flowmeter Pre-QC") +
+  facet_wrap(~Station) + 
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+ggplotly(outlierPreFlow)
+
+outlierPostFlow <- ggplot(FlowmeterQAQC, aes(x = factor(Month), y = FlowdiffAdj, color = factor(Flag_FM))) + geom_point(size = 2.5, alpha = 0.5) + scale_color_viridis(discrete = TRUE)  + labs(title = "Flowmeter Post-QC") +
+  facet_wrap(~Station) +   
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+ggplotly(outlierPostFlow)
+
+grid.arrange(outlierPreFlow, outlierPostFlow, nrow = 2)
+```
+
+Plot before and after for SAMP
+```{r}
+
+outlierPreSamp <- ggplot(Flow.outlier, aes(x = factor(Month), y = Flowdiff, color = factor(Flag_SAMP))) + geom_point(size = 3, alpha = 0.8) + scale_color_viridis(discrete = TRUE) + labs(title = "Sampling Pre-QC") +
+  facet_wrap(~Station) + 
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+ggplotly(outlierPreSamp)
+
+outlierPostSamp <- ggplot(FlowmeterQAQC, aes(x = factor(Month), y = FlowdiffAdj, color = factor(Flag_SAMP))) + geom_point(size = 3, alpha = 0.8) + scale_color_viridis(discrete = TRUE) + labs(title = "Sampling Post-QC") +
+  facet_wrap(~Station) + 
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+ggplotly(outlierPostSamp)
+
+grid.arrange(outlierPreSamp, outlierPostSamp, nrow = 2)
+```
+
+## QAQC: CPUE
+
+25. Calculate Vol and CPUE, Vol_adj, CPUEAdj
+```{r}
+NetArea = 0.4572 * 0.25
+FlowQAQC_CPUE <- FlowmeterQAQC %>%
+  mutate(Volume = ifelse(FlowMeterSpeed == "Regular",
+                         Flowdiff * 26873 * NetArea/999999,
+                         ifelse(FlowMeterSpeed == "Low",
+                                Flowdiff * 57560 * NetArea/999999, NA))) %>%
+  filter(!is.na(Flowdiff)) %>%
+  mutate(CPUE= round(Count/Volume,3))%>%
+  
+  mutate(VolumeAdj = ifelse(FlowMeterSpeed == "Regular",
+                            FlowdiffAdj * 26873 * NetArea/999999,
+                            ifelse(FlowMeterSpeed == "Low",
+                                   FlowdiffAdj * 57560 * NetArea/999999, NA))) %>%
+  mutate(CPUEAdj = round(Count/VolumeAdj,3))%>%
+  arrange(Datetime)
+
+```
+
+Look at distribution of CPUE values
+```{r}
+FlowQAQC_CPUE$Month <- factor(FlowQAQC_CPUE$Month)
+FlowQAQC_low <- filter(FlowQAQC_CPUE, CPUE < 10)
+FlowQAQC_high <- filter(FlowQAQC_CPUE, CPUE > 10)
+
+# Histogram of values
+CPUEHist <- ggplot(FlowQAQC_CPUE, aes(CPUEAdj)) + geom_histogram(binwidth = 1) +
+  facet_wrap(~Station) + theme_bw()
+
+# SHR vs STTD boxplot
+CPUEBox <- ggplot(FlowQAQC_CPUE) + geom_boxplot(aes(x = Station, y = CPUEAdj)) + theme_bw()
+
+# SHR vs STTD boxplot by month
+CPUEBoxMonth <- ggplot(FlowQAQC_CPUE) + geom_boxplot(aes(x = Month, y = CPUEAdj, color = Month)) + facet_wrap(~Station) + scale_color_viridis(discrete = TRUE) + theme_bw() 
+
+grid.arrange(CPUEHist, CPUEBox)
+
+# SHR vs STTD boxplot by year
+CPUEBoxYear <- ggplot(FlowQAQC_CPUE) + geom_boxplot(aes(x = factor(WY), y = CPUEAdj)) + facet_grid(Station~.) + theme_bw() 
+ggplotly(CPUEBoxYear)
+
+grid.arrange(CPUEBoxMonth, CPUEBoxYear)
+
+```
+
+CPUE and Count Plots
+```{r fig.width = 10, fig.height = 8}
+# Species
+ich_summary <-FlowQAQC_CPUE %>%
+  filter(WY>1998) %>%
+  group_by(Station, WYClass, ScientificName) %>%
+  summarize(median.CPUE = median(CPUEAdj),
+            max.CPUE = max(CPUEAdj),
+            max.Count = max(Count),
+            median.Count = median(Count),
+            total.CPUE = sum(CPUEAdj),
+            n = n()) %>%
+  filter(n > 2)
+
+# All CPUE
+speciesCPUE <- ggplot(FlowQAQC_CPUE, aes(ScientificName, CPUEAdj)) + 
+  geom_jitter(aes(col = WYClass)) + facet_grid(Station~.) + 
+  scale_color_viridis(discrete=TRUE) +
+    theme_bw() + theme(axis.text = element_text(size = 12),
+                      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15)) 
+
+ggplotly(speciesCPUE)
+
+# Median CPUE
+species2 <- ggplot(ich_summary, aes(ScientificName, median.CPUE)) + geom_jitter(aes(col = WYClass)) + facet_grid(Station~.) + 
+    scale_color_viridis(discrete=TRUE) + 
+    theme_bw() + theme(axis.text = element_text(size = 12),
+                      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+# MaxCPUE
+species3 <- ggplot(ich_summary, aes(ScientificName, max.CPUE)) + geom_jitter(aes(col = WYClass)) + facet_grid(Station~.) + 
+    scale_color_viridis(discrete=TRUE) + 
+    theme_bw() + theme(axis.text = element_text(size = 12),
+                      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+
+# Median Count
+medCount <- ggplot(ich_summary, aes(ScientificName, median.Count)) + geom_jitter(aes(col = WYClass)) + facet_grid(Station~.) + 
+    scale_color_viridis(discrete=TRUE) + 
+    theme_bw() + theme(axis.text = element_text(size = 12),
+                      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+# Max Count
+maxCount <- ggplot(ich_summary, aes(ScientificName, max.Count)) + geom_jitter(aes(col = WYClass)) + facet_grid(Station~.) + 
+    scale_color_viridis(discrete=TRUE) + 
+    theme_bw() + theme(axis.text = element_text(size = 12),
+                      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+grid.arrange(species2, species3)
+grid.arrange(medCount, maxCount)
+
+# Which are the outliers?
+ggplotly(maxCount)
+```
+
+ Check on and change any known errors
+```{r}
+checkCounts <- filter(FlowQAQC_CPUE, Count>1000)
+# Match up with datasheet 
+
+checkCPUE <- filter(FlowQAQC_CPUE, CPUEAdj > 100)
+checkCPUE2 <- filter(FlowQAQC_CPUE, is.na(CPUEAdj))
+```
+
+
 
 
