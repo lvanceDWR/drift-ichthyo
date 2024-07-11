@@ -769,6 +769,8 @@ Flow.outlier.STTD <- left_join(FM_Samp, Flow.sum.STTD) %>%
                                                                                                                       "None"))))
 str(Flow.outlier.STTD)
 
+Flow.outlier.STTD$FlowMeterSpeed <- str_replace_all(Flow.outlier.STTD$FlowMeterSpeed, "low", "Low")
+
 summary(factor(Flow.outlier.STTD$Flow_Outlier))
 
 Flow.outlier.SHR <- left_join(FM_Samp, Flow.sum.SHR) %>%
@@ -829,7 +831,7 @@ grid.arrange(FlowBoxMonth1b, outlierWY1b, outlierMonth1b)
 #then combine
 Flow.outlier <- rbind(Flow.outlier.SHR, Flow.outlier.STTD)
 
-Flow.outlier$FlowMeterSpeed <- str_replace_all(Flow.outlier$FlowMeterSpeed, "low", "Low")
+
 
 summary(factor(Flow.outlier$Flow_Outlier))
 

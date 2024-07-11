@@ -793,6 +793,8 @@ Flow.outlier.STTD <- left_join(FM_Samp, Flow.sum.STTD) %>%
          Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey", ifelse(Flow_modZ > 3.5, "MAD", 
                                                                                                                       "None"))))
 
+Flow.outlier.STTD$FlowMeterSpeed <- str_replace_all(Flow.outlier.STTD$FlowMeterSpeed, "low", "Low")
+
 summary(factor(Flow.outlier.STTD$Flow_Outlier))
 
 
@@ -861,7 +863,6 @@ grid.arrange(FlowBoxMonth1b, outlierWY1b, outlierMonth1b)
 ```{r}
 Flow.outlier <- rbind(Flow.outlier.SHR, Flow.outlier.STTD)
 
-Flow.outlier$FlowMeterSpeed <- str_replace_all(Flow.outlier$FlowMeterSpeed, "low", "Low")
 ```
 
 27. Flowmeter Flags and New Flowdiff calculated
