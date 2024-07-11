@@ -473,11 +473,11 @@ IchExcelOverlap <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
            FL, LifeStage, LarvalLifeStage, TotalCountSpecies, CountIndividual) %>%
   summarise(Count = sum(CountIndividual))
 
-IchFullData <- bind_rows(IchAccessOverlap, IchExcelOverlap)
+IchFullData <- bind_rows(IchAccessOverlapA, IchExcelOverlap)
 
 #write to a csv for ease of future publishings
 #export bound file
-write_csv(IchFullData, "test files/IchFullData1998-2022.csv")
+write_csv(IchFullData, "R_write/IchFullData1998-2022.csv")
 
 ```
 
@@ -496,7 +496,9 @@ samp_catch_physMerge <- IchFullData %>%
   mutate(WY = ifelse(Month >9, Year + 1, Year)) %>%
   left_join(wy, by = "WY") %>%
   select(-c(Index, WYType)) %>%
-  mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart))
+  mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart))%>%
+  select(-c(LarvalDataID, LarvalCatchID, CountIndividual, TotalCountSpecies)) %>%
+  arrange(Datetime)
 
 ```
 
@@ -523,7 +525,7 @@ samp_catch_physMerge <- IchFullData %>%
     * Leave blank if no issues
 
 * This part is manual. Think about how to make this codeable, change our condition code flags or add a flag as part of data entry? 
-* The following section creates blank columns before creating the csv to manually filter through comments and add appropriate notation before reading the file back in at step 12
+* The following section creates blank columns before creating the csv to manually filter through comments and add appropriate notation before reading the file back in at step 18
 
 
 ```{r}
@@ -614,7 +616,7 @@ grid.arrange(inplot1, inplot2, inplot3, nrow = 3)
 
 # Allow 10 days after last "inundation=TRUE" to also count as inundated. Merge with sample data. 
 inundation4 <- inundation2a %>%
-  mutate(Inundation2 = ifelse(lead(Inundation, 10) == "TRUE", "TRUE", Inundation)) %>%
+  mutate(Inundation2 = ifelse(lag(Inundation, 10) == "TRUE", "TRUE", Inundation)) %>%
   select(c(Date, Month:Inundation2))
 
 inundation4$Inundation2[inundation4$Date=="1998-01-01"] <- "FALSE"
@@ -631,7 +633,7 @@ inundation4$Inundation2[inundation4$Date=="1998-01-10"] <- "FALSE"
 samp_catch_phys <- left_join(samp_catch_physMerge, inundation4)
 ```
 
-Flowmeter QA/QC
+##Flowmeter QA/QC
 
 20. Look at distribution of flowmeter values
 ```{r}
@@ -697,6 +699,7 @@ samp3$Flowdiff[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
 ```
 
 22. Merge data with lab/sampling QAQC 
+  * Replace NA with blank
 ```{r}
 
 FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id") %>%
@@ -713,6 +716,8 @@ FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id") %>%
 23. Make a table of summarized flowmeter values for different conditions
     * Use Flowdiff/Settime to look for outliers
     * Use inundation as a grouping variable for STTD but not SHR
+    
+STTD
 ```{r}
 #removed meter set times that were NA due to errors in code
 Flow.sum.STTD <- samp3 %>%
@@ -742,7 +747,7 @@ Flow.sum.STTD %>%
 
 ```
 
-24. 
+Sherwood (SHR)
 ```{r}
 #removed meter set times that were NA due to errors in code
 Flow.sum.SHR <- samp3 %>%
@@ -773,7 +778,11 @@ Flow.sum.SHR %>%
 
 ```
 
-25.
+25.Apply outlier definitions to data
+
+* Merge table (above) with rest of the data so averages are based on each individual collected sample and not multiplied for each organism in a sample. 
+* Calculate modified Z score, then label each row as outlier = Tukey, MAD, or BOTH.
+* Do this separately for STTD and SHR
 ```{r}
 
 Flow.outlier.STTD <- left_join(FM_Samp, Flow.sum.STTD) %>%
@@ -799,7 +808,7 @@ summary(factor(Flow.outlier.SHR$Flow_Outlier))
 
 ```
 
-26.
+26. Plot Outliers - STTD
 ```{r}
 FlowBoxMonth1a <- ggplot(Flow.outlier.STTD) + geom_boxplot(aes(x = WYClass, y = Flow_s)) +  scale_fill_viridis(discrete = TRUE) + theme_bw() 
 ggplotly(FlowBoxMonth1a)
@@ -824,7 +833,7 @@ grid.arrange(FlowBoxMonth1a, outlierWY1a, outlierMonth1a)
 ```
 
 
-27.
+Plot Outliers - Sherwood
 ```{r}
 FlowBoxMonth1b <- ggplot(Flow.outlier.SHR) + geom_boxplot(aes(x = WYClass, y = Flow_s)) +  scale_fill_viridis(discrete = TRUE) + theme_bw() 
 ggplotly(FlowBoxMonth1b)
@@ -848,14 +857,14 @@ outlierMonth1b <- ggplot(Flow.outlier.SHR, aes(x = Month, y = Flow_s, color = Fl
 grid.arrange(FlowBoxMonth1b, outlierWY1b, outlierMonth1b)
 ```
 
-28. Merge the two data frames together
+ Merge the two data frames together
 ```{r}
 Flow.outlier <- rbind(Flow.outlier.SHR, Flow.outlier.STTD)
 
 Flow.outlier$FlowMeterSpeed <- str_replace_all(Flow.outlier$FlowMeterSpeed, "low", "Low")
 ```
 
-Flowmeter Flags and New Flowdiff calculated
+27. Flowmeter Flags and New Flowdiff calculated
 
 Cutoffs based on looking at plots and Upper limits calculated above. 
 
@@ -865,11 +874,19 @@ Flag 2 | Suspect                    | Tukey or MAD but not Both | 200-999
 Flag 1 | Acceptable                 |                           | 
 No flag| Acceptable                 | None                      | 1000-59999
 
-Add comment about what was flagged (FM for flowmeter-related)
+28. Add comment about what was flagged (FM for flowmeter-related)
 29. Calculate replacement values where Flag_FM = 3 or Comment_SAMP = FM
   * Replacement values are median standardized flowdiff * settime based on groupings of Station, Flowmeter Speed, Water Year Class
   
-```{r}
+```{r Flag-Replace-Flowmeters}
+################## Flag Flowmeter data: Flag_QC1 ############################
+# Mutate QC Flags 
+# Conditions for Flag 3: Outlier = Both | Flowdiff < 200 | Flowdiff >= 50000 when no inundation | Flowdiff >= 70000
+# Conditions for Flag 2: Outlier = Tukey | Outlier = MAD (but not Both) |Flowdiff between 200-999 
+# Conditions for Flag 1: Acceptable data
+
+# If Flag 3, calculate FlowdiffAdj = median.Flowdiff_s * SetTime
+
 FlowmeterQAQC <- Flow.outlier %>%
   filter(!is.na(Flowdiff), Flow_modZ>=0.00000001) %>%
   mutate(Flag_FM = ifelse(Flow_Outlier=="Both" | Flowdiff < 200 | (Flowdiff >= 50000 & Inundation2 ==FALSE) | Flowdiff >= 70000 , 3, 
@@ -880,7 +897,7 @@ FlowmeterQAQC <- Flow.outlier %>%
 ```
 
 
-30. Summarize number of outliers flagged
+ Summarize number of outliers flagged
 ```{r}
 FlowmeterQAQC$Flag_FM <- ordered(FlowmeterQAQC$Flag_FM)
 print("Flowmeter Outliers")
@@ -892,8 +909,7 @@ summary(factor(FlowmeterQAQC$Flag_LAB))
 ```
 
 
-
-31. 
+30. Plot Changes and Flags 
 ```{r}
 
 outlierPreFlow <- ggplot(FlowmeterQAQC, aes(x = factor(Month), y = Flowdiff,  text = paste('Date: ', Date,'<br>Inundation: ', Inundation2, '<br>Set time: ', MeterSetTime), color = factor(Flag_FM))) + geom_point(size = 2.5, alpha = 0.5) +  scale_color_viridis(discrete = TRUE) + labs(title = "Flowmeter Pre-QC") +
@@ -919,7 +935,7 @@ ggplotly(outlierPostFlow)
 grid.arrange(outlierPreFlow, outlierPostFlow, nrow = 2)
 ```
 
-32. Plot before and after for SAMP
+31. Plot before and after for SAMP
 ```{r}
 
 outlierPreSamp <- ggplot(Flow.outlier, aes(x = factor(Month), y = Flowdiff, color = factor(Flag_SAMP))) + geom_point(size = 3, alpha = 0.8) + scale_color_viridis(discrete = TRUE) + labs(title = "Sampling Pre-QC") +
@@ -947,7 +963,7 @@ grid.arrange(outlierPreSamp, outlierPostSamp, nrow = 2)
 
 ## QAQC: CPUE
 
-33. Calculate Vol and CPUE, Vol_adj, CPUEAdj
+32. Calculate Vol and CPUE, Vol_adj, CPUEAdj
 ```{r}
 NetArea = 0.4572 * 0.25
 FlowQAQC_CPUE <- FlowmeterQAQC %>%
@@ -967,7 +983,7 @@ FlowQAQC_CPUE <- FlowmeterQAQC %>%
 
 ```
 
-34. Look at distribution of CPUE values
+33. Look at distribution of CPUE values
 ```{r}
 FlowQAQC_CPUE$Month <- factor(FlowQAQC_CPUE$Month)
 FlowQAQC_low <- filter(FlowQAQC_CPUE, CPUE < 10)
@@ -993,7 +1009,7 @@ grid.arrange(CPUEBoxMonth, CPUEBoxYear)
 
 ```
 
-35. CPUE and Count Plots
+CPUE and Count Plots
 ```{r fig.width = 10, fig.height = 8}
 # Species
 ich_summary <-FlowQAQC_CPUE %>%
@@ -1068,7 +1084,7 @@ grid.arrange(medCount, maxCount)
 ggplotly(maxCount)
 ```
 
-36. Check on and change any known errors
+34. Check on and change any known errors
 ```{r}
 checkCounts <- filter(FlowQAQC_CPUE, Count>1000)
 # Match up with datasheet 
@@ -1077,6 +1093,88 @@ checkCPUE <- filter(FlowQAQC_CPUE, CPUEAdj > 100)
 checkCPUE2 <- filter(FlowQAQC_CPUE, is.na(CPUEAdj))
 ```
 
+35. Look at summary table of adjusted CPUE values
+```{r, eval = FALSE}
+### Table of values
+CPUE.adj.table <- FlowQAQC_CPUE %>%
+  group_by(Station, FlowMeterSpeed, WYClass, ScientificName) %>%
+  summarize(min.CPUE = min(CPUEAdj),
+            median.CPUE = median(CPUEAdj),
+            max.CPUE = max(CPUEAdj),
+            n = n())
 
+CPUE.adj.table %>%
+    kbl() %>%
+  kable_styling()
+
+```
+
+36. Determine and apply flags and cutoffs
+    * In this case, used plots to decide to flag CPUE values > 70 
+
+37. Add comment about what was flagged (Comment_CPUE = CPUE)
+```{r}
+CPUEQAQC <- FlowQAQC_CPUE %>%
+  mutate(Flag_CPUE = ifelse(CPUEAdj>70, 2, "" ),
+         Comment_CPUE = ifelse(CPUEAdj>70, "CPUE", ""))
+```
+
+38. Plot outliers
+```{r}
+outlier2a <- ggplot(CPUEQAQC, aes(x = Month, y = CPUE, color = Flag_FM)) + geom_point(size = 2.5, alpha = 0.5) + scale_color_viridis(discrete = "TRUE") + facet_wrap(~Station) + labs(title = "CPUE calculated with original Flowmeter values") + 
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+outlier2b <- ggplot(CPUEQAQC, aes(x = Month, y = CPUEAdj, color = Flag_CPUE)) + geom_point(size = 2.5, alpha = 0.5) + scale_color_viridis(discrete = "TRUE") + facet_wrap(~Station) +   labs(title = "CPUE calculated with adjusted Flowmeter values + CPUE flags") + 
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+ggplotly(outlier2b)
+
+grid.arrange(outlier2a, outlier2b)
+
+```
+
+## Clean up display of dataset
+39. Join taxa and clean up order of variables
+```{r}
+# Rename some columns, remove unnecessary columns
+ich_select <- CPUEQAQC %>%
+  dplyr::rename(Inundation = Inundation2,
+         FlagPhys = Flag_PQC,
+         FlagSamp = Flag_SAMP,
+         FlagLab = Flag_LAB,
+         FlagFM = Flag_FM, 
+         FlagCPUE = Flag_CPUE,
+         CommentPhys = Comment_PQC,
+         CommentSamp = Comment_SAMP,
+         CommentLab = Comment_LAB,
+         CommentFM = Comment_FM,
+         CommentCPUE = Comment_CPUE) %>%
+  select(c(event_id, Datetime, Station,
+           WY, WYClass, Inundation,
+           WeatherCode, Tide, MicrocystisVisualRank,
+           WaterTemperature:Turbidity,
+           ConditionCode,FieldComments, 
+           SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, Flowdiff, FlowdiffAdj, Volume, VolumeAdj,LabComments, Category, LifeStage, Count, CPUE, CPUEAdj, FlagPhys, CommentPhys, FlagSamp, CommentSamp, FlagLab, CommentLab, FlagFM, CommentFM, FlagCPUE, CommentCPUE)) 
+
+ 
+
+############## CHECK
+# Join taxa table with the rest of the data
+# ich_all <- left_join(ich_select, tax) %>%
+#   filter(!is.na(TaxonName))
+
+# Rearrange 
+ich_arrange <- ich_all %>% 
+  select(c(event_id:Turbidity, SetTime:VolumeAdj, ConditionCode:FieldComments, LabComments:Category, OrganismID, TaxonRank, TaxonName, LifeStage:CommentCPUE))
+
+```
 
 

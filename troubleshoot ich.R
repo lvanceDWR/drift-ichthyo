@@ -482,7 +482,7 @@ IchExcelOverlap <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
 IchFullData <- bind_rows(IchAccessOverlapA, IchExcelOverlap)
 
 #export bound file
-write_csv(IchFullData, "test files/FullData.csv")
+write_csv(IchFullData, "test files/IchFullData.csv")
 
 
 
@@ -1051,3 +1051,17 @@ checkCounts <- filter(FlowQAQC_CPUE, Count>1000)
 
 checkCPUE <- filter(FlowQAQC_CPUE, CPUEAdj > 100)
 checkCPUE2 <- filter(FlowQAQC_CPUE, is.na(CPUEAdj))
+
+
+
+### Table of values
+CPUE.adj.table <- FlowQAQC_CPUE %>%
+  group_by(Station, FlowMeterSpeed, WYClass, ScientificName) %>%
+  summarize(min.CPUE = min(CPUEAdj),
+            median.CPUE = median(CPUEAdj),
+            max.CPUE = max(CPUEAdj),
+            n = n())
+
+CPUE.adj.table %>%
+  kbl() %>%
+  kable_styling()
