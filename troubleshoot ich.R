@@ -1068,3 +1068,74 @@ CPUE.adj.table <- FlowQAQC_CPUE %>%
 CPUE.adj.table %>%
   kbl() %>%
   kable_styling()
+
+
+CPUEQAQC <- FlowQAQC_CPUE %>%
+  mutate(Flag_CPUE = ifelse(CPUEAdj>70, 2, "" ),
+         Comment_CPUE = ifelse(CPUEAdj>70, "CPUE", ""))
+
+outlier2a <- ggplot(CPUEQAQC, aes(x = Month, y = CPUE, color = Flag_FM)) + geom_point(size = 2.5, alpha = 0.5) + scale_color_viridis(discrete = "TRUE") + facet_wrap(~Station) + labs(title = "CPUE calculated with original Flowmeter values") + 
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+ggplotly(outlier2a)
+
+outlier2b <- ggplot(CPUEQAQC, aes(x = Month, y = CPUEAdj, color = Flag_CPUE)) + geom_point(size = 2.5, alpha = 0.5) + scale_color_viridis(discrete = "TRUE") + facet_wrap(~Station) +   labs(title = "CPUE calculated with adjusted Flowmeter values + CPUE flags") + 
+  theme_bw() + theme(axis.text = element_text(size = 14),
+                     axis.title = element_text(size =14),
+                     legend.text = element_text(size = 14),
+                     legend.title = element_text(size = 14), 
+                     strip.text = element_text(size = 15))
+
+ggplotly(outlier2b)
+
+grid.arrange(outlier2a, outlier2b)
+
+
+
+ich_select <- CPUEQAQC %>%
+  dplyr::rename(Inundation = Inundation2,
+                FlagPhys = Flag_PQC,
+                FlagSamp = Flag_SAMP,
+                FlagLab = Flag_LAB,
+                FlagFM = Flag_FM, 
+                FlagCPUE = Flag_CPUE,
+                CommentPhys = Comment_PQC,
+                CommentSamp = Comment_SAMP,
+                CommentLab = Comment_LAB,
+                CommentFM = Comment_FM,
+                CommentCPUE = Comment_CPUE) %>%
+  select(c(event_id, Datetime, Station,
+           WY, WYClass, Inundation,
+           WeatherCode, Tide, MicrocystisVisualRank,
+           WaterTemperature:Turbidity,
+           ConditionCode,FieldComments, 
+           MeterSetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, Flowdiff, FlowdiffAdj, Volume, VolumeAdj,LabComments, ScientificName, LifeStage, Count, CPUE, CPUEAdj, FlagPhys, CommentPhys, FlagSamp, CommentSamp, FlagLab, CommentLab, FlagFM, CommentFM, FlagCPUE, CommentCPUE))
+
+
+
+empty_as_na <- function(x){
+  if("factor" %in% class(x)) x <- as.character(x) ## since ifelse wont work with factors
+  ifelse(as.character(x)!="", x, NA)
+}
+
+ich_final <- ich_select %>%
+  mutate(LifeStage = replace(LifeStage, LifeStage == "N/A", NA)) %>%
+  mutate(across(c(FlagSamp:CommentCPUE), list(empty_as_na)) ) %>%
+  select(-c(FlagSamp:CommentCPUE)) %>%
+  rename(FlagSamp = FlagSamp_1, 
+         FlagLab = FlagLab_1,
+         FlagFM = FlagFM_1,
+         FlagCPUE = FlagCPUE_1,
+         CommentSamp = CommentSamp_1, 
+         CommentLab = CommentLab_1,
+         CommentFM = CommentFM_1,
+         CommentCPUE = CommentCPUE_1) %>%
+  mutate(QCFlags = paste(FlagSamp, " ", FlagLab, " ", FlagFM, " ", FlagCPUE)) %>%
+  mutate(QCComments = paste(CommentSamp, " ", CommentLab, " ",CommentFM, " ",  CommentCPUE)) %>%
+  relocate(FlowMeterSpeed, .before = "FlowMeterStart")
+
+##also create fish crosswalk like in the main fish dataset? use iep fish codes? 
