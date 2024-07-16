@@ -1050,6 +1050,7 @@ ggplotly(maxCount)
 ## Check
 checkCounts <- filter(FlowQAQC_CPUE, Count>1000)
 # Match up with datasheet 
+#tfs is high - could be real?
 
 checkCPUE <- filter(FlowQAQC_CPUE, CPUEAdj > 100)
 checkCPUE2 <- filter(FlowQAQC_CPUE, is.na(CPUEAdj))
