@@ -1139,3 +1139,13 @@ ich_final <- ich_select %>%
   relocate(FlowMeterSpeed, .before = "FlowMeterStart")
 
 ##also create fish crosswalk like in the main fish dataset? use iep fish codes? 
+
+## Filter rows with a 7
+threes <- inv_final%>%
+  filter(grepl("3", QCFlags ))
+
+# calculate proportion flagged
+## Amount replaced
+print(paste0(round(nrow(threes)/nrow(inv_final)*100,3), "% highly suspicious"))
+
+
