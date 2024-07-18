@@ -48,7 +48,8 @@ catch2 <- catch2 %>%
          Station = `Sampling Area Number`,
          SAMCode = `Sampling Event Number`,
          SampleID = `Sample ID`,
-         LabComments = lab_comments) %>%
+         LabComments = lab_comments,
+         Classification = Category) %>%
   select(-c(`Measuring program short name`, `Observation Type Short Name`,
             SAMCode))
 
@@ -189,8 +190,15 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
 # Condcode <- samp_catch_phys2 %>%
 #   select(c("event_id", "Station", "Condition Code", "ConditionCode"))
 
+catchtax <- left_join(catch,tax) %>%
+  select(-c(Kingdom, Phylum, Subphylum, Class, Subclass,
+            Infraclass, Superorder, Suborder, Infraorder, Superfamily,
+            Genus, Species, CommonName, TaxonRank))
+
+
+
 # Merge datasets for CPUE variables
-samp_catch <- left_join(samp, catch)
+samp_catch <- left_join(samp, catchtax)
 
 #rename and remove columns from join
 
