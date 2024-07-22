@@ -11,23 +11,13 @@ library(tidylog)
 # Load data - several tables
 phys <- read_csv("drift data/LT_phys_qc_20240118.csv")
 catch <- read_csv("drift data/DriftCatchDataAccess_20240119.csv")
-catch2 <- read_csv("drift data/DriftLabExcelData.csv", skip=1)
+catch2 <- read_csv("drift data/DriftLabExcelData_20240430.csv", skip=1)
 samp <- read_csv("drift data/DriftInvertSampAccess_20240119.csv")
 samp2 <- read_csv("drift data/DriftSampExcelData.csv", skip=1)
 tax <- read_csv("drift data/DriftTaxonomy.csv")
 wy <- read_csv("WaterYearType_CDEC.csv") 
 inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
 
-
-# Add and change date formats (does this even need to be done for phys??)
-# phys$Date<-as.Date(phys$Date,"%m/%d/%Y")
-# phys$Year <- year(phys$Date)
-# phys$Month <- month(phys$Date)
-# phys$MonthAbb <- mymonths[phys$Month ]
-# phys$MonthAbb <-ordered(phys$Month,levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
-# phys$Datetime = paste(phys$Date, phys$Time)
-# phys$Datetime <- as.POSIXct(phys$Datetime, 
-#                             format = "%Y-%m-%d %H:%M:%S")
 
 #rename columns and variables for consistency across dataframes, simplify for later work
 #remove unnecessary columns
@@ -86,11 +76,7 @@ catch2$Time <- hms::as_hms(catch2$Time)
 
 
 
-#correct the time for catch2 on dates:8/31/21 STTD 11:06, 8/31/21 SHR 8:06; 9/28/21 SHR 8:10
-time <- catch2 %>%
-  filter(Time == "11:05" | (Time == "08:05" & Date == "08/31/2021") | Time == "08:09")
-str(time)
-time2 <- str_replace(time$Time, "11:05", "11:06")
+# #correct the time for catch2 on dates:8/31/21 STTD 11:06, 8/31/21 SHR 8:06; 9/28/21 SHR 8:10
 # just correct in csv and note instead?
 
 
@@ -133,10 +119,6 @@ samp_catch2 <- left_join(samp2, catch2) %>%
 str(samp_catch2)
 
 samp_catch2$Date <- as.Date(samp_catch2$Date)
-# samp_catch2$Time <- strptime(samp_catch2$Time, format = "%H:%M", tz = "") %>%
-#   strftime(samp_catch2$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
-# str(samp_catch2)
-# samp_catch2$Time <- hms::as_hms(samp_catch2$Time)
 samp_catch2 <- samp_catch2 %>%
   mutate(FlowMeterEnd = as.numeric(FlowMeterEnd))
 str(samp_catch2)
@@ -169,26 +151,6 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
 
 #number of rows expanded a lot due to duplicates - find a way to manage this
 
-# comments3 <- samp_catch_phys2 %>%
-#   filter(!is.na(Field_Comments))
-# 
-# Comments4 <- samp_catch_phys2 %>%
-#   filter(!is.na(FieldComments))
-# 
-# duplicate <- left_join(comments3, Comments4) %>%
-#   select("event_id", "Station", "Date", "Field_Comments", "FieldComments")
-#this confirms these two comments columns contain exactly the same comments
-
-
-# Flow <- samp_catch_phys2 %>%
-#   select(c("event_id", "Datetime", "Station", "FlowMeterStart.x", "FlowMeterEnd.x",
-#            "FlowMeterStart.y", "FlowMeterEnd.y", "Set Time", "MeterSetTime"))
-# 
-# altered <- samp_catch_phys2 %>%
-#   filter(!is.na("SamplingAltered"))
-# 
-# Condcode <- samp_catch_phys2 %>%
-#   select(c("event_id", "Station", "Condition Code", "ConditionCode"))
 
 catchtax <- left_join(catch,tax) %>%
   select(-c(Kingdom, Phylum, Subphylum, Class, Subclass,
@@ -212,8 +174,7 @@ samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
   filter(!is.na(Station)) %>%
   filter(Date < "2019-04-22")
 
-# find2019 <- samp_catch_phys0 %>%
-#   filter(year(Date) == 2019)
+
 
 # For second part 2019, merge phys-samp, then add catch.
 # For the additional data
@@ -240,14 +201,7 @@ gap <- left_join(phys_samp, catch2019)
 checksampphys <- samp_catch_phys0 %>%
   filter(!is.na(FieldComments.y))
 
-# checkgap <- gap %>%
-#   filter(!is.na(FieldComments))
-#comments not lost
 
-# checkcol <- samp_catch_phys0 %>%
-#   select(c(event_id, Date, Time, PhysicalDataID, Station, FlowMeterStart.x, FlowMeterStart.y,
-#            FlowMeterEnd.x, FlowMeterEnd.y, FlowMeterSpeed.x, FlowMeterSpeed.y, ConditionCode.x,
-#            ConditionCode.y))
 
 samp_catch_phys0 <- samp_catch_phys0 %>%
   select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
@@ -262,61 +216,9 @@ samp_catch_phys0 <- samp_catch_phys0 %>%
 samp_catch_phys <- bind_rows(samp_catch_phys0, gap) %>%
   relocate(event_id, Datetime)
 
-#check duplicate columns
-# 
-# comments1 <- samp_catch_phys %>%
-#   filter(!is.na(FieldComments.x))
-# 
-# comments2 <- samp_catch_phys %>%
-#   filter(!is.na(FieldComments.y))
-# 
-# condcode <- samp_catch_phys %>%
-#   filter(!is.na(ConditionCode)) %>%
-#   select(c(event_id, Date, ConditionCode.x, ConditionCode.y, ConditionCode))
-
-#bind with the other two df to create full catch data? make sure to not duplicate
-# reference ich code?
 
 
-# overlap <- left_join(phys, catch2019)
 
-
-# phys_samp <- left_join(samp_catch_phys0, catch2019, by = c("event_id", "Station", "Date", "Time",
-#                                                            "Datetime", "Year", "Month", "MonthAbb")) %>%
-#   filter(Date > "2019-04-16" & Date < "2020-02-01") %>%
-#   mutate(SamplingID = "N/A") 
-
-# phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("event_id", "Datetime", "Date", "Station")) %>%
-#   select(c("event_id", PhysicalDataID:Comment_PQC, InvertDataID:SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, TaxonName, Count, Category, LifeStage))
-
-# check <- samp_catch_phys0 %>%
-#   filter(Date > "2019-12-31" & Date < "2021-01-01") %>%
-#   filter(is.na(PhysicalDataID))
-# 
-# flow <- samp_catch_phys0 %>%
-#   filter(!is.na(FlowMeterSpeed.y))
-# 
-# samp_catch_phys3 <- samp_catch_phys %>%
-#   select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
-#             ConditionCode.x, FieldComments.x)) %>%
-#   rename(FlowMeterStart = FlowMeterStart.y,
-#          FlowMeterEnd = FlowMeterEnd.y,
-#          FlowMeterSpeed = FlowMeterSpeed.y,
-#          ConditionCode = ConditionCode.y,
-#          FieldComments = FieldComments.y,
-#          Category = Classification)
-# 
-# samp_catch_phys3 <- samp_catch_phys %>%
-#   select(-c(FlowMeterStart.x, FlowMeterEnd.x, FlowMeterSpeed.x, MeterSetTime,
-#             ConditionCode.x, FieldComments.x))
-# 
-# samp_catch_phys3 <- samp_catch_phys3 %>%
-#   rename(FlowMeterStarta = FlowMeterStart.y,
-#          FlowMeterEnda = FlowMeterEnd.y,
-#          FlowMeterSpeeda = FlowMeterSpeed.y,
-#          ConditionCodea = ConditionCode.y,
-#          FieldComments = FieldComments.y,
-#          Categoryx = Classification)
 
 
 #check invert taxons and counts ensure none disappeared
@@ -324,15 +226,7 @@ samp_catch_phys <- bind_rows(samp_catch_phys0, gap) %>%
 nacount <- samp_catch_phys0 %>%
   filter(is.na(Count))
 
-# condcode <- samp_catch_phys0 %>%
-#   filter(!is.na(ConditionCode.y))
-# 
-# comments <- samp_catch_phys0 %>%
-#   filter(!is.na(FieldComments.y))
-# 
-# comments2 <- samp_catch_phys0 %>%
-#   filter(is.na(FieldComments.x))
-#need to figure out field comments column
+
 
 sampcatchphysMerge <- bind_rows(samp_catch_phys0, samp_catch_phys2) %>%
   relocate(event_id, Datetime)
@@ -345,33 +239,6 @@ sampcatchphysMerge <- rbind(samp_catch_phys0, phys_samp_catch0)
 
 #check various comments columns, find solution for number of columns
 
-# allcomments <- sampcatchphysMerge %>%
-#   select(c(event_id, Date, Time, Station, FieldComments_WQ, FieldComments_Acc, FieldComments_Samp,
-#            FieldComments, Comment_PQC, Flag_PQC))
-# 
-# anyAcc <- allcomments %>%
-#   filter(is.na(FieldComments_Acc))
-# #this column can be removed
-# 
-# anyWQ <- allcomments %>%
-#   filter(!is.na(FieldComments_WQ))
-# 
-# anySamp <- allcomments %>%
-#   filter(!is.na(FieldComments_Samp))
-# 
-# anyNA <- allcomments %>%
-#   filter(!is.na(FieldComments))
-# 
-# field <- phys %>%
-#   filter(!is.na(FieldComments))
-# 
-# field2 <- phys %>%
-#   filter(is.na(FieldComments))
-# 
-# sampcom <- samp %>%
-#   filter(!is.na(FieldComments))
-# 
-# fieldsamp <- left_join(field, sampcom, by = "PhysicalDataID")
 
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
