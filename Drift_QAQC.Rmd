@@ -47,6 +47,7 @@ wy <- read_csv("WaterYearType_CDEC.csv")
 inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
 #inv_tax_2 <- read_csv("Data/TblInvertsLookUpV2.csv")
 
+#updated catch2 file accounts for correction of date/time for a few dates - verified by checking data sheets (dates:8/31/21 STTD 11:06, 8/31/21 SHR 8:06; 9/28/21 SHR 8:10)
 ```
 
 3. Rename variables
