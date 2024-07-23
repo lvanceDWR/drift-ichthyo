@@ -160,14 +160,14 @@ catchtax <- left_join(catch,tax) %>%
 
 
 # Merge datasets for CPUE variables
-samp_catch <- left_join(samp, catchtax)
+samp_catcht <- left_join(samp, catchtax)
+
+samp_catch <- left_join(samp, catch, by = "InvertDataID") %>%
+  select(-c(InvertCode.y)) %>%
+  rename(InvertCode = "InvertCode.x")
 
 #rename and remove columns from join
 
-# samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
-#   filter(!is.na(Station)) %>%
-#   filter(Date < "2020-02-10") 
-# notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 
 
 samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
