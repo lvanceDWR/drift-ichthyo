@@ -75,6 +75,8 @@ CatchSpecies2 <- mutate(CatchSpecies, ChannelLocation = case_when(is.na(ChannelL
 IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
 View(IchSample)
 
+#check join to ensure nothing is missing from catch data
+
 # rename columns to help simplify before pivoting
 
 IchSample2 <- IchSample %>%
