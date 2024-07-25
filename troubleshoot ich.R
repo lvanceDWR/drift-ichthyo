@@ -16,6 +16,8 @@ library(magrittr)
 library(janitor)
 library(tidylog)
 
+setwd("C:/Users/lvance/OneDrive - California Department of Water Resources/Data publishing/drift ichthyo publish")
+
 ################# bring in qa/qc physical data #################################
 PhysData <-read_csv("drift data/LT_phys_qc_20240118.csv")
 
@@ -71,6 +73,14 @@ CatchSpecies <- left_join(CatchData, Species)
 View(CatchSpecies)
 
 CatchSpecies2 <- mutate(CatchSpecies, ChannelLocation = case_when(is.na(ChannelLocation) ~ "Center", TRUE ~ ChannelLocation))
+
+#removing NA in physical data ID to reduce error in joining - 13 rows with no physical data ID, but have larval data ID but no other info
+SamplingData <- SamplingData %>%
+  filter(!is.na(PhysicalDataID))
+  
+#remove NA in physicalDataID to reduce error in joining for Access
+PhysDataAccess <- PhysData %>%
+  filter(Date < "2020-02-10")
 
 IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
 View(IchSample)
