@@ -76,18 +76,18 @@ Species <- Species %>%
   rename (SpeciesCode = "Code",
           CommonName = "Species",
           ScientificName = "Scientific Name")
-View(Species)
+
 
 SamplingData <- SamplingData %>%
   rename (SamplingQAQCByAccess = "QA/QC'dBy",
           SamplingEnteredByAccess = 'EnteredBy',
           FieldCommentsLarval = "FieldComments") %>%
   select(-c(SamplingEnteredByAccess, SamplingQAQCByAccess))
-View(SamplingData)
+
 
 IEPFish <- IEPFish %>%
   select(-c("...5":"...17"))
-View(IEPFish)
+
 
 PhysData <- PhysData %>%
   select(-c(MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed, ConditionCode))
@@ -103,14 +103,14 @@ CatchData <- CatchData %>%
 ```{r}
 
 CatchSpecies <- left_join(CatchData, Species)
-View(CatchSpecies)
+
 
 #using "center" as default if no channel location is specified as most tows are done as center of channel as possible following SOPs
 
 CatchSpecies2 <- mutate(CatchSpecies, ChannelLocation = case_when(is.na(ChannelLocation) ~ "Center", TRUE ~ ChannelLocation))
 
 IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
-View(IchSample)
+
 
 # rename columns to help simplify before pivoting to simplify column names and make tidy
 
@@ -127,7 +127,7 @@ IchSample2 <- IchSample %>%
          End_MidBottom = "LarvalEndMeter_Mid_Bottom") %>%
   select(-c(StartTime, StopTime, "2ndStartTime_East", "2ndStopTime_East",
             Bottom_StartTime))
-View(IchSample2)
+
 
 #now use pivot longer to create separate columns of "meter start" and "location"
 
@@ -149,7 +149,7 @@ StartPivot <- pivot_longer(IchSample2,
                                  TowLocation == "NearEast" ~ "Near_East",
                                  TowLocation == "MidBottom" ~ "Bottom",
                                  TRUE ~ TowLocation))
-View(StartPivot)
+
 
 EndPivot <- pivot_longer(IchSample2,
                          cols = c(End_MidWest, End_NearWest,
@@ -169,14 +169,14 @@ EndPivot <- pivot_longer(IchSample2,
                                  TowLocation == "NearEast" ~ "Near_East",
                                  TowLocation == "MidBottom" ~ "Bottom",
                                  TRUE ~ TowLocation))
-View(EndPivot)
+
 
 Pivot1 <- left_join(StartPivot, EndPivot)
-View(Pivot1)
+
 
 Pivot3 <- filter(Pivot1, !is.na(LarvalDataID)) %>%
   left_join(CatchSpecies2, by = c("LarvalDataID", "TowLocation" = "ChannelLocation"))
-View(Pivot3)
+
 
 # larval code mainly utilized for linking things in access database, now that 
 # things are linked, not necessary to keep so can be dropped here
@@ -186,7 +186,7 @@ IchAccess <- Pivot3 %>%
   select(-c(LarvalCode.x, LarvalCode.y)) %>%
   rename(FieldCommentsAccess = "FieldComments") %>%
   relocate(event_id, Datetime)
-View(IchAccess)
+
 
 # this ensures looking at data that is in access, not excel
 # this means these larvaldataID are not affected by the data gap to address
@@ -277,7 +277,7 @@ IchSampling <- Sampling2 %>%
          SpotNumber = 'Spot Number',
          SpotCode = 'Spot Code (original/duplicate)')
 
-View(IchSampling)
+
 
 #filtering the na rows removes the excess at the end of the file and the descriptor row without losing column names
 IchSampling2 <- filter(IchSampling, !is.na(Program))
@@ -300,7 +300,7 @@ IchSampling2$Time <- hms::as_hms(IchSampling2$Time)
 
 #filtering the rows helps to remove the demonstration data that was in the file
 IchSampling2 <- filter(IchSampling2, year(Date)>2018)
-View(IchSampling2)
+
 
 #drop unnecessary columns and create event id column for ease of merging with phys data and catch data
 IchSampling3 <- IchSampling2 %>%
@@ -310,7 +310,7 @@ IchSampling3 <- IchSampling2 %>%
   mutate(event_id = paste0(Station, "_", Datetime)) %>%
   relocate(event_id, Datetime) %>%
   filter(year(Date)<2023)
-View(IchSampling3)
+
 ```
 
 7. Now split the sampling from Excel to account for overlap between Access and Excel. Dates 01/06/2020 and 01/27/2020 sampling was entered into both Access and Excel. The appropriate comments for sampling data are housed in the Excel files so utilize that. Also create a data frame housing just the sampling data for 4/22/2019 through 7/15/2019 - that sampling data and physical data was entered into Access, but due to the delay in receiving confirmation of catch data from contractors the lab data was entered into Access
