@@ -82,6 +82,9 @@ SamplingData <- SamplingData %>%
 PhysDataAccess <- PhysData %>%
   filter(Date < "2020-02-10")
 
+
+IchSample <- left_join(PhysDataAccess, SamplingData)
+
 IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
 View(IchSample)
 
@@ -276,6 +279,16 @@ IchLabExcel <- IchLabData2 %>%
 
 #correct scientific name misspelling
 IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menidia berylina", "Menidia beryllina")
+
+#check where striped bass eggs is listed
+stbe <- IchLabExcel %>%
+  filter(ScientificName == "Morone saxitalis")
+
+sbe <-IchAccessB %>%
+  filter(ScientificName == "Morone saxitalis")
+
+se <- IchAccessC %>%
+  filter(ScientificName == "Morone saxitalis")
 
 #per contractor form Menidia sp. = common name silverside
 # between lab data in excel and lab data from access, add to the 
