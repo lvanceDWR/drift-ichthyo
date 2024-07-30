@@ -60,7 +60,8 @@ PhysData <- PhysData %>%
 #these flow meter values relate to drift data, not ichthyo
 
 CatchData <- CatchData %>%
-  rename(CommentsCatch = Comments)
+  rename(CommentsCatch = Comments) %>%
+  filter(!is.na(LarvalDataID))
 
 
 
@@ -85,8 +86,13 @@ PhysDataAccess <- PhysData %>%
 
 IchSample <- left_join(PhysDataAccess, SamplingData)
 
-IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
-View(IchSample)
+
+na <- IchSample %>%
+  filter(is.na(PhysicalDataID))
+#confirms all NA in physical data ID are removed
+
+# IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
+# View(IchSample)
 
 #check join to ensure nothing is missing from catch data
 
