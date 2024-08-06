@@ -379,7 +379,7 @@ IchLabExcel <- IchLabData2 %>%
 #correct any scientific name misspellings before adding species codes
 IchLab2019$ScientificName <- str_replace_all(IchLab2019$ScientificName, "Menidia berylina", "Menidia beryllina")
 IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menidia berylina", "Menidia beryllina")
-
+IchAccessB$ScientificName <- str_replace_all(IchAccessB$ScientificName, "Morone saxitalis", "Morone saxatilis")
 ```
 
 9. Add in some updates to the species dataframe to account for changes in contractor notation of ID'd species
