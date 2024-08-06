@@ -192,7 +192,7 @@ AccessNoData <- filter(viewAccessNA, year(Date) < 2010)
 
 NOSpecimens = mutate(IchAccess, SpeciesCode = case_when(IchAccess$Date %in% viewAccessNA$Date & year(Date) >= 2010
                                                         & year(Date) < 2019 & is.na(SpeciesCode) ~ 
-                                                          "NONE", TRUE ~ SpeciesCode))
+                                                          "None", TRUE ~ SpeciesCode))
 
 NoData = mutate(NOSpecimens, SpeciesCode = case_when(IchAccess$Date %in% viewAccessNA$Date & year(Date) < 2010
                                                      & is.na(SpeciesCode) ~ "NODATA", TRUE ~ SpeciesCode))
@@ -304,7 +304,7 @@ se <- IchAccessC %>%
 SpeciesUpdate <- Species %>%
   add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
   add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
-  add_row(SpeciesCode = "NONE", CommonName = "NoCatch", ScientificName = "No Catch") %>%
+  add_row(SpeciesCode = "None", CommonName = "NoCatch", ScientificName = "No Catch") %>%
   add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
   add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
 
