@@ -226,109 +226,6 @@ IchAccessC <- IchAccessA %>%
 # write_csv(IchAccessB, paste("test files/AccessCatchData.csv"))
 # write_csv(,paste("test files/overlapdata.csv"))
 
-#lab data for 4/22/2019 onward is in Excel
-#physical data overlaps for 01/06/2020 and 01/27/2020 - use excel phys data for this, remove from access phys data
-#join phys data from 4/22/2019 to end of 2019 with catch data from Excel
-#combine lab data from 01/06/2020 and 01/27/2020 with excel
-#once all these separate pieces are accounted for, bind all dataframes to create complete ich catch data 1999-2022
-
-#bring in lab data from Excel, then separate to what does and does not overlap
-IchLabData <- IchLabData %>%
-  rename(Program = 'Measuring program short name',
-         Date = 'Sampling Event Date',
-         Time = 'Sampling Event Time',
-         Station = 'Sampling Area Number',
-         SamplingNumber = 'Sampling Event Number',
-         SampleID = 'Sample ID',
-         OrganismType = 'Observation Type Short Name',
-         OrganismGroup = 'Attribute',
-         ScientificName = 'Observable',
-         TotalCountSpecies = 'Value...10',
-         TL = 'Value...11',
-         FL = 'Value...12',
-         LifeStage = 'Value...13',
-         LarvalLifeStage = '...14',) %>%
-  filter(!is.na(Program)) %>%
-  select(-c(SamplingNumber, SampleID, Program, OrganismType, OrganismGroup))
-
-#format date and time columns for ability to combine with Access data
-IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
-IchLabData$Year <- year(IchLabData$Date)
-IchLabData$Month <- month(IchLabData$Date)
-mymonths <- c("Jan","Feb","Mar",
-              "Apr","May","Jun",
-              "Jul","Aug","Sep",
-              "Oct","Nov","Dec")
-IchLabData$MonthAbb <- mymonths[ IchLabData$Month ]
-IchLabData$Datetime = paste(IchLabData$Date, IchLabData$Time)
-IchLabData$Datetime <- ymd_hm(IchLabData$Datetime)
-IchLabData$Time <- strptime(IchLabData$Time, format = "%H:%M", tz = "") %>%
-  strftime(IchLabData$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
-IchLabData$Time <- hms::as_hms(IchLabData$Time)
-
-IchLabData2 <- IchLabData %>%
-  mutate(event_id = paste0(Station, "_", Datetime)) %>%
-  relocate(event_id, Datetime)%>%
-  filter(year(Date)<2023)
-
-#combine lab data with "sampling data to ensure no missing field comments for ich tows
-
-#create two lab data frames. one 4-22-2019 to end of 2019, one 2020 to 2022
-IchLab2019 <- IchLabData2 %>%
-  filter(year(Date) == 2019) %>%
-  mutate(FL = as.numeric(FL))
-
-IchLab2019$ScientificName <- str_replace_all(IchLab2019$ScientificName, "Menidia berylina", "Menidia beryllina")
-
-IchLabExcel <- IchLabData2 %>%
-  filter(year(Date) > 2019)
-
-#correct scientific name misspelling
-IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menidia berylina", "Menidia beryllina")
-
-#check where striped bass eggs is listed
-stbe <- IchLabExcel %>%
-  filter(ScientificName == "Morone saxitalis")
-
-sbe <-IchAccessB %>%
-  filter(ScientificName == "Morone saxitalis")
-
-se <- IchAccessC %>%
-  filter(ScientificName == "Morone saxitalis")
-
-#per contractor form Menidia sp. = common name silverside
-# between lab data in excel and lab data from access, add to the 
-# species lookup table to cover everything for joining 
-#double check species names
-
-SpeciesUpdate <- Species %>%
-  add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
-  add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
-  add_row(SpeciesCode = "None", CommonName = "NoCatch", ScientificName = "No Catch") %>%
-  add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
-  add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
-
-SpeciesUpdate2 <- SpeciesUpdate %>%
-  filter(!is.na(ScientificName)) %>%
-  filter(SpeciesCode != "TSE") %>%
-  filter(SpeciesCode != "ASE")
-
-# removing TSE - threadfin shad eggs and ASE american shad eggs in this version 
-# since it does not appear contractor has made a comment re: eggs
-# also the "animal tissue, baby clam, etc" is removed since those NA don't match
-# correctly when tied to the excel data
-
-
-#important to account for changes in scientific name and species code notation from contractors here - merge these
-#lab data with speciesupdate2 before binding with the data from Access
-
-IchLab2019S <- left_join(IchLab2019, SpeciesUpdate2)
-
-IchLabExcelS <- left_join(IchLabExcel, SpeciesUpdate2)
-
-#note that the counts for lab are different from how counts were notated in Access - will need to update this to make sure
-#all the counts match prior to publishing
-
 IchSampling <- Sampling2 %>%
   rename(Program = 'Measuring program short name',
          Date = 'Sampling Event Date',
@@ -409,11 +306,122 @@ str(IchSampling3)
 IchOverlap <- IchSampling3 %>%
   filter(Date == "2020-01-06" | Date == "2020-01-27")
 
+IchSampling4 <- IchSampling3 %>%
+  filter(!(Date == "2020-01-06" | Date == "2020-01-27"))
+
+
+#lab data for 4/22/2019 onward is in Excel
+#physical data overlaps for 01/06/2020 and 01/27/2020 - use excel phys data for this, remove from access phys data
+#join phys data from 4/22/2019 to end of 2019 with catch data from Excel
+#combine lab data from 01/06/2020 and 01/27/2020 with excel
+#once all these separate pieces are accounted for, bind all dataframes to create complete ich catch data 1999-2022
+
+#bring in lab data from Excel, then separate to what does and does not overlap
+IchLabData <- IchLabData %>%
+  rename(Program = 'Measuring program short name',
+         Date = 'Sampling Event Date',
+         Time = 'Sampling Event Time',
+         Station = 'Sampling Area Number',
+         SamplingNumber = 'Sampling Event Number',
+         SampleID = 'Sample ID',
+         OrganismType = 'Observation Type Short Name',
+         OrganismGroup = 'Attribute',
+         ScientificName = 'Observable',
+         TotalCountSpecies = 'Value...10',
+         TL = 'Value...11',
+         FL = 'Value...12',
+         LifeStage = 'Value...13',
+         LarvalLifeStage = '...14',) %>%
+  filter(!is.na(Program)) %>%
+  select(-c(SamplingNumber, SampleID, Program, OrganismType, OrganismGroup))
+
+#format date and time columns for ability to combine with Access data
+IchLabData$Date<-as.Date(IchLabData$Date,"%m/%d/%Y")
+IchLabData$Year <- year(IchLabData$Date)
+IchLabData$Month <- month(IchLabData$Date)
+mymonths <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+IchLabData$MonthAbb <- mymonths[ IchLabData$Month ]
+IchLabData$Datetime = paste(IchLabData$Date, IchLabData$Time)
+IchLabData$Datetime <- ymd_hm(IchLabData$Datetime)
+IchLabData$Time <- strptime(IchLabData$Time, format = "%H:%M", tz = "") %>%
+  strftime(IchLabData$Time, format = "%H:%M:%S", tz = "", usetz = FALSE)
+IchLabData$Time <- hms::as_hms(IchLabData$Time)
+
+IchLabData2 <- IchLabData %>%
+  mutate(event_id = paste0(Station, "_", Datetime)) %>%
+  relocate(event_id, Datetime)%>%
+  filter(year(Date)<2023)
+
+#combine lab data with "sampling data to ensure no missing field comments for ich tows
+
+#create two lab data frames. one 4-22-2019 to end of 2019, one 2020 to 2022
+IchLab2019 <- IchLabData2 %>%
+  filter(year(Date) == 2019) %>%
+  mutate(FL = as.numeric(FL))
+
+IchLab2019$ScientificName <- str_replace_all(IchLab2019$ScientificName, "Menidia berylina", "Menidia beryllina")
+
+IchLabExcel <- IchLabData2 %>%
+  filter(year(Date) > 2019)
+
+#correct scientific name misspelling
+IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menidia berylina", "Menidia beryllina")
+
+IchAccessB$ScientificName <- str_replace_all(IchAccessB$ScientificName, "Morone saxitalis", "Morone saxatilis")
+
+#check where striped bass eggs is listed
+stbe <- IchLabExcel %>%
+  filter(ScientificName == "Morone saxitalis")
+
+sbe <-IchAccessB %>%
+  filter(ScientificName == "Morone saxitalis")
+
+se <- IchAccessC %>%
+  filter(ScientificName == "Morone saxitalis")
+
+#per contractor form Menidia sp. = common name silverside
+# between lab data in excel and lab data from access, add to the 
+# species lookup table to cover everything for joining 
+#double check species names
+
+SpeciesUpdate <- Species %>%
+  add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
+  add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
+  add_row(SpeciesCode = "None", CommonName = "NoCatch", ScientificName = "No Catch") %>%
+  add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
+  add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
+
+SpeciesUpdate2 <- SpeciesUpdate %>%
+  filter(!is.na(ScientificName)) %>%
+  filter(SpeciesCode != "TSE") %>%
+  filter(SpeciesCode != "ASE")
+
+# removing TSE - threadfin shad eggs and ASE american shad eggs in this version 
+# since it does not appear contractor has made a comment re: eggs
+# also the "animal tissue, baby clam, etc" is removed since those NA don't match
+# correctly when tied to the excel data
+
+
+#important to account for changes in scientific name and species code notation from contractors here - merge these
+#lab data with speciesupdate2 before binding with the data from Access
+
+IchLab2019S <- left_join(IchLab2019, SpeciesUpdate2)
+
+IchLabExcelS <- left_join(IchLabExcel, SpeciesUpdate2)
+
+#note that the counts for lab are different from how counts were notated in Access - will need to update this to make sure
+#all the counts match prior to publishing
+
+
+
+
+
 IchOverlapCatch <- left_join(IchOverlap, IchLabExcelS) %>%
   rename(FieldComments = FieldCommentsExcel)
 
-IchSampling4 <- IchSampling3 %>%
-  filter(!(Date == "2020-01-06" | Date == "2020-01-27"))
 
 IchExcelCatch <- left_join(IchSampling4, IchLabExcelS) %>%
   rename(FieldComments = FieldCommentsExcel) %>%
