@@ -56,6 +56,9 @@ SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
 Sampling2 <- read_csv("ichthyo data/IchSampData.csv", skip = 1)
 IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
+
+## species code for Sacramento Pikeminnow changed - code updated in CSV before reading in
+
 ########## Read in Excel Catch data ###########################################
 
 #note there was a transciption error for time sent to contractors on COC for 5/6/2019 - corrected
