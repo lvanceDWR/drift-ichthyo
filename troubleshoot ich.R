@@ -16,7 +16,6 @@ library(magrittr)
 library(janitor)
 library(tidylog)
 
-setwd("C:/Users/lvance/OneDrive - California Department of Water Resources/Data publishing/drift ichthyo publish")
 
 ################# bring in qa/qc physical data #################################
 PhysData <-read_csv("drift data/LT_phys_qc_20240118.csv")
@@ -29,6 +28,9 @@ SamplingData <- read_csv("ichthyo data/TblLarvalSampAccess.csv")
 Sampling2 <- read_csv("ichthyo data/IchSampData.csv", skip = 1)
 IEPFish <- read_csv("ichthyo data/IEP FISH CODE.csv")
 
+
+# updated species code for pikeminnow
+ 
 ########## Read in Excel Catch data ###########################################
 
 IchLabData <- read_csv("ichthyo data/IchLabExcelData.csv", skip=1)
@@ -87,8 +89,8 @@ PhysDataAccess <- PhysData %>%
 IchSample <- left_join(PhysDataAccess, SamplingData)
 
 
-na <- IchSample %>%
-  filter(is.na(PhysicalDataID))
+# na <- IchSample %>%
+#   filter(is.na(PhysicalDataID))
 #confirms all NA in physical data ID are removed
 
 # IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
@@ -160,11 +162,11 @@ Pivot3 <- filter(Pivot1, !is.na(LarvalDataID)) %>%
   left_join(CatchSpecies2, by = c("LarvalDataID", "TowLocation" = "ChannelLocation"))
 View(Pivot3)
 
-# checking values between the two dataframes before joining, ensuring everything matches
-# for "channel location" and "tow location" as they are essentially the same
-
-unique(CatchSpecies2$ChannelLocation)
-unique(Pivot1$TowLocation)
+# # checking values between the two dataframes before joining, ensuring everything matches
+# # for "channel location" and "tow location" as they are essentially the same
+# 
+# unique(CatchSpecies2$ChannelLocation)
+# unique(Pivot1$TowLocation)
 
 # larval code mainly utilized for linking things in access database, now that 
 # things are linked, not necessary to keep so can be dropped here
@@ -373,14 +375,14 @@ IchLabExcel$ScientificName <- str_replace_all(IchLabExcel$ScientificName, "Menid
 IchAccessB$ScientificName <- str_replace_all(IchAccessB$ScientificName, "Morone saxitalis", "Morone saxatilis")
 
 #check where striped bass eggs is listed
-stbe <- IchLabExcel %>%
-  filter(ScientificName == "Morone saxitalis")
-
-sbe <-IchAccessB %>%
-  filter(ScientificName == "Morone saxitalis")
-
-se <- IchAccessC %>%
-  filter(ScientificName == "Morone saxitalis")
+# stbe <- IchLabExcel %>%
+#   filter(ScientificName == "Morone saxitalis")
+# 
+# sbe <-IchAccessB %>%
+#   filter(ScientificName == "Morone saxitalis")
+# 
+# se <- IchAccessC %>%
+#   filter(ScientificName == "Morone saxitalis")
 
 #per contractor form Menidia sp. = common name silverside
 # between lab data in excel and lab data from access, add to the 
@@ -390,7 +392,6 @@ se <- IchAccessC %>%
 SpeciesUpdate <- Species %>%
   add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
   add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
-  add_row(SpeciesCode = "None", CommonName = "NoCatch", ScientificName = "No Catch") %>%
   add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
   add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
 
