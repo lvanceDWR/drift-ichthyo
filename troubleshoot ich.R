@@ -421,12 +421,18 @@ IchLabExcelS <- left_join(IchLabExcel, SpeciesUpdate2)
 
 
 IchOverlapCatch <- left_join(IchOverlap, IchLabExcelS) %>%
-  rename(FieldComments = FieldCommentsExcel)
+  rename(FieldComments = FieldCommentsExcel) %>%
+  mutate(SpeciesCode = case_when(is.na(SpeciesCode) ~ "None", TRUE ~ SpeciesCode),
+         ScientificName = case_when(is.na(ScientificName) ~ "No Catch", TRUE ~ ScientificName),
+         CommonName = case_when(is.na(CommonName) ~ "No Catch", TRUE ~ CommonName))
 
 
 IchExcelCatch <- left_join(IchSampling4, IchLabExcelS) %>%
   rename(FieldComments = FieldCommentsExcel) %>%
-  filter(Station == "STTD")
+  filter(Station == "STTD") %>%
+  mutate(SpeciesCode = case_when(is.na(SpeciesCode) ~ "None", TRUE ~ SpeciesCode),
+         ScientificName = case_when(is.na(ScientificName) ~ "No Catch", TRUE ~ ScientificName),
+         CommonName = case_when(is.na(CommonName) ~ "No Catch", TRUE ~ CommonName))
 #removes the times ich net was used at SHR for comparison - no actual tow done
 
 #test binding the two jan 2020 overlap dates with the rest of the excel catch data - success
