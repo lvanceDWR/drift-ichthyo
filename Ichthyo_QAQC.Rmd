@@ -418,12 +418,18 @@ IchLabExcelS <- left_join(IchLabExcel, SpeciesUpdate2)
 ```{r}
 #2020 overlap between access and excel
 IchOverlapCatch <- left_join(IchOverlap, IchLabExcelS)%>%
-  rename(FieldComments = FieldCommentsExcel)
+  rename(FieldComments = FieldCommentsExcel)%>%
+  mutate(SpeciesCode = case_when(is.na(SpeciesCode) ~ "None", TRUE ~ SpeciesCode),
+         ScientificName = case_when(is.na(ScientificName) ~ "No Catch", TRUE ~ ScientificName),
+         CommonName = case_when(is.na(CommonName) ~ "No Catch", TRUE ~ CommonName))
 
 #remainder of data strictly entered into Excel merge with catch
 IchExcelCatch <- left_join(IchSampling4, IchLabExcelS)%>%
   rename(FieldComments = FieldCommentsExcel)%>%
-  filter(Station == "STTD")
+  filter(Station == "STTD")%>%
+  mutate(SpeciesCode = case_when(is.na(SpeciesCode) ~ "None", TRUE ~ SpeciesCode),
+         ScientificName = case_when(is.na(ScientificName) ~ "No Catch", TRUE ~ ScientificName),
+         CommonName = case_when(is.na(CommonName) ~ "No Catch", TRUE ~ CommonName))
 #removes the times ich net was used at SHR for comparison - no actual tow done
 
 #next step is binding these to the 2019 overlap
