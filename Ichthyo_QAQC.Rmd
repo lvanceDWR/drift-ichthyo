@@ -112,7 +112,15 @@ CatchSpecies <- left_join(CatchData, Species)
 
 CatchSpecies2 <- mutate(CatchSpecies, ChannelLocation = case_when(is.na(ChannelLocation) ~ "Center", TRUE ~ ChannelLocation))
 
-IchSample <- left_join(PhysData, SamplingData, by = "PhysicalDataID")
+#removing NA in physical data ID to reduce error in joining - 13 rows with no physical data ID, but have larval data ID but no other info
+SamplingData <- SamplingData %>%
+  filter(!is.na(PhysicalDataID))
+  
+#remove NA in physicalDataID to reduce error in joining for Access
+PhysDataAccess <- PhysData %>%
+  filter(Date < "2020-02-10")
+
+IchSample <- left_join(PhysDataAccess, SamplingData, by = "PhysicalDataID")
 
 
 # rename columns to help simplify before pivoting to simplify column names and make tidy
