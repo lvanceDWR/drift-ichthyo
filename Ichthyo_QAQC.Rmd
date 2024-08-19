@@ -97,7 +97,8 @@ PhysData <- PhysData %>%
 #these flow meter values relate to drift data, not ichthyo
 
 CatchData <- CatchData %>%
-  rename(CommentsCatch = Comments)
+  rename(CommentsCatch = Comments) %>%
+  filter(!is.na(LarvalDataID))
 #help distinguish comments columns
 
 ```
@@ -120,7 +121,7 @@ SamplingData <- SamplingData %>%
 PhysDataAccess <- PhysData %>%
   filter(Date < "2020-02-10")
 
-IchSample <- left_join(PhysDataAccess, SamplingData, by = "PhysicalDataID")
+IchSample <- left_join(PhysDataAccess, SamplingData)
 
 
 # rename columns to help simplify before pivoting to simplify column names and make tidy
@@ -402,7 +403,6 @@ IchAccessB$ScientificName <- str_replace_all(IchAccessB$ScientificName, "Morone 
 SpeciesUpdate <- Species %>%
   add_row(SpeciesCode = "UNSS" , CommonName = "silverside", ScientificName = "Menidia sp.") %>%
   add_row(SpeciesCode = "POM", CommonName = "Unid Crappie", ScientificName = "Pomoxis sp.") %>%
-  add_row(SpeciesCode = "NONE", CommonName = "NoCatch", ScientificName = "No Catch") %>%
   add_row(SpeciesCode = "RAIKIL", CommonName = "Rainwater Killifish", ScientificName = "Lucania parva") %>%
   add_row(SpeciesCode = "KLF", CommonName = "Killifish", ScientificName = "Cyprinodontidae spp.")
 
