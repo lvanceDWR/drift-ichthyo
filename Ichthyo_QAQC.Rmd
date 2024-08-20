@@ -911,7 +911,7 @@ FlowmeterQAQC <- Flow.outlier %>%
                           ifelse(Flow_Outlier %in% c("Tukey", "MAD") | Flowdiff < 1000, 2,
                                  "")),
          Comment_FM = ifelse(Flag_FM %in% c(2,3), "FM", ""),
-         FlowdiffAdj = ifelse(Flag_FM == 3 | Comment_SAMP == "FM", median.Flowdiff_s * SetTime, Flowdiff))
+         FlowdiffAdj = ifelse(Flag_FM == 3 | Comment_SAMP == "FM", median.Flowdiff_s * MeterSetTime, Flowdiff))
 ```
 
 
