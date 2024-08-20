@@ -578,7 +578,7 @@ today <- today()
 write.csv(SamplingQAQC, paste("R_write/IchSamplingQAQC_", today, ".csv"))
 
 
-SamplingQAQC_fill <- read.csv("R_write/IchSamplingQAQC_Notated_2024-06-20.csv")
+SamplingQAQC_fill <- read.csv("R_write/IchSamplingQAQC_ Notated_2024-08-20.csv")
 SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
   select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
 
