@@ -168,6 +168,10 @@ samp_catch <- left_join(samp, catch, by = "InvertDataID") %>%
 
 #rename and remove columns from join
 
+samp_catch_phys00 <-left_join(phys, samp_catch, by = "PhysicalDataID") %>%
+  filter(!is.na(Station)) %>%
+  filter(Date < "2019-04-22")
+
 
 
 samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
@@ -195,15 +199,25 @@ phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
          FlowMeterSpeed = "FlowMeterSpeed.y",
          ConditionCode = "ConditionCode.y")
 
+#invert code has no data here. 
+
 gap <- left_join(phys_samp, catch2019)
 #seems to take care of missing 2019 catch data...next, how to combine? 
+
+#jan thru 4/23/2019 is in access - the rest is in excel
+accessoverlap <- gap %>%
+  filter(Date < "2019-04-22") %>%
+  select(-c(InvertCode, SampleVolume, SampleID, Attribute, TaxonName, Classification, Count, 
+            LifeStage, wet_mass, dry_mass, LabComments, condition))
+
+accessoverlapcatch <- left_join(accessoverlap, catchtax)
 
 checksampphys <- samp_catch_phys0 %>%
   filter(!is.na(FieldComments.y))
 
 
 
-samp_catch_phys0 <- samp_catch_phys0 %>%
+samp_catch_phys0 <- samp_catch_phys00 %>%
   select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
             "FlowMeterSpeed.x", "FieldComments.x")) %>%
   rename(FlowMeterStart = "FlowMeterStart.y",
