@@ -726,15 +726,39 @@ samp3$Flowdiff[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
 #16. Merge data with lab/sampling QAQC 
 #* Replace NA with blank
 #* 
-# FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id")
+#* 
 
-FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id") %>%
+################ figure out duplication when bringing back in #########
+SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
+  select(-c(Datetime, Date, Time, Month))
+
+
+SamplingQAQC_fill_s <- SamplingQAQC_fill_s %>%
   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
          Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
          Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
-         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), "")) %>%
-  select(-c(PhysicalDataID.y))%>%
-  rename(PhysicalDataID = "PhysicalDataID.x")
+         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), ""))
+
+str(SamplingQAQC_fill)
+
+FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill, by = c("event_id", "PhysicalDataID", "FlowMeterStart", "FlowMeterEnd",
+                                                                "FlowMeterSpeed","MeterSetTime", "TowLocation", "Station",
+                                                                "pH", "Conductivity", "WaterTemperature", "Secchi",
+                                                                "SampleVolume", "FieldComments_WQ","DataCorrectionComments", "Stage", "TL",
+                                                                "FL","FieldComments", "CommonName", "ScientificName",
+                                                                 "LifeStage", "LarvalLifeStage",
+                                                                "LabComments", "SpeciesCode", "Count"))
+
+length(unique(samp_catch_phys$pH))
+
+FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s) %>%
+  mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
+         Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
+         Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
+         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), "")) 
+##even closer with 5007 instead of 6626  
+#4830 rows instead of 6626 but much much closer - suggestion to join the sampling qaqc with just the sample data
+#before the catch data gets added.
 
 #does the na for meterset time need to stay in? maybe so that it runs the fucntion
 Flow.sum.STTD <- samp3 %>%
