@@ -741,13 +741,20 @@ SamplingQAQC_fill_s <- SamplingQAQC_fill_s %>%
 
 str(SamplingQAQC_fill)
 
-FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill, by = c("event_id", "PhysicalDataID", "FlowMeterStart", "FlowMeterEnd",
+FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = c("event_id", "PhysicalDataID", "FlowMeterStart", "FlowMeterEnd",
+                                                                  "YSI", "WeatherCode", "Tide", "FlowDirection", "ConditionCode", "VegetationRank",
+                                                                  "MicrocystisVisualRank", "SpCnd", "DO", "Turbidity", "SamplingAltered",
                                                                 "FlowMeterSpeed","MeterSetTime", "TowLocation", "Station",
                                                                 "pH", "Conductivity", "WaterTemperature", "Secchi",
+                                                                "MeshSize", "Year", "MonthAbb", "Flag_PQC", "Comment_PQC",
                                                                 "SampleVolume", "FieldComments_WQ","DataCorrectionComments", "Stage", "TL",
                                                                 "FL","FieldComments", "CommonName", "ScientificName",
                                                                  "LifeStage", "LarvalLifeStage",
-                                                                "LabComments", "SpeciesCode", "Count"))
+                                                                "LabComments", "SpeciesCode", "Count")) 
+#this narrows down and does not over expand the dataset by as much, but still need to figure out how to get 
+# 6626 lines so it is the same as the "full" dataset. Distinct only gives 5007. Check full data set? 
+
+compare_df_cols(samp_catch_phys, FM_Samp)
 
 length(unique(samp_catch_phys$pH))
 
@@ -759,6 +766,13 @@ FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s) %>%
 ##even closer with 5007 instead of 6626  
 #4830 rows instead of 6626 but much much closer - suggestion to join the sampling qaqc with just the sample data
 #before the catch data gets added.
+
+str(sampUnique)
+str(SamplingQAQC_fill_s)
+sampUniqueA <- sampUnique %>%
+  mutate(TotalCountSpecies = as.integer(TotalCountSpecies))
+compare_df_cols_same(sampUniqueA, SamplingQAQC_fill_s)
+test <- left_join(sampUnique, SamplingQAQC_fill_s)
 
 #does the na for meterset time need to stay in? maybe so that it runs the fucntion
 Flow.sum.STTD <- samp3 %>%
