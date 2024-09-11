@@ -146,16 +146,44 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
          SubsampleNumber = "Subsample Number",
          SlideCount = "Slide Count",
          ConditionCode = "Condition Code") %>%
-  select(-c(Field_Comments))
+  select(-c(Field_Comments, SampleID))
 
+
+
+#figure out how to navigate life stage column for access data
+catchpivot <- pivot_longer(catch,
+                           cols = c(Larvae, Pupae, Nymphs, Emergents,
+                                    Adults, "NA"),
+                           names_to = c("LifeStage"),
+                           values_to = c("CountStage"),
+                           values_drop_na = TRUE)
+
+samp_catch <- left_join(samp, catchpivot, by = "InvertDataID") %>%
+  select(-c(InvertCode.y)) %>%
+  rename(InvertCode = "InvertCode.x")
+
+trial <- samp_catch_phys0 %>%
+  select(-c(Classification, Order, Family))
+#getting rid of columns with na prevents issue of a bunch of NA when joining. This helps prevent loss of info.
+trial2 <- left_join(trial, tax) %>%
+  select(-c(Kingdom, Phylum, Subphylum, Class, Subclass,
+            Infraclass, Superorder, Suborder, Infraorder, Superfamily,
+            Genus, Species, TaxonRank))
+
+trial3 <- pivot_longer(trial2,
+                       cols = c(Larvae, Pupae, Nymphs, Emergents,
+                                Adults, "NA"),
+                       names_to = c("LifeStage"),
+                       values_to = c("CountStage"),
+                       values_drop_na = TRUE)
 
 #number of rows expanded a lot due to duplicates - find a way to manage this
 
 
-catchtax <- left_join(catch,tax) %>%
+catchtax <- left_join(tax, catchpivot) %>%
   select(-c(Kingdom, Phylum, Subphylum, Class, Subclass,
             Infraclass, Superorder, Suborder, Infraorder, Superfamily,
-            Genus, Species, CommonName, TaxonRank))
+            Genus, Species, TaxonRank))
 
 
 
