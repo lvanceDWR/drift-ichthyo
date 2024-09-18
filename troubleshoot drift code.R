@@ -123,12 +123,24 @@ samp_catch2 <- samp_catch2 %>%
   mutate(FlowMeterEnd = as.numeric(FlowMeterEnd))
 str(samp_catch2)
 
-comments1 <- samp_catch2 %>%
-  filter(!is.na(`Field Comments`))
+# comments1 <- samp_catch2 %>%
+#   filter(!is.na(`Field Comments`))
 
 #select only up to 2022 for publishing
 
 #25 lines in samp_catch2 have no taxon name - 2021 and 2022 data.
+
+### phys samp combo for making sure we don't lost jan 2020 dates and late 2019 data
+phys_samp1 <- left_join(phys, samp, by = "PhysicalDataID")
+
+physsampoverlap <- left_join(phys, samp, by = "PhysicalDataID") %>%
+  select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
+            "FlowMeterSpeed.x", "FieldComments.x")) %>%
+  rename(ConditionCode = "ConditionCode.y",
+         FlowMeterStart = "FlowMeterStart.y",
+         FlowMeterEnd = "FlowMeterEnd.y", 
+         FieldComments = "FieldComments.y") %>%
+  filter(Date > "2019-04-16" & Date < "2020-02-10")
 
 # Merge physical data
 
@@ -146,8 +158,10 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
          SubsampleNumber = "Subsample Number",
          SlideCount = "Slide Count",
          ConditionCode = "Condition Code") %>%
-  select(-c(Field_Comments, SampleID))
-
+   select(-c(Field_Comments, SampleID, Attribute)) #%>%
+  # unique() %>%
+  # arrange(Datetime)
+#find where the early 2020 sampling data is - Jan 2020 - make sure it doesn't get lost.
 
 
 #figure out how to navigate life stage column for access data
@@ -157,6 +171,9 @@ catchpivot <- pivot_longer(catch,
                            names_to = c("LifeStage"),
                            values_to = c("CountStage"),
                            values_drop_na = TRUE)
+
+checkcount <- catchpivot %>%
+  summarise(CountCheck = sum(CountStage))
 
 samp_catch <- left_join(samp, catchpivot, by = "InvertDataID") %>%
   select(-c(InvertCode.y)) %>%
@@ -175,7 +192,14 @@ trial3 <- pivot_longer(trial2,
                                 Adults, "NA"),
                        names_to = c("LifeStage"),
                        values_to = c("CountStage"),
-                       values_drop_na = TRUE)
+                       values_drop_na = TRUE) %>%
+  select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
+            "FlowMeterSpeed.x", "FieldComments.x")) %>%
+  rename(ConditionCode = "ConditionCode.y",
+         FlowMeterStart = "FlowMeterStart.y",
+         FlowMeterEnd = "FlowMeterEnd.y", 
+         FieldComments = "FieldComments.y") %>%
+  arrange(Datetime)
 
 #number of rows expanded a lot due to duplicates - find a way to manage this
 
@@ -198,8 +222,20 @@ samp_catch <- left_join(samp, catch, by = "InvertDataID") %>%
 
 samp_catch_phys00 <-left_join(phys, samp_catch, by = "PhysicalDataID") %>%
   filter(!is.na(Station)) %>%
-  filter(Date < "2019-04-22")
+  filter(Date < "2019-04-22") %>%
+  select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
+            "FlowMeterSpeed.x", "FieldComments.x", Order, Family)) %>%
+  rename(ConditionCode = "ConditionCode.y",
+         FlowMeterStart = "FlowMeterStart.y",
+         FlowMeterEnd = "FlowMeterEnd.y", 
+         FieldComments = "FieldComments.y") %>%
+  arrange(Datetime)
 
+
+samp_catch_phys01 <- left_join(samp_catch_phys00, tax) %>%
+  select(-c(Kingdom, Phylum, Subphylum, Class, Subclass,
+            Infraclass, Superorder, Suborder, Infraorder, Superfamily,
+            Genus, Species, TaxonRank))
 
 
 samp_catch_phys0 <- left_join(phys, samp_catch, by = "PhysicalDataID") %>%
