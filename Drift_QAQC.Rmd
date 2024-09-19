@@ -183,7 +183,9 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
          SubsampleNumber = "Subsample Number",
          SlideCount = "Slide Count",
          ConditionCode = "Condition Code") %>%
-  select(-c(Field_Comments))
+  select(-c(Field_Comments, SampleID, Attribute)) %>%
+  unique() %>%
+  arrange(Datetime)
 
 ```
 
