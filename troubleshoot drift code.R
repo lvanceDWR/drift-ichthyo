@@ -123,27 +123,38 @@ samp_catch2 <- samp_catch2 %>%
   mutate(FlowMeterEnd = as.numeric(FlowMeterEnd))
 str(samp_catch2)
 
-# comments1 <- samp_catch2 %>%
-#   filter(!is.na(`Field Comments`))
+#check how many values exist without jan 2020 in catch2
+# catch3 <- catch2 %>%
+#   filter(Date > "2020-02-09") %>%
+#   filter(Date < "2023-01-01")
+# #total is 1498 which matches sampcatchphys2 with distinct. solved.
+# 
+# #check how many distinct values exist
+# samp_catch3 <- samp_catch2 %>%
+#   distinct()
+# 
+# write_csv(samp_catch2, paste("R_write/sampcatch2.csv"))
+# write_csv(samp_catch3, paste("R_write/sampcatch3.csv"))
 
-#select only up to 2022 for publishing
 
-#25 lines in samp_catch2 have no taxon name - 2021 and 2022 data.
+samp_catch_phys3 <- left_join(samp_catch3, phys, by = c("event_id","Datetime", "Station", "Date", "Time",
+                                                        "Year", "Month", "MonthAbb")) %>%
+  select(-c("FlowMeterStart.y", "FlowMeterEnd.y", "MeterSetTime", "FlowMeterSpeed", 
+            "Observation Area Name", "Physical Data ID", "Sampling Altered", "ConditionCode")) %>%
+  rename(FlowMeterStart = "FlowMeterStart.x",
+         FlowMeterEnd = "FlowMeterEnd.x",
+         FlowMeterSpeed = "Flow Meter Speed",
+         SetTime = "Set Time",
+         Field_Comments = "Field Comments",
+         SampleVolume = "Sample Volume",
+         SubsampleNumber = "Subsample Number",
+         SlideCount = "Slide Count",
+         ConditionCode = "Condition Code") %>%
+  distinct()
 
-### phys samp combo for making sure we don't lost jan 2020 dates and late 2019 data
-phys_samp1 <- left_join(phys, samp, by = "PhysicalDataID")
 
-physsampoverlap <- left_join(phys, samp, by = "PhysicalDataID") %>%
-  select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
-            "FlowMeterSpeed.x", "FieldComments.x")) %>%
-  rename(ConditionCode = "ConditionCode.y",
-         FlowMeterStart = "FlowMeterStart.y",
-         FlowMeterEnd = "FlowMeterEnd.y", 
-         FieldComments = "FieldComments.y") %>%
-  filter(Date > "2019-04-16" & Date < "2020-02-10")
 
-# Merge physical data
-
+# merge phys data and make sure early 2020 sampling data doesnt get lost because of overlap in excel and access
 
 samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "Station", "Date", "Time",
                                                         "Year", "Month", "MonthAbb")) %>%
@@ -158,10 +169,43 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
          SubsampleNumber = "Subsample Number",
          SlideCount = "Slide Count",
          ConditionCode = "Condition Code") %>%
-   select(-c(Field_Comments, SampleID, Attribute)) #%>%
-  # unique() %>%
-  # arrange(Datetime)
+   select(-c(Field_Comments, SampleID, Attribute)) %>%
+  unique() %>%
+  arrange(Datetime)
 #find where the early 2020 sampling data is - Jan 2020 - make sure it doesn't get lost.
+
+#find a way to not lose taxon name, family, order, count, 
+catchtax <- left_join(tax, catchpivot) %>%
+  select(-c(Kingdom, Phylum, Subphylum, Class, Subclass,
+            Infraclass, Superorder, Suborder, Infraorder, Superfamily,
+            Genus, Species, TaxonRank))
+
+#select only up to 2022 for publishing
+
+#25 lines in samp_catch2 have no taxon name - 2021 and 2022 data.
+
+### phys samp combo for making sure we don't lost jan 2020 dates and late 2019 data
+phys_samp1 <- left_join(phys, samp, by = "PhysicalDataID")
+
+
+# this is the data from april 2019 to jan 2020
+physsampoverlap <- left_join(phys, samp, by = "PhysicalDataID") %>%
+  select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
+            "FlowMeterSpeed.x", "FieldComments.x")) %>%
+  rename(ConditionCode = "ConditionCode.y",
+         FlowMeterStart = "FlowMeterStart.y",
+         FlowMeterEnd = "FlowMeterEnd.y", 
+         FieldComments = "FieldComments.y",
+         FlowMeterSpeed = "FlowMeterSpeed.y") %>%
+  filter(Date > "2019-04-16" & Date < "2020-02-10")
+
+overlapcatch <- left_join(physsampoverlap, catch) %>%
+  distinct()
+
+# Merge physical data
+
+
+
 
 
 #figure out how to navigate life stage column for access data
@@ -204,10 +248,7 @@ trial3 <- pivot_longer(trial2,
 #number of rows expanded a lot due to duplicates - find a way to manage this
 
 
-catchtax <- left_join(tax, catchpivot) %>%
-  select(-c(Kingdom, Phylum, Subphylum, Class, Subclass,
-            Infraclass, Superorder, Suborder, Infraorder, Superfamily,
-            Genus, Species, TaxonRank))
+
 
 
 
