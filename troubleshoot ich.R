@@ -88,6 +88,8 @@ PhysDataAccess <- PhysData %>%
 
 IchSample <- left_join(PhysDataAccess, SamplingData)
 
+uniquevalues <- IchSample %>%
+  distinct()
 
 # na <- IchSample %>%
 #   filter(is.na(PhysicalDataID))
@@ -161,6 +163,9 @@ View(Pivot1)
 Pivot3 <- filter(Pivot1, !is.na(LarvalDataID)) %>%
   left_join(CatchSpecies2, by = c("LarvalDataID", "TowLocation" = "ChannelLocation"))
 View(Pivot3)
+
+distinctpiv <- unique(Pivot3)
+
 
 # # checking values between the two dataframes before joining, ensuring everything matches
 # # for "channel location" and "tow location" as they are essentially the same
@@ -564,7 +569,7 @@ samp_catch_physMerge <- IchFullData %>%
   select(-c(Index, WYType)) %>%
   mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart)) %>%
   select(-c(LarvalDataID, LarvalCatchID, CountIndividual, TotalCountSpecies)) %>%
-  arrange(Datetime)
+  arrange(Datetime) 
 
 
 ################################################################################################
@@ -741,16 +746,10 @@ SamplingQAQC_fill_s <- SamplingQAQC_fill_s %>%
 
 str(SamplingQAQC_fill)
 
-FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = c("event_id", "PhysicalDataID", "FlowMeterStart", "FlowMeterEnd",
-                                                                  "YSI", "WeatherCode", "Tide", "FlowDirection", "ConditionCode", "VegetationRank",
-                                                                  "MicrocystisVisualRank", "SpCnd", "DO", "Turbidity", "SamplingAltered",
-                                                                "FlowMeterSpeed","MeterSetTime", "TowLocation", "Station",
-                                                                "pH", "Conductivity", "WaterTemperature", "Secchi",
-                                                                "MeshSize", "Year", "MonthAbb", "Flag_PQC", "Comment_PQC",
-                                                                "SampleVolume", "FieldComments_WQ","DataCorrectionComments", "Stage", "TL",
-                                                                "FL","FieldComments", "CommonName", "ScientificName",
-                                                                 "LifeStage", "LarvalLifeStage",
-                                                                "LabComments", "SpeciesCode", "Count")) 
+FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = c("event_id", "Datetime", "PhysicalDataID", "Date", "Time",
+                                                                  "Station", "YSI", "WeatherCode", "Tide", "FlowDirection",
+                                                                  "ConditionCode", "VegetationRank", "MicrocystisVisualRank",
+                                                                  "WaterTemperature", ))
 #this narrows down and does not over expand the dataset by as much, but still need to figure out how to get 
 # 6626 lines so it is the same as the "full" dataset. Distinct only gives 5007. Check full data set? 
 
@@ -762,7 +761,8 @@ FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s) %>%
   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
          Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
          Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
-         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), "")) 
+         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), ""))  %>%
+  distinct()
 ##even closer with 5007 instead of 6626  
 #4830 rows instead of 6626 but much much closer - suggestion to join the sampling qaqc with just the sample data
 #before the catch data gets added.
