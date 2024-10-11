@@ -574,6 +574,49 @@ samp_catch_physMerge <- IchFullData %>%
 
 ################################################################################################
 
+
+#multiple comments for a single event ID
+IchFullData$comment_multiple <- paste(IchFullData$FieldComments, IchFullData$ConditionCode, IchFullData$LabComments)
+# #sampqc_trial <- IchFullData[duplicated(IchFullData$comment_multiple) == FALSE,c("event_id", "Datetime", "PhysicalDataID", "Station", 
+#                                                         "ConditionCode", "MeterSetTime","FlowMeterSpeed", "FlowMeterStart", "FlowMeterEnd", "TowLocation", 
+#                                                         "SampleVolume", "SamplingAltered", "LarvalDataID", "FieldComments", "LarvalCatchID", 
+#                                                         "LabComments")]
+
+
+IchFullData$comment_extra <- ""
+for(i in unique(IchFullData$event_id)){
+  print(i)
+  temp <- IchFullData[IchFullData$event_id == i,]
+  if(length(unique(temp$comment_multiple)) >1){
+    print("whatevs") 
+    IchFullData[IchFullData$event_id==i,"comment_extra"] <- 
+      paste(unlist(unique(temp$comment_multiple)), collapse = "**")
+  }
+}
+
+sampqc2 <- IchFullData[duplicated(IchFullData$event_id) == FALSE,c("event_id", "Datetime", "PhysicalDataID", "Station", 
+                                                                   "ConditionCode", "MeterSetTime","FlowMeterSpeed", "FlowMeterStart", "FlowMeterEnd", "TowLocation", 
+                                                                   "SampleVolume", "SamplingAltered", "LarvalDataID", "FieldComments", "LarvalCatchID", 
+                                                                   "LabComments", "comment_extra")]
+
+
+
+sampqc2$Flag_SAMP <-  ifelse(is.na(sampqc2$FieldComments), 1, "")
+sampqc2$Comment_SAMP <-""
+sampqc2$Flag_LAB <- ifelse(is.na(sampqc2$LabComments), 1, "")
+sampqc2$Comment_LAB <- ""
+
+#help parse out info for manual flagging, done before sampqc2 (put above 577) then export the sampqc2 with the comment extra
+#this should make it so it's not a many to many join
+#one to many instead of many to many - this helps to reduce overexpansion of the dataset
+# should be 686 - some with and some without comments - could prepopulate with a 1 if it has no comments
+
+
+
+
+dput(colnames(IchFullData))
+#doublecheck time for tow locations
+
 SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 | !is.na(LabComments))
 SamplingQAQC$Flag_SAMP <-  ""
 SamplingQAQC$Comment_SAMP <-""
@@ -663,6 +706,7 @@ inundation4$Inundation2[inundation4$Date=="1998-01-08"] <- "FALSE"
 inundation4$Inundation2[inundation4$Date=="1998-01-09"] <- "FALSE"
 inundation4$Inundation2[inundation4$Date=="1998-01-10"] <- "FALSE"
 
+
 samp_catch_phys <- left_join(samp_catch_physMerge, inundation4)
 
 #14. Look at distribution of flowmeter values
@@ -735,6 +779,10 @@ samp3$Flowdiff[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
 
 ################ figure out duplication when bringing back in #########
 SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
+  select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
+
+
+SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
   select(-c(Datetime, Date, Time, Month))
 
 
@@ -746,10 +794,7 @@ SamplingQAQC_fill_s <- SamplingQAQC_fill_s %>%
 
 str(SamplingQAQC_fill)
 
-FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = c("event_id", "Datetime", "PhysicalDataID", "Date", "Time",
-                                                                  "Station", "YSI", "WeatherCode", "Tide", "FlowDirection",
-                                                                  "ConditionCode", "VegetationRank", "MicrocystisVisualRank",
-                                                                  "WaterTemperature", ))
+FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = c("event_id"))
 #this narrows down and does not over expand the dataset by as much, but still need to figure out how to get 
 # 6626 lines so it is the same as the "full" dataset. Distinct only gives 5007. Check full data set? 
 
@@ -761,8 +806,18 @@ FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s) %>%
   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
          Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
          Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
-         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), ""))  %>%
+         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), "")) %>%
   distinct()
+
+str(samp_catch_phys)
+str(SamplingQAQC_fill_s)
+
+FM_Samp2 <- merge(samp_catch_phys, sampqc2, by = c("event_id"), all.x = TRUE)
+
+samp_catch_phys[is.na(samp_catch_phys$PhysicalDataID),]
+
+length(unique(samp_catch_phys$event_id))
+
 ##even closer with 5007 instead of 6626  
 #4830 rows instead of 6626 but much much closer - suggestion to join the sampling qaqc with just the sample data
 #before the catch data gets added.
