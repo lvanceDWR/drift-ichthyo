@@ -574,7 +574,7 @@ samp_catch_physMerge <- IchFullData %>%
 
 ################################################################################################
 
-
+#to avoid overduplication of values and many to many join - find all event ID where there are multiple comment types
 #multiple comments for a single event ID
 IchFullData$comment_multiple <- paste(IchFullData$FieldComments, IchFullData$ConditionCode, IchFullData$LabComments)
 # #sampqc_trial <- IchFullData[duplicated(IchFullData$comment_multiple) == FALSE,c("event_id", "Datetime", "PhysicalDataID", "Station", 
@@ -582,48 +582,56 @@ IchFullData$comment_multiple <- paste(IchFullData$FieldComments, IchFullData$Con
 #                                                         "SampleVolume", "SamplingAltered", "LarvalDataID", "FieldComments", "LarvalCatchID", 
 #                                                         "LabComments")]
 
+#create an extra column to verify where there are multiples of the comments
 
 IchFullData$comment_extra <- ""
 for(i in unique(IchFullData$event_id)){
   print(i)
   temp <- IchFullData[IchFullData$event_id == i,]
   if(length(unique(temp$comment_multiple)) >1){
-    print("whatevs") 
+    print("multiple") 
     IchFullData[IchFullData$event_id==i,"comment_extra"] <- 
       paste(unlist(unique(temp$comment_multiple)), collapse = "**")
   }
 }
 
-sampqc2 <- IchFullData[duplicated(IchFullData$event_id) == FALSE,c("event_id", "Datetime", "PhysicalDataID", "Station", 
+#create data frame for sampling qaqc where the duplicated or multiple comments are taken care of to avoid a many to many join
+#when testing called sampqc2
+SamplingQAQC <- IchFullData[duplicated(IchFullData$event_id) == FALSE,c("event_id", "Datetime", "PhysicalDataID", "Station", 
                                                                    "ConditionCode", "MeterSetTime","FlowMeterSpeed", "FlowMeterStart", "FlowMeterEnd", "TowLocation", 
                                                                    "SampleVolume", "SamplingAltered", "LarvalDataID", "FieldComments", "LarvalCatchID", 
-                                                                   "LabComments", "comment_extra")]
+                                                                   "LabComments", "comment_extra")] %>%
+  arrange(Datetime)
 
 
+#for na comments, put 0 since 1 means comment but acceptable. make no comments a 0 for no issues?
+SamplingQAQC$Flag_SAMP <-  ifelse(is.na(SamplingQAQC$FieldComments), 0, "")
+SamplingQAQC$Comment_SAMP <-""
+SamplingQAQC$Flag_LAB <- ifelse(is.na(SamplingQAQC$LabComments), 0, "")
+SamplingQAQC$Comment_LAB <- ""
+today <- today()
+write.csv(SamplingQAQC, paste("R_write/IchSamplingQAQC_",today, ".csv"))
 
-sampqc2$Flag_SAMP <-  ifelse(is.na(sampqc2$FieldComments), 1, "")
-sampqc2$Comment_SAMP <-""
-sampqc2$Flag_LAB <- ifelse(is.na(sampqc2$LabComments), 1, "")
-sampqc2$Comment_LAB <- ""
-
-#help parse out info for manual flagging, done before sampqc2 (put above 577) then export the sampqc2 with the comment extra
+#help parse out info for manual flagging, done before SamplingQAQC (put above 577) then export the sampqc2 with the comment extra
 #this should make it so it's not a many to many join
 #one to many instead of many to many - this helps to reduce overexpansion of the dataset
 # should be 686 - some with and some without comments - could prepopulate with a 1 if it has no comments
 
 
 
+# 
+# dput(colnames(IchFullData))
+# #doublecheck time for tow locations
+# 
 
-dput(colnames(IchFullData))
-#doublecheck time for tow locations
-
-SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 | !is.na(LabComments))
-SamplingQAQC$Flag_SAMP <-  ""
-SamplingQAQC$Comment_SAMP <-""
-SamplingQAQC$Flag_LAB <- ""
-SamplingQAQC$Comment_LAB <- ""
-today <- today()
-write.csv(SamplingQAQC, paste("R_write/IchSamplingQAQC_", today, ".csv"))
+### no longer use this for qaqc for ichthyo due to the multiple comment types causing issues
+# SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 | !is.na(LabComments))
+# SamplingQAQC$Flag_SAMP <-  ""
+# SamplingQAQC$Comment_SAMP <-""
+# SamplingQAQC$Flag_LAB <- ""
+# SamplingQAQC$Comment_LAB <- ""
+# today <- today()
+# write.csv(SamplingQAQC, paste("R_write/IchSamplingQAQC_", today, ".csv"))
 
 
 SamplingQAQC_fill <- read.csv("R_write/IchSamplingQAQC_ Notated_2024-08-20.csv")
