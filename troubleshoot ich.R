@@ -654,6 +654,8 @@ inundation2a <- inundation %>%
          Year = year(Date),
          WY = ifelse(Month > 9, Year + 1, Year))
 
+
+##############check how this is affected by the above solution for the many to many join problem solving
 # Modify sample table to include Flowdiff
 samp3 <-sampUnique %>%
   mutate(Flowdiff = abs(FlowMeterEnd-FlowMeterStart),
