@@ -66,8 +66,8 @@ CatchData <- CatchData %>%
   filter(!is.na(LarvalDataID))
 
 
-
-CheckLocation <- filter(CatchData, !is.na(ChannelLocation))
+# 
+# CheckLocation <- filter(CatchData, !is.na(ChannelLocation))
 
 #confirms that channel location/tow location included with speciated data
 
@@ -88,8 +88,8 @@ PhysDataAccess <- PhysData %>%
 
 IchSample <- left_join(PhysDataAccess, SamplingData)
 
-uniquevalues <- IchSample %>%
-  distinct()
+# uniquevalues <- IchSample %>%
+#   distinct()
 
 # na <- IchSample %>%
 #   filter(is.na(PhysicalDataID))
@@ -164,7 +164,7 @@ Pivot3 <- filter(Pivot1, !is.na(LarvalDataID)) %>%
   left_join(CatchSpecies2, by = c("LarvalDataID", "TowLocation" = "ChannelLocation"))
 View(Pivot3)
 
-distinctpiv <- unique(Pivot3)
+# distinctpiv <- unique(Pivot3)
 
 
 # # checking values between the two dataframes before joining, ensuring everything matches

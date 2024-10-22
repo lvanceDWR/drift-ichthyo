@@ -517,11 +517,24 @@ samp_catch_physMerge <- IchFullData %>%
   select(-c(LarvalDataID, LarvalCatchID, CountIndividual, TotalCountSpecies)) %>%
   arrange(Datetime)
 
+#find where multiple types of comments exist for one event_id 
+IchFullData$comment_multiple <- paste(IchFullData$FieldComments, IchFullData$ConditionCode, IchFullData$LabComments)
+
+IchFullData$comment_extra <- ""
+for(i in unique(IchFullData$event_id)){
+  print(i)
+  temp <- IchFullData[IchFullData$event_id == i,]
+  if(length(unique(temp$comment_multiple)) >1){
+    print("multiple") 
+    IchFullData[IchFullData$event_id==i,"comment_extra"] <- 
+      paste(unlist(unique(temp$comment_multiple)), collapse = "**")
+  }
+}
 ```
 
 ## QAQC 
 
-* QC Flags: Blank = no issues/1 = Comment but deemed Acceptable/ 2 = Suspect/ 3 = Highly Suspect
+* QC Flags: 0 = no issues,no comments, blank/1 = Comment but deemed Acceptable/ 2 = Suspect/ 3 = Highly Suspect
 * Flag_SAMP: Sampling issues
 * Flag_LAB: Lab issues
 * Flag_FM: Flowmeter
@@ -546,18 +559,26 @@ samp_catch_physMerge <- IchFullData %>%
 
 
 ```{r}
-SamplingQAQC <- filter(sampUnique, !is.na(FieldComments) | ConditionCode>1 | !is.na(LabComments))
-SamplingQAQC$Flag_SAMP <-  ""
+SamplingQAQC <- IchFullData[duplicated(IchFullData$event_id) == FALSE,c("event_id", "Datetime","PhysicalDataID",
+                                                      "Station","ConditionCode","MeterSetTime","FlowMeterSpeed",
+                                                      "FlowMeterStart", "FlowMeterEnd", "TowLocation",
+                                                      "SampleVolume", "SamplingAltered", "LarvalDataID",
+                                                      "FieldComments", "LarvalCatchID","LabComments",
+                                                      "comment_extra")] %>% 
+  arrange(Datetime)
+
+
+SamplingQAQC$Flag_SAMP <-  ifelse(is.na(SamplingQAQC$FieldComments), 0, "")
 SamplingQAQC$Comment_SAMP <-""
-SamplingQAQC$Flag_LAB <- ""
+SamplingQAQC$Flag_LAB <- ifelse(is.na(SamplingQAQC$LabComments), 0, "")
 SamplingQAQC$Comment_LAB <- ""
 today <- today()
-write.csv(SamplingQAQC, paste("R_write/IchSamplingQAQC_", today, ".csv"))
+write.csv(SamplingQAQC, paste("R_write/IchSamplingQAQC_",today, ".csv"))
 ```
 
 18. Now that file is notated, read back in and select for the flags and comments. 
 ```{r}
-SamplingQAQC_fill <- read.csv("R_write/IchSamplingQAQC_ Notated_2024-08-20.csv")
+SamplingQAQC_fill <- read.csv("R_write/IchSamplingQAQC_ Notated_2024-10-18.csv")
 SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
   select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
 ```
