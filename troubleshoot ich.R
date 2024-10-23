@@ -571,6 +571,7 @@ samp_catch_physMerge <- IchFullData %>%
   select(-c(LarvalDataID, LarvalCatchID, CountIndividual, TotalCountSpecies)) %>%
   arrange(Datetime) 
 
+## biggest difference between sampcatchphysmerge and samp3 is flowdiff....
 
 ################################################################################################
 
@@ -788,12 +789,12 @@ samp3$Flowdiff[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
 #* 
 
 ################ figure out duplication when bringing back in #########
-SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
-  select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
+# SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
+#   select(c(event_id, PhysicalDataID, Flag_SAMP, Comment_SAMP, Flag_LAB, Comment_LAB))
 
 
-SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
-  select(-c(Datetime, Date, Time, Month))
+# SamplingQAQC_fill_s <- SamplingQAQC_fill %>%
+#   select(-c(Datetime, Date, Time, Month))
 
 
 SamplingQAQC_fill_s <- SamplingQAQC_fill_s %>%
@@ -804,29 +805,35 @@ SamplingQAQC_fill_s <- SamplingQAQC_fill_s %>%
 
 str(SamplingQAQC_fill)
 
-FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = c("event_id"))
-#this narrows down and does not over expand the dataset by as much, but still need to figure out how to get 
-# 6626 lines so it is the same as the "full" dataset. Distinct only gives 5007. Check full data set? 
-
-compare_df_cols(samp_catch_phys, FM_Samp)
-
-length(unique(samp_catch_phys$pH))
-
-FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s) %>%
+FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = c("event_id")) %>%
   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
          Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
          Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
-         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), "")) %>%
-  distinct()
-
-str(samp_catch_phys)
-str(SamplingQAQC_fill_s)
-
-FM_Samp2 <- merge(samp_catch_phys, sampqc2, by = c("event_id"), all.x = TRUE)
-
-samp_catch_phys[is.na(samp_catch_phys$PhysicalDataID),]
-
-length(unique(samp_catch_phys$event_id))
+         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), ""))%>%
+  select(-c(PhysicalDataID.y))%>%
+  rename(PhysicalDataID = "PhysicalDataID.x")
+#this narrows down and does not over expand the dataset by as much, but still need to figure out how to get 
+# 6626 lines so it is the same as the "full" dataset. Distinct only gives 5007. Check full data set? 
+# 
+# compare_df_cols(samp_catch_phys, FM_Samp)
+# 
+# length(unique(samp_catch_phys$pH))
+# 
+# FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s) %>%
+#   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
+#          Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
+#          Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
+#          Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), "")) %>%
+#   distinct()
+# 
+# str(samp_catch_phys)
+# str(SamplingQAQC_fill_s)
+# 
+# FM_Samp2 <- merge(samp_catch_phys, sampqc2, by = c("event_id"), all.x = TRUE)
+# 
+# samp_catch_phys[is.na(samp_catch_phys$PhysicalDataID),]
+# 
+# length(unique(samp_catch_phys$event_id))
 
 ##even closer with 5007 instead of 6626  
 #4830 rows instead of 6626 but much much closer - suggestion to join the sampling qaqc with just the sample data
@@ -834,10 +841,10 @@ length(unique(samp_catch_phys$event_id))
 
 str(sampUnique)
 str(SamplingQAQC_fill_s)
-sampUniqueA <- sampUnique %>%
-  mutate(TotalCountSpecies = as.integer(TotalCountSpecies))
-compare_df_cols_same(sampUniqueA, SamplingQAQC_fill_s)
-test <- left_join(sampUnique, SamplingQAQC_fill_s)
+# sampUniqueA <- sampUnique %>%
+#   mutate(TotalCountSpecies = as.integer(TotalCountSpecies))
+# compare_df_cols_same(sampUniqueA, SamplingQAQC_fill_s)
+# test <- left_join(sampUnique, SamplingQAQC_fill_s)
 
 #does the na for meterset time need to stay in? maybe so that it runs the fucntion
 Flow.sum.STTD <- samp3 %>%
