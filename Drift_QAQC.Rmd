@@ -1207,7 +1207,7 @@ inv_arrange <- inv_all %>%
 
 ```
 
-33. Merge flags and commments into one flag, one comment column, replace "" with NA
+33. Merge flags and comments into one flag, one comment column, replace "" with NA
 ```{r}
 empty_as_na <- function(x){
     if("factor" %in% class(x)) x <- as.character(x) ## since ifelse wont work with factors
