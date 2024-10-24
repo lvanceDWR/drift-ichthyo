@@ -483,9 +483,9 @@ IchExcelOverlap <- bind_rows(IchOverlapCatchA, IchExcelCatchA) %>%
   mutate(FL = as.numeric(FL))%>%
   mutate(CountIndividual = if_else(TotalCountSpecies >= 1, 1, NA))%>%
   group_by(event_id, PhysicalDataID, Datetime, Date, Time, Station, YSI, WeatherCode,Tide, MicrocystisVisualRank,
-           WaterTemperature, Secchi, Conductivity, SpCnd, pH, DO, Turbidity, FlowDirection, VegetationRank, ConditionCode,
-           SamplingAltered,FieldComments_WQ, Flag_PQC, Comment_PQC, DataCorrectionComments, Year, Month, MonthAbb,
-           MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed,MeshSize, FieldComments,
+           WaterTemperature, Secchi, Conductivity, SpCnd, pH, DO, Turbidity, FlowDirection, VegetationRank,
+           ConditionCode, SamplingAltered,FieldComments_WQ, Flag_PQC, Comment_PQC, DataCorrectionComments, Year,
+           Month, MonthAbb,MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed,MeshSize, FieldComments,
            SampleVolume, LabComments, SpeciesCode, ScientificName, CommonName, TL,
            FL, LifeStage, LarvalLifeStage, TotalCountSpecies, CountIndividual) %>%
   summarise(Count = sum(CountIndividual))
@@ -517,9 +517,10 @@ samp_catch_physMerge <- IchFullData %>%
   select(-c(LarvalDataID, LarvalCatchID, CountIndividual, TotalCountSpecies)) %>%
   arrange(Datetime)
 
-#find where multiple types of comments exist for one event_id 
+#find where multiple types of comments exist for one event_id before getting qaqc dataframe ready
 IchFullData$comment_multiple <- paste(IchFullData$FieldComments, IchFullData$ConditionCode, IchFullData$LabComments)
 
+#create an extra column to verify where there are multiples of the comments
 IchFullData$comment_extra <- ""
 for(i in unique(IchFullData$event_id)){
   print(i)
@@ -546,6 +547,7 @@ for(i in unique(IchFullData$event_id)){
 13. Look at field sampling comments
 14. Flag comments reflecting poor data quality (Flag_SAMP)
 15. Add comment about what was flagged
+    * FM if issue with flowmeter
     * FMMISSING if lacking flowmeter values
     * SAMP for other sampling issues 
     * Leave blank if no issues
@@ -559,6 +561,7 @@ for(i in unique(IchFullData$event_id)){
 
 
 ```{r}
+#find duplicated, ensure only looking at each individual event id but including comment extra to ensure no important comment is missed
 SamplingQAQC <- IchFullData[duplicated(IchFullData$event_id) == FALSE,c("event_id", "Datetime","PhysicalDataID",
                                                       "Station","ConditionCode","MeterSetTime","FlowMeterSpeed",
                                                       "FlowMeterStart", "FlowMeterEnd", "TowLocation",
@@ -675,6 +678,10 @@ samp_catch_phys <- left_join(samp_catch_physMerge, inundation4)
 
 20. Look at distribution of flowmeter values
 ```{r}
+#make sure case matches for flowmeter speed
+samp_catch_phys$FlowMeterSpeed <- str_replace_all(samp_catch_phys$FlowMeterSpeed, "low", "Low")
+samp3$FlowMeterSpeed <- str_replace_all(samp3$FlowMeterSpeed, "low", "Low")
+
 # Histogram of values
 samp_catch_phys$Month <- ordered(samp_catch_phys$Month)
 FlowHist <- ggplot(samp_catch_phys, aes(Flowdiff)) + geom_histogram() +
@@ -707,6 +714,9 @@ grid.arrange(FlowPoint, FlowPoint2)
 ```{r}
 
 checkich <- samp_catch_phys %>% filter(Flowdiff > 40000)
+checkich2 <- samp_catch_phys %>% filter(Flowdiff <1000)
+#checking for later outlier section
+checkich3 <- samp_catch_phys %>% filter(Flowdiff <200)
 
 #fix known flowmeter errors
 #flowmeter when it reads 0, use as if it reads 1000000
@@ -747,7 +757,6 @@ FM_Samp <- left_join(samp_catch_phys, SamplingQAQC_fill_s, by = "event_id") %>%
          Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), "")) %>%
   select(-c(PhysicalDataID.y))%>%
   rename(PhysicalDataID = "PhysicalDataID.x")
-
 
 ```
 
@@ -816,7 +825,7 @@ Flow.sum.SHR %>%
 
 ```
 
-25.Apply outlier definitions to data
+24.Apply outlier definitions to data
 
 * Merge table (above) with rest of the data so averages are based on each individual collected sample and not multiplied for each organism in a sample. 
 * Calculate modified Z score, then label each row as outlier = Tukey, MAD, or BOTH.
@@ -828,8 +837,9 @@ Flow.outlier.STTD <- left_join(FM_Samp, Flow.sum.STTD) %>%
   filter(!is.na(Flowdiff), !is.na(Inundation2), Station=="STTD") %>%
   group_by(Station, FlowMeterSpeed, WYClass) %>%
   mutate(Flow_modZ = abs(0.6745*(Flow_s - median.Flowdiff_s)/Flow_s_MAD),
-         Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey", ifelse(Flow_modZ > 3.5, "MAD", 
-                                                                                                                      "None"))))
+         Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey",
+                                                                                    ifelse(Flow_modZ > 3.5, "MAD",
+                                                                                           "None"))))
 
 Flow.outlier.STTD$FlowMeterSpeed <- str_replace_all(Flow.outlier.STTD$FlowMeterSpeed, "low", "Low")
 
@@ -841,14 +851,15 @@ Flow.outlier.SHR <- left_join(FM_Samp, Flow.sum.SHR) %>%
   filter(!is.na(Flowdiff),  Station=="SHR") %>%
   group_by(Station, FlowMeterSpeed, WYClass) %>%
   mutate(Flow_modZ = abs(0.6745*(Flow_s - median.Flowdiff_s)/Flow_s_MAD),
-         Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey", ifelse(Flow_modZ > 3.5, "MAD", 
-                                                                                                                      "None"))))
+         Flow_Outlier = ifelse((Flow_s > Flow_UL) & Flow_modZ > 3.5, "Both", ifelse(Flow_s > Flow_UL, "Tukey",
+                                                                                    ifelse(Flow_modZ > 3.5,
+                                                                                           "MAD","None"))))
 
 summary(factor(Flow.outlier.SHR$Flow_Outlier))
 
 ```
 
-26. Plot Outliers - STTD
+25. Plot Outliers - STTD
 ```{r}
 FlowBoxMonth1a <- ggplot(Flow.outlier.STTD) + geom_boxplot(aes(x = WYClass, y = Flow_s)) +  scale_fill_viridis(discrete = TRUE) + theme_bw() 
 ggplotly(FlowBoxMonth1a)
@@ -901,9 +912,10 @@ grid.arrange(FlowBoxMonth1b, outlierWY1b, outlierMonth1b)
 ```{r}
 Flow.outlier <- rbind(Flow.outlier.SHR, Flow.outlier.STTD)
 
+summary(factor(Flow.outlier$Flow_Outlier))
 ```
 
-27. Flowmeter Flags and New Flowdiff calculated
+26. Flowmeter Flags and New Flowdiff calculated
 
 Cutoffs based on looking at plots and Upper limits calculated above. 
 
@@ -913,8 +925,8 @@ Flag 2 | Suspect                    | Tukey or MAD but not Both | 200-999
 Flag 1 | Acceptable                 |                           | 
 No flag| Acceptable                 | None                      | 1000-59999
 
-28. Add comment about what was flagged (FM for flowmeter-related)
-29. Calculate replacement values where Flag_FM = 3 or Comment_SAMP = FM
+27. Add comment about what was flagged (FM for flowmeter-related)
+28. Calculate replacement values where Flag_FM = 3 or Comment_SAMP = FM
   * Replacement values are median standardized flowdiff * settime based on groupings of Station, Flowmeter Speed, Water Year Class
   
 ```{r Flag-Replace-Flowmeters}
@@ -936,7 +948,7 @@ FlowmeterQAQC <- Flow.outlier %>%
 ```
 
 
- Summarize number of outliers flagged
+29. Summarize number of outliers flagged
 ```{r}
 FlowmeterQAQC$Flag_FM <- ordered(FlowmeterQAQC$Flag_FM)
 print("Flowmeter Outliers")
@@ -1181,39 +1193,72 @@ grid.arrange(outlier2a, outlier2b)
 ```
 
 ## Clean up display of dataset
-39. Join taxa and clean up order of variables
+39. Clean up order of variables
 ```{r}
 # Rename some columns, remove unnecessary columns
 ich_select <- CPUEQAQC %>%
   dplyr::rename(Inundation = Inundation2,
-         FlagPhys = Flag_PQC,
-         FlagSamp = Flag_SAMP,
-         FlagLab = Flag_LAB,
-         FlagFM = Flag_FM, 
-         FlagCPUE = Flag_CPUE,
-         CommentPhys = Comment_PQC,
-         CommentSamp = Comment_SAMP,
-         CommentLab = Comment_LAB,
-         CommentFM = Comment_FM,
-         CommentCPUE = Comment_CPUE) %>%
+                FlagPhys = Flag_PQC,
+                FlagSamp = Flag_SAMP,
+                FlagLab = Flag_LAB,
+                FlagFM = Flag_FM, 
+                FlagCPUE = Flag_CPUE,
+                CommentPhys = Comment_PQC,
+                CommentSamp = Comment_SAMP,
+                CommentLab = Comment_LAB,
+                CommentFM = Comment_FM,
+                CommentCPUE = Comment_CPUE) %>%
   select(c(event_id, Datetime, Station,
            WY, WYClass, Inundation,
            WeatherCode, Tide, MicrocystisVisualRank,
            WaterTemperature:Turbidity,
            ConditionCode,FieldComments, 
-           SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, Flowdiff, FlowdiffAdj, Volume, VolumeAdj,LabComments, Category, LifeStage, Count, CPUE, CPUEAdj, FlagPhys, CommentPhys, FlagSamp, CommentSamp, FlagLab, CommentLab, FlagFM, CommentFM, FlagCPUE, CommentCPUE)) 
+           MeterSetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, Flowdiff, FlowdiffAdj, Volume,
+           VolumeAdj,LabComments,SpeciesCode, CommonName, ScientificName, LifeStage, Count, CPUE, CPUEAdj, FlagPhys, 
+           CommentPhys, FlagSamp, CommentSamp, FlagLab, CommentLab, FlagFM, CommentFM, FlagCPUE, CommentCPUE))
 
- 
 
-############## CHECK
-# Join taxa table with the rest of the data
-# ich_all <- left_join(ich_select, tax) %>%
-#   filter(!is.na(TaxonName))
-
-# Rearrange 
-ich_arrange <- ich_all %>% 
-  select(c(event_id:Turbidity, SetTime:VolumeAdj, ConditionCode:FieldComments, LabComments:Category, OrganismID, TaxonRank, TaxonName, LifeStage:CommentCPUE))
 
 ```
 
+40. Merge flags and comments into one flag, one comment column, replace "" with NA
+```{r}
+empty_as_na <- function(x){
+  if("factor" %in% class(x)) x <- as.character(x) ## since ifelse wont work with factors
+  ifelse(as.character(x)!="", x, NA)
+}
 
+ich_final <- ich_select %>%
+  mutate(LifeStage = replace(LifeStage, LifeStage == "N/A", NA)) %>%
+  mutate(across(c(FlagSamp:CommentCPUE), list(empty_as_na)) ) %>%
+  select(-c(FlagSamp:CommentCPUE)) %>%
+  rename(FlagSamp = FlagSamp_1, 
+         FlagLab = FlagLab_1,
+         FlagFM = FlagFM_1,
+         FlagCPUE = FlagCPUE_1,
+         CommentSamp = CommentSamp_1, 
+         CommentLab = CommentLab_1,
+         CommentFM = CommentFM_1,
+         CommentCPUE = CommentCPUE_1) %>%
+  mutate(QCFlags = paste(FlagSamp, " ", FlagLab, " ", FlagFM, " ", FlagCPUE)) %>%
+  mutate(QCComments = paste(CommentSamp, " ", CommentLab, " ",CommentFM, " ",  CommentCPUE)) %>%
+  relocate(FlowMeterSpeed, .before = "FlowMeterStart")
+
+#look at data flags 3
+threes <- ich_final%>%
+  filter(grepl("3", QCFlags ))
+```
+
+41. Calculate proportion of data flagged
+```{r}
+## Amount replaced
+print(paste0(round(nrow(threes)/nrow(ich_final)*100,3), "% highly suspicious"))
+```
+
+42. Write CSV file
+```{r}
+today = format(today(),"%Y%m%d")
+write.csv(inv_final, paste0("R_write/Ichthyo/Ichthyo_data_", today, ".csv"), row.names = FALSE, quote = TRUE)
+```
+
+43. Write R Markdown File
