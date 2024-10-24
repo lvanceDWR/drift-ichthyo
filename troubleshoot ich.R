@@ -720,6 +720,8 @@ inundation4$Inundation2[inundation4$Date=="1998-01-10"] <- "FALSE"
 
 samp_catch_phys <- left_join(samp_catch_physMerge, inundation4)
 
+samp_catch_phys$FlowMeterSpeed <- str_replace_all(samp_catch_phys$FlowMeterSpeed, "low", "Low")
+samp3$FlowMeterSpeed <- str_replace_all(samp3$FlowMeterSpeed, "low", "Low")
 #14. Look at distribution of flowmeter values
 
 # Histogram of values
@@ -797,11 +799,11 @@ samp3$Flowdiff[samp3$event_id == "STTD_2012-07-25 10:11:00"] <- 900000-899989
 #   select(-c(Datetime, Date, Time, Month))
 
 
-SamplingQAQC_fill_s <- SamplingQAQC_fill_s %>%
-  mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
-         Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
-         Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
-         Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), ""))
+# SamplingQAQC_fill_s <- SamplingQAQC_fill_s %>%
+#   mutate(Flag_SAMP = replace(Flag_SAMP, is.na(Flag_SAMP), "" ),
+#          Comment_SAMP = replace(Comment_SAMP, is.na(Comment_SAMP), ""),
+#          Flag_LAB = replace(Flag_LAB, is.na(Flag_LAB), ""),
+#          Comment_LAB = replace(Comment_LAB, is.na(Comment_LAB), ""))
 
 str(SamplingQAQC_fill)
 
@@ -1269,7 +1271,9 @@ ich_select <- CPUEQAQC %>%
            WeatherCode, Tide, MicrocystisVisualRank,
            WaterTemperature:Turbidity,
            ConditionCode,FieldComments, 
-           MeterSetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, Flowdiff, FlowdiffAdj, Volume, VolumeAdj,LabComments, ScientificName, LifeStage, Count, CPUE, CPUEAdj, FlagPhys, CommentPhys, FlagSamp, CommentSamp, FlagLab, CommentLab, FlagFM, CommentFM, FlagCPUE, CommentCPUE))
+           MeterSetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, Flowdiff, FlowdiffAdj, Volume, VolumeAdj,LabComments, 
+           SpeciesCode, CommonName, ScientificName, LifeStage, Count, CPUE, CPUEAdj, FlagPhys, 
+           CommentPhys, FlagSamp, CommentSamp, FlagLab, CommentLab, FlagFM, CommentFM, FlagCPUE, CommentCPUE))
 
 
 
@@ -1297,11 +1301,11 @@ ich_final <- ich_select %>%
 ##also create fish crosswalk like in the main fish dataset? use iep fish codes? 
 
 ## Filter rows with a 7
-threes <- inv_final%>%
+threes <- ich_final%>%
   filter(grepl("3", QCFlags ))
 
 # calculate proportion flagged
 ## Amount replaced
-print(paste0(round(nrow(threes)/nrow(inv_final)*100,3), "% highly suspicious"))
+print(paste0(round(nrow(threes)/nrow(ich_final)*100,3), "% highly suspicious"))
 
 
