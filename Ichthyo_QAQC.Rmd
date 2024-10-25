@@ -1258,7 +1258,7 @@ print(paste0(round(nrow(threes)/nrow(ich_final)*100,3), "% highly suspicious"))
 42. Write CSV file
 ```{r}
 today = format(today(),"%Y%m%d")
-write.csv(inv_final, paste0("R_write/Ichthyo/Ichthyo_data_", today, ".csv"), row.names = FALSE, quote = TRUE)
+write.csv(ich_final, paste0("R_write/Ichthyo/Ichthyo_data_", today, ".csv"), row.names = FALSE, quote = TRUE)
 ```
 
 43. Write R Markdown File
