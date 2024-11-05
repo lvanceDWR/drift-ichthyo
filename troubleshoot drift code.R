@@ -240,19 +240,46 @@ physsampoverlap <- left_join(phys, samp, by = "PhysicalDataID") %>%
          FlowMeterSpeed = "FlowMeterSpeed.y") %>%
   filter(Date > "2019-04-16" & Date < "2020-02-10")
 
-overlapcatch <- left_join(physsampoverlap, catch) %>%
+overlapcatch <- left_join(physsampoverlap, catch2) %>%
   distinct()
-
+########################################################################################
 
 ## part 1 adding catch data
 
-AccessData1 <- left_join(phys_samp1, catchtaxapiv, by = c("InvertDataID", "InvertCode")) %>%
-  unique()
-###2001 and earlier no taxa information?? find out why expanding so much - life stage pivot not helping
+# data1 <- left_join(phys_samp1, catchtaxa, by = "InvertDataID", "InvertCode") %>%
+#   unique()
+# 
+# AccessData1 <- left_join(phys_samp1, catchtaxapiv, by = c("InvertDataID", "InvertCode")) %>%
+#   unique()
+# ###2001 and earlier no taxa information?? find out why expanding so much - life stage pivot not helping
+# 
+# abc <- AccessData1 %>%
+#   filter(is.na(TaxonName))
 
-# Merge physical data
+# # Merge physical data
+# check2 <- data1 %>%
+#   filter(is.na(TaxonName))
 
 
+samp_catch1 <- left_join(samp, catchtaxapiv, by = "InvertDataID") %>%
+  select(-c(InvertCode.y)) %>%
+  rename(InvertCode = "InvertCode.x")
+
+testjoin <- left_join(phys_samp1, samp_catch1, by = "PhysicalDataID")%>%
+  select(-c("ConditionCode.x", "MeterSetTime", "FlowMeterStart.x", "FlowMeterEnd.x",
+            "FlowMeterSpeed.x", "FieldComments.x")) %>%
+  rename(FlowMeterStart = "FlowMeterStart.y",
+         FlowMeterEnd = "FlowMeterEnd.y",
+         FlowMeterSpeed = "FlowMeterSpeed.y",
+         ConditionCode = "ConditionCode.y",
+         FieldComments = "FieldComments.y")
+naa <- testjoin %>%
+  filter(is.na(TaxonName))
+
+# taxadata <- left_join(samp_catch_phys0, tax2, by = c("OrganismID", "Order", "Family"))
+# checkdata <- taxadata %>%
+#   filter(is.na(TaxonName))
+#this creates 6791 rows with no taxon name
 
 
 
@@ -263,9 +290,9 @@ AccessData1 <- left_join(phys_samp1, catchtaxapiv, by = c("InvertDataID", "Inver
 #                            names_to = c("LifeStage"),
 #                            values_to = c("CountStage"),
 #                            values_drop_na = TRUE)
-
-checkcount <- catchpivot %>%
-  summarise(CountCheck = sum(CountStage))
+# 
+# checkcount <- catchpivot %>%
+#   summarise(CountCheck = sum(CountStage))
 
 samp_catch <- left_join(samp, catchpivot, by = "InvertDataID") %>%
   select(-c(InvertCode.y)) %>%
