@@ -1245,13 +1245,13 @@ inv_select$LifeStage[inv_select$TaxonName == "Actinopterygii - eggs"]  <- "eggs"
 inv_select$TaxonName[inv_select$TaxonName == "Actinopterygii - eggs"]  <- "Actinopterygii" 
 
 ############## CHECK
-# Join taxa table with the rest of the data
-inv_all <- left_join(inv_select, tax) %>%
+# Join taxa table to bring organism ID back in
+inv_all <- left_join(inv_select, taxaccess) %>%
   filter(!is.na(TaxonName))
 
 # Rearrange 
 inv_arrange <- inv_all %>% 
-  select(c(event_id:Turbidity, SetTime:VolumeAdj, ConditionCode:FieldComments, LabComments:Category, OrganismID, TaxonRank, TaxonName, LifeStage:CommentCPUE))
+  select(c(event_id:Turbidity, SetTime:VolumeAdj, ConditionCode:FieldComments, LabComments:Category, OrganismID, TaxonRank, TaxonName, CommonName, LifeStage:CommentCPUE))
 
 ```
 
