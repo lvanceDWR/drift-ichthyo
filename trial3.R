@@ -1,4 +1,5 @@
 #utilize the data from the 2021 publication for up to 2019, then use excel moving forward
+#make sure to get jan 2020 sampling data
 
 library(tidyverse)
 library(gridExtra) # combine plots
@@ -21,7 +22,7 @@ samp3 <- read_csv("drift data/DriftSampExcelData.csv", skip=1)
 tax <- read_csv("drift data/DriftTaxonomy.csv")
 wy <- read_csv("WaterYearType_CDEC.csv") 
 inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
-
+phys2020 <- read_csv("drift data/DriftInvertSampAccess_20240119.csv")
 
 
 ######################### ACCESS ##############################################################################
@@ -34,11 +35,14 @@ phys$MonthAbb <-ordered(phys$Month,levels=c("Jan","Feb","Mar","Apr","May","Jun",
 phys$Datetime = paste(phys$Date, phys$Time)
 phys$Datetime <- as.POSIXct(phys$Datetime, 
                             format = "%Y-%m-%d %H:%M:%S")
+
 catch$Time <- as.POSIXct(catch$Time,
                          format = "%m/%d/%Y %H:%M")
+
 samp$Date<-as.Date(samp$Date,"%m/%d/%Y")
 samp$`Date/Time` = as.POSIXct(samp$`Date/Time`, 
                               format = "%m/%d/%Y %H:%M:%S")
+
 catch2$Date <- as.Date(catch2$Date, "%m/%d/%Y")
 catch2$Time <- strptime(catch2$Time, format = "%H:%M:%S") %>%
   strftime(catch2$Time, format = "%H:%M:%S",tz = "", usetz = FALSE)
@@ -46,6 +50,8 @@ catch2$Datetime = paste(catch2$Date, catch2$Time)
 catch2$Datetime <- as.POSIXct(catch2$Datetime, 
                               format = "%Y-%m-%d %H:%M:%S")
 
+phys <- phys %>%
+  arrange(Datetime)
 
 catch <- catch %>%
   mutate(SamplingID = str_extract(`Sampling number`, "[^/]+")) %>%
@@ -86,11 +92,9 @@ catch2 <- catch2 %>%
 samp2 <- samp2 %>%
   rename(FlowMeterStart = DriftStartMeter,
          FlowMeterEnd = DriftEndMeter) %>%
-  select(-c("StartTime", "StopTime"))
+  select(-c("StartTime", "StopTime", "EnteredBy", "QA/QC'dBy"))
 
-samp_catch <- left_join(samp, catch, by = c("event_id", "SamplingID", "Station")) %>%
-  rename(Datetime = Datetime.x) %>%
-  select(-c(Datetime.y))
+samp_catch <- left_join(samp, catch, by = c("event_id", "Station"))
 
 # Merge physical data
 samp_catch_phys0 <- left_join(phys, samp_catch, by = c("event_id", "PhysicalDataID")) %>%
@@ -108,7 +112,8 @@ notjoinedPhysDataID <- anti_join(phys, samp_catch, by = "PhysicalDataID")
 # For the additional data
 phys_samp <- left_join(phys, samp2, by = c("PhysicalDataID")) %>%
   filter(Date > "2019-04-16" & Date < "2020-01-01") %>%
-  mutate(SamplingID = "N/A") 
+  mutate(SamplingID = "N/A") %>%
+  arrange(Datetime)
 
 phys_samp_catch0 <- left_join(phys_samp, catch2, by = c("Datetime", "Date", "Station")) %>%
   select(c(PhysicalDataID:Comment_PQC, SamplingID, InvertDataID:SetTime, FlowMeterSpeed, FlowMeterStart, FlowMeterEnd, LabComments, FieldComments, TaxonName, Count, Category, LifeStage))
@@ -117,6 +122,23 @@ sampcatchphysMergeA <- rbind(samp_catch_phys0, phys_samp_catch0)
 
 ##########################################################################################
 
+#################################### JAN 2020 ######################################
+physA <- phys %>%
+  filter(Date > "2019-12-27" & Date < "2020-02-10") %>%
+  select(-c(MeterSetTime, FlowMeterStart, FlowMeterEnd, FlowMeterSpeed, FieldComments, ConditionCode))
+
+phys2020 <- phys2020 %>%
+  filter(PhysicalDataID == 2005 | PhysicalDataID == 2007 | PhysicalDataID == 2009 | PhysicalDataID == 2010) %>%
+  select(-c("EnteredBy", "QA/QC'dBy"))
+
+physJan <- left_join(physA, phys2020, by = "PhysicalDataID")
+
+catchJan <- catch3 %>%
+  filter(Date < "2020-02-10")
+
+Janoverlap <- left_join(physJan, catch3, by = "event_id")
+
+#########################################################################################
 
 ############################ EXCEL #########################################
 
