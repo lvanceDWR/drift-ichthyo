@@ -45,7 +45,7 @@ samp2 <- read_csv("drift data/DriftSampExcelData.csv", skip=1)
 tax <- read_csv("drift data/DriftTaxonomy.csv")
 wy <- read_csv("WaterYearType_CDEC.csv") 
 inundation <- read_csv("Yolo_Bypass_Inundation_1998-2022.csv")
-#inv_tax_2 <- read_csv("Data/TblInvertsLookUpV2.csv")
+inv_tax_2 <- read_csv("drift data/TblInvertsLookUpV2.csv")
 
 #updated catch2 file accounts for correction of date/time for a few dates - verified by checking data sheets (dates:8/31/21 STTD 11:06, 8/31/21 SHR 8:06; 9/28/21 SHR 8:10)
 ```
@@ -93,6 +93,18 @@ str(catch)
 str(samp)
 str(samp2)
 str(catch2)
+
+
+## create taxa df for access to bind with Excel later
+inv_tax <- full_join(tax, inv_tax_2, by = "OrganismID") %>%
+  relocate(Kingdom, "Phylum.x", "Phylum.y", Subphylum, "Class.x", "Class.y",
+           "Order.x", "Order.y", "Family.x", "Family.y")
+
+taxaccess <- inv_tax %>%
+  select(c(Genus, "Species.x", CommonName, OrganismID, TaxonName, TaxonRank, Category)) %>%
+  rename(Species = "Species.x") %>%
+  relocate(OrganismID, Category, TaxonName, TaxonRank, CommonName, Genus, Species) %>%
+  select(-c(Genus, Species))
 
 ```
 
@@ -195,6 +207,7 @@ samp_catch_phys2 <- left_join(samp_catch2, phys, by = c("event_id","Datetime", "
 # Merge datasets for CPUE variables
 # tax <- full_join(inv_tax, inv_tax_2, by = "OrganismID")
 
+####################################### ACCESS DATA #####################################################
 samp_catch <- left_join(samp, catch)
 
 #rename and remove columns from join
@@ -221,7 +234,7 @@ catch2019 <- catch2 %>%
   filter(Date > "2019-04-10" & Date < "2020-02-01")
 
 phys2019 <- phys %>%
-  filter(Date > "2018-12-31" & Date < "2020-01-01") %>%
+  filter(Date > "2019-04-20" & Date < "2020-02-10") %>%
   select(-c(FieldComments))
 #fieldcomments removed for 2019 since all NA and the comments are in a diff comments column
 
@@ -231,19 +244,54 @@ phys_samp <- left_join(phys2019, samp, by = "PhysicalDataID")%>%
   rename(FlowMeterStart = "FlowMeterStart.y",
          FlowMeterEnd = "FlowMeterEnd.y",
          FlowMeterSpeed = "FlowMeterSpeed.y",
-         ConditionCode = "ConditionCode.y")
+         ConditionCode = "ConditionCode.y") %>%
+  arrange(Datetime)
 
-gap <- left_join(phys_samp, catch2019)
+gap <- left_join(phys_samp, catch2019) %>%
+  select(-(SampleID))
 
-#combine the 2019 data with the rest of the access data
-samp_catch_phys <- bind_rows(samp_catch_phys0, gap)
+#combine the 2019 and Jan 2020 data with the rest of the Excel data
+samp_catch_physA <- bind_rows(samp_catch_phys2, gap) %>%
+  select(-c(Attribute)) %>%
+  arrange(Datetime)
 
-#Now combine these two files to then continue with qa/qc
-sampcatchphysMerge <- bind_rows(samp_catch_phys, samp_catch_phys2) %>%
+#### add taxon data to access data before combining with excel info
+samp_catch_physC <- samp_catch_phys0 %>%
+  select(-c(Classification, Order, Family))
+
+samp_catch_physD <- left_join(samp_catch_physC, taxaccess, by = "OrganismID") %>%
+  rename(NotDetermined = "NA",
+         TotalCount = "Count") %>%
+  arrange(Datetime)
+
+Nolifestage <- samp_catch_physD %>%
+  filter(is.na(Larvae) | is.na(Pupae) | is.na(Nymphs) |
+           is.na(Emergents) | is.na(Adults) | is.na(NotDetermined)) %>%
+  filter(Date < "2005-02-01") %>%
+  select(-c(Larvae, Pupae, Nymphs, Emergents, 
+            Adults, NotDetermined)) %>%
+  rename(Count = "TotalCount") %>%
+  arrange(Datetime)
+
+samp_catch_physB <- pivot_longer(samp_catch_physD,
+                                 cols = c(Larvae, Pupae, Nymphs, Emergents,
+                                          Adults, NotDetermined),
+                                 names_to = c("LifeStage"),
+                                 values_to = c("Count"),
+                                 values_drop_na = TRUE) %>%
+  arrange(Datetime) %>%
+  unique()
+
+#recombine Access data
+samp_catch_physAB <- bind_rows(Nolifestage, samp_catch_physB) %>%
+  unique()
+
+#Now combine  with access data and then continue with qa/qc
+sampcatchphysMerge <- bind_rows(samp_catch_physAB, samp_catch_phys2) %>%
   relocate(event_id, Datetime)
 
 #create exported joined data file for ease of publishing data in future
-write_csv(sampcatchphysMerge, paste("R_write/SamplingDrift1998-2022.csv"))
+write_csv(sampcatchphysMerge, paste("R_write/Sampling_Drift_1998-2022.csv"))
 
 # All samplings - remove catch info and find unique entries
 sampUnique <- sampcatchphysMerge %>%
