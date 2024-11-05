@@ -134,6 +134,20 @@ samp3 <- samp3 %>%
             `Entered by`, `QAQC'd by`, `...6`, `Measuring program short name`,
             SAMCode))
 
+catch3 <- catch3 %>%
+  filter(!(is.na(`Measuring program short name`))) %>%
+  rename(Count = `Value...11`,
+         LifeStage = `Value...12`,
+         TaxonName = Observable,
+         Date = `Sampling Event Date`,
+         Time = `Sampling Event Time`,
+         Station = `Sampling Area Number`,
+         SAMCode = `Sampling Event Number`,
+         SampleID = `Sample ID`,
+         LabComments = lab_comments) %>%
+  select(-c(`Measuring program short name`, `Observation Type Short Name`,
+            SAMCode))
+
 
 catch3$Date<-as.Date(catch3$Date,"%m/%d/%Y")
 catch3$Year <- year(catch3$Date)
