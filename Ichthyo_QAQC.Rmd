@@ -1261,4 +1261,24 @@ today = format(today(),"%Y%m%d")
 write.csv(ich_final, paste0("R_write/Ichthyo/Ichthyo_data_", today, ".csv"), row.names = FALSE, quote = TRUE)
 ```
 
+43. Make fish code crosswalk for IEP Fish Codes
+```{r}
+# fish species code crosswalk
+SpeciesUpdate3 <- SpeciesUpdate2 %>%
+  rename(CommonName1 = CommonName)
+
+IEPFish <- IEPFish %>%
+  rename(CommonName = `CommonName `)
+
+Crosswalk <- full_join(SpeciesUpdate3, IEPFish, by = ("ScientificName")) %>%
+  distinct() %>%
+  filter(!is.na(SpeciesCode)) %>%
+  select(-c(CommonName, Family)) %>%
+  rename(CommonName = CommonName1) %>%
+  relocate(SpeciesCode, IEPFishCode, CommonName, ScientificName)
+
+write_csv(Crosswalk,"R_Write/Ichthyo/Crosswalk_fishcode.csv")
+```
+
+
 43. Write R Markdown File

@@ -1,0 +1,97 @@
+SpeciesCode,IEPFishCode,CommonName,ScientificName
+AMS,AMESHA,American Shad,Alosa sapidissima
+AMM,NA,Ammocoete Lamprey,Petromyzontidae
+BPF,NA,Bay Pipefish,Syngnathus leptorhyncus
+BKB,BLABUL,Black Bullhead,Ameiurus melas
+BKS,BLACRA,Black Crappie,Pomoxis nigromaculatus
+BGS,BLUEGI,Bluegill,Lepomis macrochirus
+BKT,NA,Brook Trout,Salvelinus fontinalis
+BRB,BROBUL,Brown Bullhead,Ameiurus nebulosus
+BT,BRNTRT,Brown Trout,Salmo trutta
+CAR,NA,California Roach,Lavinia symmetricus
+C,COMCAR,Carp,Cyprinus carpio
+CHG,CHAGOB,Chameleon Goby,Tridentiger trigonocephalus
+CHC,CHACAT,Channel Catfish,Ictalurus punctatus
+CHNA,CHISAL,"Chinook Salmon, Adult",Oncorhynchus tshawytscha
+CHNF,CHISAL,"Chinook Salmon, Fall-Run",Oncorhynchus tshawytscha
+CHNL,CHISAL,"Chinook Salmon, Late-Fall-Run",Oncorhynchus tshawytscha
+CHNM,CHISAL,"Chinook Salmon, Marked (Dyed)",Oncorhynchus tshawytscha
+CHNS,CHISAL,"Chinook Salmon, Spring-Run",Oncorhynchus tshawytscha
+CHNT,CHISAL,"Chinook Salmon, Tagged",Oncorhynchus tshawytscha
+CHN,CHISAL,"Chinook Salmon, Unknown Race",Oncorhynchus tshawytscha
+CHNW,CHISAL,"Chinook Salmon, Winter-Run",Oncorhynchus tshawytscha
+DSM,DELSME,Delta Smelt,Hypomesus transpacificus
+FHM,FATMIN,Fathead Minnow,Pimephales promelas
+GF,GOLDFI,Gold Fish,Carassius auratus
+GSN,GOLSHI,Golden Shiner,Notemigonus crysoleucas
+GST,GRESTU,Green Sturgeon,Acipenser medirostris
+GSF,GRESUN,Green Sunfish,Lepomis cyanellus
+HH,HARDHE,Hardhead,Mylopharodon conocephalus
+HCH,HITCH,Hitch,Lavinia exilicauda
+MSS,INLSIL,Inland Silverside,Menidia beryllina
+JSM,JACKSM,Jacksmelt,Atherinopsis californiensis
+LAM,NA,"Lamprey, Unidentified Adult",Petromyzontidae
+LMB,LARBAS,Largemouth Bass,Micropterus salmoides
+LP,BIGLOG,Logperch,Percina macrolepida
+LFS,LONSME,Longfin Smelt,Spirinchus thaleichthys
+MQF,WESMOS,Mosquito Fish,Gambusia affinis
+None,NA,No Catch,No Catch
+NAN,NORANC,Northern Anchovy,Engraulis mordax
+BL,NA,Pacific Brook Lamprey,Lampetra pacifica
+PAH,NA,Pacific Herring,Clupea harengeus pallasii
+PL,NA,Pacific Lamprey,Lampetra tridentata
+PSS,PACSSC,Pacific Staghorn Sclupin,Leptocottus armatus
+PMP,PLAMID,Plainfin Midshipman,Porichthys notatus
+PRS,PRISCU,Prickly Sculpin,Cottus asper
+SF,PUMPKI,Pumpkinseed,Lepomis gibbosus
+RBT,RAITRO,Rainbow Trout (Steel Head),Oncorhynchus mykiss
+RBTT,RAITRO,"Rainbow Trout, Tagged",Oncorhynchus mykiss
+RSN,REDSHI,Red Shiner,Cyprinella lutrensis
+RES,REDSUN,Redear Sunfish,Lepomis microlophus
+REB,NA,Redeye Bass,Micropterus	 coosae
+RFS,RIFSCU ,Riffle Sculpin,Cottus gulosus
+RL,NA,River Lamprey,Lampetra ayersi
+SCB,SACBLA,Sacramento Blackfish,Orthodon microlepidotus
+SAPM,NA,Sacramento Pikeminnow,Ptychocheilus grandis
+SPLT,SPLITT,Sacramento Splittail,Pogonichthys macrolepidotus
+SASU,SACSUC,Sacramento Sucker,Catostomus occidentalis
+SHM,SHIGOB,Shimofuri Goby,Tridentiger bifasciatus
+SMB,SMABAS,Smallmouth Bass,Micropterus dolomieu
+SPD,SPEDAC ,Speckled Dace,Rhinichthys osculus
+STF,STAFLO,Starry Flounder,Platichthys stellatus
+STB,STRBAS,Striped Bass,Morone saxatilis
+STB,STRBA0,Striped Bass,Morone saxatilis
+STB,STRBA1,Striped Bass,Morone saxatilis
+STB,STRBA2,Striped Bass,Morone saxatilis
+STB,STRBA3 ,Striped Bass,Morone saxatilis
+SBE,NA,Striped Bass Eggs,Morone saxitalis
+SSM,SURSME,Surf Smelt,Hypomesus pretiosus
+TFS,THRSHA,Threadfin Shad,Dorosoma petenense
+TSS,THRSTI,Threespine Stickleback,Gasterosteus aculeatus
+TSM,TOPSME,Top Smelt,Atherinops affinis
+TP,NA,Tule Perch,Hysterocarpus traski
+ACT,NA,Unid Actinopterygii (ray-finned fishes),Actinopterygii
+CLU,NA,Unid Clupeidae (shad or herring),Clupeidae
+POM,NA,Unid Crappie,Pomoxis spp
+CAT,NA,Unid Ictalurid (catfish or bullhead),Ictaluridae
+BAS,NA,Unid Juvenile Bass,Micropterus spp
+MIN,NA,Unid Juvenile Minnow,Cyprinidae
+SNF,NA,Unid Juvenile non-Micropterus Sunfish,Centrarchidae
+SCP,NA,Unid Juvenile Sculpin,Cottus spp.
+ATH,NA,Unid Juvenile silverside,Atherinopsidae
+STG,NA,Unid Juvenile Sturgeon,Acipenser spp.
+LEP,NA,Unid Sunfish,Lepomis spp
+TRD,NA,Unid Tridentiger,Tridentiger spp.
+GOB,NA,Unidentified Goby,Gobiidae
+WAG,WAKASA,Wakasagi,Hypomesus nipponensis
+W,WARMOT,Warmouth,Lepomis gulosus
+WHC,WHICAT,White Catfish,Ameiurus catus
+WHS,WHICRA,White Crappie,Pomoxis annularis
+WCK,WHICRO,White Croaker,Genyonemus lineatus
+WST,WHISTU,White Sturgeon,Acipenser transmontanus
+YEB,YELBUL ,Yellow Bullhead,Ameiurus natalis
+YFG,YELGOB,Yellowfin Goby,Acanthogobius flavimanus
+UNSS,NA,silverside,Menidia sp.
+POM,NA,Unid Crappie,Pomoxis sp.
+RAIKIL,RAIKIL,Rainwater Killifish,Lucania parva
+KLF,NA,Killifish,Cyprinodontidae spp.

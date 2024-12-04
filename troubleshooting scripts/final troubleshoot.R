@@ -354,5 +354,22 @@ grid.arrange(FlowPoint, FlowPoint2)
 ###########################################
 
 
+# fish species code crosswalk
+SpeciesUpdate3 <- SpeciesUpdate2 %>%
+  rename(CommonName1 = CommonName)
 
+IEPFish <- IEPFish %>%
+  rename(CommonName = `CommonName `)
+
+Crosswalk <- full_join(SpeciesUpdate3, IEPFish, by = ("ScientificName")) %>%
+  distinct() %>%
+  filter(!is.na(SpeciesCode)) %>%
+  select(-c(CommonName, Family)) %>%
+  rename(CommonName = CommonName1) %>%
+  relocate(SpeciesCode, IEPFishCode, CommonName, ScientificName)
+
+
+
+
+colnames(IEPFish)
 
